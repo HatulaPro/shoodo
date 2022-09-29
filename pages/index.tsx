@@ -7,6 +7,7 @@ import Button from '@mui/material/Button';
 import List from '@mui/material/List';
 import CheckListItem from '../components/CheckListItem/CheckListItem';
 import Image from 'next/image';
+import { Container } from '@mui/system';
 
 const Home: NextPage = () => {
 	return (
@@ -16,9 +17,9 @@ const Home: NextPage = () => {
 				<meta name="description" content="An app to help you manage your to do lists" />
 				<link rel="icon" href="/favicon.ico" />
 			</Head>
-			<Grid container className={styles.main}>
-				<Grid item xs={12} md={7} className={styles.mainContent}>
-					<Typography variant="h2" component="h1" sx={{ maxWidth: 0.8 }}>
+			<Grid container className={styles.main} sx={{ flexDirection: { xs: 'column', md: 'row' } }}>
+				<Grid item xs={6} md={7} className={styles.mainContent}>
+					<Typography variant="h2" component="h1" className={styles.homeTitle}>
 						Manage <span className={styles.homeTitleEffect}>Tasks</span> For Your Projects
 					</Typography>
 					<Typography variant="subtitle1" mt={4}>
@@ -30,19 +31,19 @@ const Home: NextPage = () => {
 						</Button>
 					</div>
 				</Grid>
-				<Grid container xs={12} md={5}>
-					{/* <Grid container sx={{ m: 'auto' }}> */}
-					<Grid container md={12} sm={7} xs={5}>
-						<div className={styles.mainImage} style={{ margin: 'auto' }}></div>
+				<Grid container xs={12} md={5} sx={{ flexDirection: { xs: 'row', md: 'column' } }} style={{ alignItems: 'center' }}>
+					<Grid container md={7} xs={5}>
+						<Container style={{ position: 'relative', minHeight: '160px' }}>
+							<Image src="/student.png" layout="fill" objectFit="contain" className={styles.mainImage} />
+						</Container>
 					</Grid>
-					<Grid item md={4} sm={5} xs={7}>
+					<Grid item md={5} xs={7} pr={4}>
 						<List component={'div'}>
 							{['Quick', 'Simple', 'Interactive', 'Free'].map((word, index) => (
 								<CheckListItem key={word} text={word} index={index} />
 							))}
 						</List>
 					</Grid>
-					{/* </Grid> */}
 				</Grid>
 			</Grid>
 		</div>

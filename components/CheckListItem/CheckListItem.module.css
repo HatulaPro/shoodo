@@ -1,6 +1,6 @@
 @keyframes checkListItemsSlide {
 	0% {
-		padding-left: 60px;
+		transform: translateX(60px);
 		width: calc(100% - 60px);
 	}
 	100% {
@@ -12,10 +12,9 @@
 	opacity: 0;
 	animation: checkListItemsSlide 0.6s ease-in-out;
 	animation-fill-mode: forwards;
-	transition: 0.3s transform;
-	transform: translateX(0px);
+	transition: 0.3s left;
+	left: 0;
 }
 .checkListItem:hover {
-	transform: translateX(10px);
-	width: calc(100% - 50px);
+	left: 8px;
 }
