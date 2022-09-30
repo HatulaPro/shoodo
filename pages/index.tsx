@@ -9,10 +9,11 @@ import CheckListItem from '../components/CheckListItem/CheckListItem';
 import Image from 'next/image';
 import { Container } from '@mui/system';
 import Link from 'next/link';
-import { getUser } from '../utils/supabase/auth';
+import { useUser } from '../hooks/useUser';
 
 const Home: NextPage = () => {
-	const user = getUser();
+	const user = useUser();
+	console.log({ user });
 
 	return (
 		<div className={styles.homePage}>

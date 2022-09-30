@@ -5,10 +5,15 @@ export function getUser(): User | null {
 	return supabase.auth.user();
 }
 
-export async function signInWithEmail(email: string): Promise<User | ApiError> {
+interface UserOrError {
+	user: User | null;
+	error: ApiError | null;
+}
+
+export async function signInWithEmail(email: string): Promise<UserOrError> {
 	const { user, error } = await supabase.auth.signIn({
 		email: email,
 	});
 
-	return user || error!;
+	return { user, error };
 }

@@ -1,0 +1,12 @@
+.authPage {
+	text-align: center;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	height: 96vh;
+	max-width: 500px;
+}
+
+.authFormWrapper {
+	border-radius: 12px;
+}
