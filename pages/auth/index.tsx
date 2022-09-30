@@ -8,12 +8,20 @@ import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import styles from './Auth.module.css';
+import LinearProgress from '@mui/material/LinearProgress';
+import Divider from '@mui/material/Divider';
+import InfoIcon from '@mui/icons-material/InfoOutlined';
 
 const AuthPage: NextPage = () => {
 	const [email, setEmail] = useState<string>('');
 	const [isLoading, setLoading] = useState<boolean>(false);
 	const [error, setError] = useState<string | null>(null);
 	const [sent, setSent] = useState<boolean>(false);
+	const [showInfo, setShowInfo] = useState<boolean>(false);
+
+	function changeShowInfo() {
+		setShowInfo((prev) => !prev);
+	}
 
 	function sendLogInEmail(e: React.FormEvent<HTMLFormElement>) {
 		e.preventDefault();
@@ -54,12 +62,23 @@ const AuthPage: NextPage = () => {
 						{sent ? (
 							'A magic link has been sent to your email.'
 						) : isLoading ? (
-							'Sending...'
+							<LinearProgress color="secondary" />
 						) : (
 							<Button disabled={!Boolean(email)} type="submit" variant="contained">
 								Submit
 							</Button>
 						)}
+						<Divider sx={{ my: 2 }} />
+						<Button onClick={changeShowInfo} variant="outlined" sx={{ color: 'success.dark' }} startIcon={<InfoIcon />}>
+							Don't have an account?
+						</Button>
+						<Box style={{ transition: '0.3s all', overflow: 'hidden', maxHeight: showInfo ? '6rem' : '0rem' }} sx={{ mt: 2 }}>
+							<Typography variant="body1" color="info.contrast">
+								<b>Doesn't matter!</b>
+								<br />
+								You can still log in using your email. No password is needed!
+							</Typography>
+						</Box>
 					</Box>
 				</Box>
 			</Container>
