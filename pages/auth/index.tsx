@@ -11,7 +11,6 @@ import styles from './Auth.module.css';
 import LinearProgress from '@mui/material/LinearProgress';
 import Divider from '@mui/material/Divider';
 import InfoIcon from '@mui/icons-material/InfoOutlined';
-import Header from '../../components/Header/Header';
 
 const AuthPage: NextPage = () => {
 	const [email, setEmail] = useState<string>('');
