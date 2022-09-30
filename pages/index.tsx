@@ -9,8 +9,11 @@ import CheckListItem from '../components/CheckListItem/CheckListItem';
 import Image from 'next/image';
 import { Container } from '@mui/system';
 import Link from 'next/link';
+import { getUser } from '../utils/supabase/auth';
 
 const Home: NextPage = () => {
+	const user = getUser();
+
 	return (
 		<div className={styles.homePage}>
 			<Head>
@@ -27,11 +30,13 @@ const Home: NextPage = () => {
 						<b>Shoodo</b> is an online management tool that will help you manage your projects, from anywhere, anytime and for absolutely free.
 					</Typography>
 					<div style={{ display: 'flex', justifyContent: 'end' }}>
-						<Link href="/auth">
-							<Button color="primary" variant="contained" sx={{ mt: 8 }}>
-								Start Now!
-							</Button>
-						</Link>
+						{!user && (
+							<Link href="/auth">
+								<Button color="primary" variant="contained" sx={{ mt: 8 }}>
+									Start Now!
+								</Button>
+							</Link>
+						)}
 					</div>
 				</Grid>
 				<Grid container xs={12} md={5} sx={{ flexDirection: { xs: 'row', md: 'column' } }} style={{ alignItems: 'center' }}>
