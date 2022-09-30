@@ -5,6 +5,10 @@ export function getUser(): User | null {
 	return supabase.auth.user();
 }
 
+export async function logOut() {
+	await supabase.auth.signOut();
+}
+
 interface UserOrError {
 	user: User | null;
 	error: ApiError | null;
