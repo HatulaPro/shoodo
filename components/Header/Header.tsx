@@ -5,12 +5,12 @@ import Toolbar from '@mui/material/Toolbar';
 import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
 import LogoSvg from '../LogoSvg/LogoSvg';
 import Link from 'next/link';
-
+import styles from './Header.module.css';
 import { useUser } from '../../hooks/useUser';
 import { logOut } from '../../utils/supabase/auth';
+import { ButtonBase } from '@mui/material';
 
 const Header: FC = () => {
 	const user = useUser();
@@ -20,12 +20,10 @@ const Header: FC = () => {
 			<Container maxWidth="xl">
 				<Toolbar disableGutters>
 					<Link href="/">
-						<span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+						<ButtonBase className={styles.headerIconBase}>
 							<LogoSvg />
-							<Typography variant="h6" noWrap>
-								Shoodo
-							</Typography>
-						</span>
+							Shoodo
+						</ButtonBase>
 					</Link>
 					<Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'end' }}>
 						<ButtonGroup>
