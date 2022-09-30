@@ -1,0 +1,8 @@
+.headerIconBase {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	border-radius: 8px;
+	padding: 8px;
+	font-size: large;
+}
