@@ -1,11 +1,10 @@
 import { NextPage } from 'next';
 import Head from 'next/head';
-import { signInWithEmail } from '../client';
+import { signInWithEmail } from '../utils/supabase/auth';
 import { useState } from 'react';
 
-const Auth: NextPage = () => {
+const AuthPage: NextPage = () => {
 	const [email, setEmail] = useState<string>('');
-	// const [password, setPassword] = useState<string>('');
 
 	return (
 		<div>
@@ -21,11 +20,10 @@ const Auth: NextPage = () => {
 				}}
 			>
 				<input type="email" value={email} onChange={(e) => setEmail(e.currentTarget.value)} />
-				{/* <input type="password" value={password} onChange={(e) => setPassword(e.currentTarget.value)} /> */}
 				<button type="submit">Submit</button>
 			</form>
 		</div>
 	);
 };
 
-export default Auth;
+export default AuthPage;
