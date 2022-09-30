@@ -58,7 +58,6 @@ const Home: NextPage = () => {
 					</Grid>
 				</Grid>
 			</div>
-			<div style={{ height: '200vh', background: 'red' }}></div>
 		</div>
 	);
 };

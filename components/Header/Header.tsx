@@ -16,7 +16,7 @@ const Header: FC = () => {
 	const user = useUser();
 
 	return (
-		<AppBar position="static">
+		<AppBar position="sticky">
 			<Container maxWidth="xl">
 				<Toolbar disableGutters>
 					<Link href="/">

@@ -11,6 +11,7 @@ import styles from './Auth.module.css';
 import LinearProgress from '@mui/material/LinearProgress';
 import Divider from '@mui/material/Divider';
 import InfoIcon from '@mui/icons-material/InfoOutlined';
+import Header from '../../components/Header/Header';
 
 const AuthPage: NextPage = () => {
 	const [email, setEmail] = useState<string>('');
@@ -50,6 +51,7 @@ const AuthPage: NextPage = () => {
 				<meta name="description" content="An app to help you manage your to do lists" />
 				<link rel="icon" href="/favicon.ico" />
 			</Head>
+			<Header />
 			<Container className={styles.authPage}>
 				<Box className={styles.authFormWrapper} sx={{ backgroundColor: 'background.default', px: 6, py: 4 }}>
 					<Typography variant="h3" component="h1" color="primary.dark">
