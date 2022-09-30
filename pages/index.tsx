@@ -22,7 +22,6 @@ const Home: NextPage = () => {
 				<meta name="description" content="An app to help you manage your to do lists" />
 				<link rel="icon" href="/favicon.ico" />
 			</Head>
-			<Header />
 			<div className={styles.homePage}>
 				<Grid container className={styles.main} sx={{ flexDirection: { xs: 'column', md: 'row' } }}>
 					<Grid item xs={6} md={7} className={styles.mainContent}>
