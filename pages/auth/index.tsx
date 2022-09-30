@@ -70,11 +70,11 @@ const AuthPage: NextPage = () => {
 						)}
 						<Divider sx={{ my: 2 }} />
 						<Button onClick={changeShowInfo} variant="outlined" sx={{ color: 'success.dark' }} startIcon={<InfoIcon />}>
-							Don't have an account?
+							Don&apos;t have an account?
 						</Button>
 						<Box style={{ transition: '0.3s all', overflow: 'hidden', maxHeight: showInfo ? '6rem' : '0rem' }} sx={{ mt: 2 }}>
 							<Typography variant="body1" color="info.contrast">
-								<b>Doesn't matter!</b>
+								<b>Doesn&apos;t matter!</b>
 								<br />
 								You can still log in using your email. No password is needed!
 							</Typography>

@@ -44,7 +44,7 @@ const Home: NextPage = () => {
 					<Grid container xs={12} md={5} sx={{ flexDirection: { xs: 'row', md: 'column' } }} style={{ alignItems: 'center' }}>
 						<Grid container md={7} xs={5}>
 							<Container style={{ position: 'relative', minHeight: '160px' }}>
-								<Image src="/student.png" layout="fill" objectFit="contain" className={styles.mainImage} />
+								<Image src="/student.png" alt="A student doing technology things" layout="fill" objectFit="contain" className={styles.mainImage} />
 							</Container>
 						</Grid>
 						<Grid item md={5} xs={7} pr={4}>
