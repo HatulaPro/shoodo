@@ -37,18 +37,23 @@ const Header: FC = () => {
 					)}
 					<Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'end' }}>
 						<ButtonGroup>
+							<Link href="/">
+								<Button sx={{ color: 'white' }}>Home</Button>
+							</Link>
 							{user ? (
-								<Button sx={{ color: 'white' }} onClick={logOut}>
-									Log Out
-								</Button>
+								<>
+									<Link href="/projects">
+										<Button sx={{ color: 'white' }}>Projects</Button>
+									</Link>
+									<Button sx={{ color: 'white' }} onClick={logOut}>
+										Log Out
+									</Button>
+								</>
 							) : (
 								<Link href="/auth">
 									<Button sx={{ color: 'white' }}>Log In</Button>
 								</Link>
 							)}
-							<Link href="/">
-								<Button sx={{ color: 'white' }}>Home</Button>
-							</Link>
 						</ButtonGroup>
 					</Box>
 				</Toolbar>
