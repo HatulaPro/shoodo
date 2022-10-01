@@ -1,4 +1,5 @@
 import { NextPage, GetServerSideProps } from 'next';
+import { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useUser } from '../../hooks/useUser';
 import { supabase } from '../../utils/supabase/client';
@@ -33,10 +34,13 @@ type ProjectProps = {
 
 const ProjectsPage: NextPage<ProjectProps> = ({ projects }) => {
 	const router = useRouter();
-	const user = useUser();
-	if (!user) {
-		router.push('/');
-	}
+	const { user, isLoading } = useUser();
+
+	useEffect(() => {
+		if (!user && !isLoading) {
+			router.push('/');
+		}
+	}, [user, isLoading]);
 
 	return (
 		<Container>

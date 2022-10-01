@@ -15,7 +15,7 @@ import { useUser } from '../../hooks/useUser';
 import { logOut } from '../../utils/supabase/auth';
 
 const Header: FC = () => {
-	const user = useUser();
+	const { user } = useUser();
 
 	return (
 		<AppBar position="sticky">

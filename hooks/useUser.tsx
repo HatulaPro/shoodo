@@ -4,8 +4,8 @@ import { useEffect } from 'react';
 import { AuthChangeEvent, Session, User } from '@supabase/supabase-js';
 import { useQuery } from 'react-query';
 
-export function useUser(): User | null {
-	const { data: user, refetch } = useQuery('user', getUser);
+export function useUser(): { user: User | null; isLoading: boolean } {
+	const { data: user, refetch, isLoading } = useQuery('user', getUser);
 
 	useEffect(() => {
 		const listener = supabase.auth.onAuthStateChange((event: AuthChangeEvent, session: Session | null) => {
@@ -21,5 +21,5 @@ export function useUser(): User | null {
 		};
 	}, [user, refetch]);
 
-	return user || null;
+	return { user: user || null, isLoading };
 }

@@ -10,10 +10,9 @@ import Image from 'next/image';
 import { Container } from '@mui/system';
 import Link from 'next/link';
 import { useUser } from '../hooks/useUser';
-import Header from '../components/Header/Header';
 
 const Home: NextPage = () => {
-	const user = useUser();
+	const { user } = useUser();
 
 	return (
 		<div>
