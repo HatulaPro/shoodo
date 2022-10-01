@@ -1,5 +1,5 @@
 import { NextPage, GetServerSideProps } from 'next';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useUser } from '../../hooks/useUser';
 import { supabase } from '../../utils/supabase/client';
@@ -12,6 +12,7 @@ import RefreshIcon from '@mui/icons-material/Refresh';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Tooltip from '@mui/material/Tooltip';
+import NewProjectDialog from '../../components/NewProjectDialog/NewProjectDialog';
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	const { user, token } = await supabase.auth.api.getUserByCookie(req);
@@ -35,12 +36,23 @@ type ProjectProps = {
 const ProjectsPage: NextPage<ProjectProps> = ({ projects }) => {
 	const router = useRouter();
 	const { user, isLoading } = useUser();
+	const [isCreateProjectOpen, setIsCreateProjectOpen] = useState<boolean>(false);
 
 	useEffect(() => {
 		if (!user && !isLoading) {
 			router.push('/');
 		}
 	}, [user, isLoading]);
+
+	function createNewProject() {
+		router.push('/projects', '/projects/new', { shallow: true });
+		setIsCreateProjectOpen(true);
+	}
+
+	function closeNewProjectDialog() {
+		router.push('/projects', '/projects', { shallow: true });
+		setIsCreateProjectOpen(false);
+	}
 
 	return (
 		<Container>
@@ -54,12 +66,13 @@ const ProjectsPage: NextPage<ProjectProps> = ({ projects }) => {
 					</IconButton>
 				</Tooltip>
 				<Box display="flex" flexDirection="row" justifyContent="end" flex="1">
-					<Button size="small" color="secondary" variant="contained">
+					<Button size="small" color="secondary" variant="contained" onClick={createNewProject}>
 						NEW
 					</Button>
 				</Box>
 			</Box>
 			<ProjectsView projects={projects} />
+			{user && <NewProjectDialog userId={user.id} open={isCreateProjectOpen} handleClose={closeNewProjectDialog} />}
 		</Container>
 	);
 };
