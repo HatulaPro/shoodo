@@ -1,5 +1,6 @@
-import { User } from '@supabase/supabase-js';
 import { NextPage, GetServerSideProps } from 'next';
+import { useRouter } from 'next/router';
+import { useUser } from '../../hooks/useUser';
 import { supabase } from '../../utils/supabase/client';
 import { getUserProjects, Project } from '../../utils/supabase/projects';
 
@@ -14,16 +15,21 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	const projects = await getUserProjects();
 
 	return {
-		props: { user, projects },
+		props: { projects },
 	};
 };
 
 type ProjectProps = {
-	user: User;
 	projects: Project[];
 };
 
-const ProjectsPage: NextPage<ProjectProps> = ({ user, projects }) => {
+const ProjectsPage: NextPage<ProjectProps> = ({ projects }) => {
+	const router = useRouter();
+	const user = useUser();
+	if (!user) {
+		router.push('/');
+	}
+
 	return <code>{JSON.stringify({ user, projects }, null, 4)}</code>;
 };
 
