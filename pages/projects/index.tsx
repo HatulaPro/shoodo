@@ -39,11 +39,17 @@ const ProjectsPage: NextPage = () => {
 		isLoading: isLoadingProjects,
 		data: userProjects,
 		refetch: refetchProjects,
-	} = useQuery(['projects'], async () => {
-		if (!user) return [] as Project[];
-		console.log('fethin');
-		return await getUserProjects(user.id);
-	});
+	} = useQuery(
+		['projects'],
+		async () => {
+			if (!user) return [] as Project[];
+			console.log('fethin');
+			return await getUserProjects(user.id);
+		},
+		{
+			refetchOnWindowFocus: false,
+		}
+	);
 
 	useEffect(() => {
 		if (!user && !isLoading) {
