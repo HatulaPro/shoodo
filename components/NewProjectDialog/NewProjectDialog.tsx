@@ -9,12 +9,12 @@ import LogoSvg from '../LogoSvg/LogoSvg';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
-import { createProject } from '../../utils/supabase/projects';
+import { Project, createProject } from '../../utils/supabase/projects';
 
 type NewProjectDialogProps = {
 	userId: string;
 	open: boolean;
-	handleClose: () => void;
+	handleClose: (project?: Project) => void;
 };
 
 interface DialogForm {
@@ -32,7 +32,7 @@ const NewProjectDialog: FC<NewProjectDialogProps> = ({ userId, open, handleClose
 		createProject(userId, data.name, data.description).then(
 			(proj) => {
 				console.log(proj);
-				handleClose();
+				handleClose(proj);
 			},
 			(error) => {
 				console.log(error);
@@ -41,7 +41,7 @@ const NewProjectDialog: FC<NewProjectDialogProps> = ({ userId, open, handleClose
 	};
 
 	return (
-		<Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth fullScreen={isSmallScreen} disableEscapeKeyDown>
+		<Dialog open={open} onClose={() => handleClose()} maxWidth="md" fullWidth fullScreen={isSmallScreen} disableEscapeKeyDown>
 			<DialogTitle style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
 				<LogoSvg />
 				New Project
@@ -71,7 +71,7 @@ const NewProjectDialog: FC<NewProjectDialogProps> = ({ userId, open, handleClose
 				/>
 			</DialogContent>
 			<DialogActions>
-				<Button onClick={handleClose}>Cancel</Button>
+				<Button onClick={() => handleClose()}>Cancel</Button>
 				<Button onClick={handleSubmit(onSubmit)}>Create</Button>
 			</DialogActions>
 		</Dialog>

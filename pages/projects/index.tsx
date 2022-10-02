@@ -37,6 +37,7 @@ const ProjectsPage: NextPage<ProjectProps> = ({ projects }) => {
 	const router = useRouter();
 	const { user, isLoading } = useUser();
 	const [isCreateProjectOpen, setIsCreateProjectOpen] = useState<boolean>(false);
+	const [newProjectIndex, setNewProjectIndex] = useState<number>(-1);
 
 	useEffect(() => {
 		if (!user && !isLoading) {
@@ -49,9 +50,14 @@ const ProjectsPage: NextPage<ProjectProps> = ({ projects }) => {
 		setIsCreateProjectOpen(true);
 	}
 
-	function closeNewProjectDialog() {
+	function closeNewProjectDialog(project?: Project) {
 		router.push('/projects', '/projects', { shallow: true });
 		setIsCreateProjectOpen(false);
+
+		if (project) {
+			setNewProjectIndex(projects.length);
+			projects.push(project);
+		}
 	}
 
 	return (
@@ -71,7 +77,7 @@ const ProjectsPage: NextPage<ProjectProps> = ({ projects }) => {
 					</Button>
 				</Box>
 			</Box>
-			<ProjectsView projects={projects} />
+			<ProjectsView projects={projects} newProject={newProjectIndex} />
 			{user && <NewProjectDialog userId={user.id} open={isCreateProjectOpen} handleClose={closeNewProjectDialog} />}
 		</Container>
 	);

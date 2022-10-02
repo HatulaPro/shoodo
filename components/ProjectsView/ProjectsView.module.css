@@ -5,3 +5,21 @@
 	text-overflow: ellipsis;
 	overflow: hidden;
 }
+
+@keyframes newProjectAnimation {
+	0% {
+		background: inherit;
+	}
+	30% {
+		background: lightblue;
+		transform: scale(1.05);
+	}
+	100% {
+		background: inherit;
+	}
+}
+
+.projectViewNew {
+	animation: newProjectAnimation 0.5s ease-in-out;
+	animation-delay: 0.8s;
+}
