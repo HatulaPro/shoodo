@@ -13,8 +13,8 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Tooltip from '@mui/material/Tooltip';
 import NewProjectDialog from '../../components/NewProjectDialog/NewProjectDialog';
-import { useQuery, useQueryClient } from 'react-query';
 import { useUserProjects } from '../../hooks/useUserProjects';
+import { useShallowRoutes } from '../../hooks/useShallowRoutes';
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	const { user, token } = await supabase.auth.api.getUserByCookie(req);
@@ -40,6 +40,7 @@ const ProjectsPage: NextPage<ProjectProps> = ({ projects }) => {
 	const { user, isLoading } = useUser();
 	const [isCreateProjectOpen, setIsCreateProjectOpen] = useState<boolean>(false);
 	const [newProjectIndex, setNewProjectIndex] = useState<number>(-1);
+	const {} = useShallowRoutes('/projects', ['/projects', '/projects/new'], isCreateProjectOpen ? 1 : 0);
 
 	const { isLoading: isLoadingProjects, data: userProjects, refetch, manualUpdate } = useUserProjects(user, projects);
 
@@ -50,12 +51,10 @@ const ProjectsPage: NextPage<ProjectProps> = ({ projects }) => {
 	}, [user, isLoading]);
 
 	function createNewProject() {
-		router.push('/projects', '/projects/new', { shallow: true });
 		setIsCreateProjectOpen(true);
 	}
 
 	function closeNewProjectDialog(project?: Project) {
-		router.push('/projects', '/projects', { shallow: true });
 		setIsCreateProjectOpen(false);
 
 		if (project) {
