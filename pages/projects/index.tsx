@@ -38,6 +38,7 @@ const ProjectsPage: NextPage<ProjectProps> = ({ projects }) => {
 	const { user, isLoading } = useUser();
 	const [isCreateProjectOpen, setIsCreateProjectOpen] = useState<boolean>(false);
 	const [newProjectIndex, setNewProjectIndex] = useState<number>(-1);
+	const [userProjects, setUserProjects] = useState<Project[]>(projects);
 
 	useEffect(() => {
 		if (!user && !isLoading) {
@@ -55,9 +56,15 @@ const ProjectsPage: NextPage<ProjectProps> = ({ projects }) => {
 		setIsCreateProjectOpen(false);
 
 		if (project) {
-			setNewProjectIndex(projects.length);
-			projects.push(project);
+			setNewProjectIndex(userProjects.length);
+			setUserProjects((prev) => [...prev, project]);
 		}
+	}
+
+	async function refresh() {
+		const updatedProjects = await getUserProjects(user!.id);
+		setUserProjects(updatedProjects);
+		setNewProjectIndex(-1);
 	}
 
 	return (
@@ -67,7 +74,7 @@ const ProjectsPage: NextPage<ProjectProps> = ({ projects }) => {
 			</Typography>
 			<Box display="flex" flexDirection="row" m={2}>
 				<Tooltip title="refresh">
-					<IconButton>
+					<IconButton onClick={refresh}>
 						<RefreshIcon />
 					</IconButton>
 				</Tooltip>
@@ -77,7 +84,7 @@ const ProjectsPage: NextPage<ProjectProps> = ({ projects }) => {
 					</Button>
 				</Box>
 			</Box>
-			<ProjectsView projects={projects} newProject={newProjectIndex} />
+			<ProjectsView projects={userProjects} newProject={newProjectIndex} />
 			{user && <NewProjectDialog userId={user.id} open={isCreateProjectOpen} handleClose={closeNewProjectDialog} />}
 		</Container>
 	);
