@@ -61,10 +61,14 @@ const ProjectsPage: NextPage<ProjectProps> = ({ projects }) => {
 		}
 	}
 
-	async function refresh() {
-		const updatedProjects = await getUserProjects(user!.id);
-		setUserProjects(updatedProjects);
-		setNewProjectIndex(-1);
+	function refresh() {
+		getUserProjects(user!.id).then(
+			(updatedProjects) => {
+				setUserProjects(updatedProjects);
+				setNewProjectIndex(-1);
+			},
+			(error) => console.log(error)
+		);
 	}
 
 	return (
