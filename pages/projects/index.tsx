@@ -13,6 +13,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Tooltip from '@mui/material/Tooltip';
 import NewProjectDialog from '../../components/NewProjectDialog/NewProjectDialog';
+import { useQuery, useQueryClient } from 'react-query';
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	const { user, token } = await supabase.auth.api.getUserByCookie(req);
@@ -22,28 +23,33 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	}
 	supabase.auth.setAuth(token!);
 
-	const projects = await getUserProjects(user.id);
-
 	return {
-		props: { projects },
+		props: {},
 	};
 };
 
-type ProjectProps = {
-	projects: Project[];
-};
-
-const ProjectsPage: NextPage<ProjectProps> = ({ projects }) => {
+const ProjectsPage: NextPage = () => {
 	const router = useRouter();
+	const queryClient = useQueryClient();
 	const { user, isLoading } = useUser();
 	const [isCreateProjectOpen, setIsCreateProjectOpen] = useState<boolean>(false);
 	const [newProjectIndex, setNewProjectIndex] = useState<number>(-1);
-	const [userProjects, setUserProjects] = useState<Project[]>(projects);
-	const [isRefreshing, setRefreshing] = useState<boolean>(false);
+
+	const {
+		isLoading: isLoadingProjects,
+		data: userProjects,
+		refetch: refetchProjects,
+	} = useQuery(['projects'], async () => {
+		if (!user) return [] as Project[];
+		console.log('fethin');
+		return await getUserProjects(user.id);
+	});
 
 	useEffect(() => {
 		if (!user && !isLoading) {
 			router.push('/');
+		} else {
+			refetchProjects();
 		}
 	}, [user, isLoading]);
 
@@ -57,24 +63,13 @@ const ProjectsPage: NextPage<ProjectProps> = ({ projects }) => {
 		setIsCreateProjectOpen(false);
 
 		if (project) {
-			setNewProjectIndex(userProjects.length);
-			setUserProjects((prev) => [...prev, project]);
+			setNewProjectIndex(userProjects!.length);
+			queryClient.setQueryData(['projects'], () => [...userProjects!, project]);
 		}
 	}
 
 	function refresh() {
-		setRefreshing(true);
-		getUserProjects(user!.id).then(
-			(updatedProjects) => {
-				setUserProjects(updatedProjects);
-				setNewProjectIndex(-1);
-				setRefreshing(false);
-			},
-			(error) => {
-				console.log(error);
-				setRefreshing(false);
-			}
-		);
+		refetchProjects();
 	}
 
 	return (
@@ -84,7 +79,7 @@ const ProjectsPage: NextPage<ProjectProps> = ({ projects }) => {
 			</Typography>
 			<Box display="flex" flexDirection="row" m={2}>
 				<Tooltip title="refresh">
-					<IconButton onClick={refresh} disabled={isRefreshing}>
+					<IconButton onClick={refresh} disabled={isLoadingProjects}>
 						<RefreshIcon />
 					</IconButton>
 				</Tooltip>
@@ -94,7 +89,7 @@ const ProjectsPage: NextPage<ProjectProps> = ({ projects }) => {
 					</Button>
 				</Box>
 			</Box>
-			<ProjectsView projects={userProjects} newProject={newProjectIndex} />
+			{userProjects && <ProjectsView projects={userProjects} newProject={newProjectIndex} />}
 			{user && <NewProjectDialog userId={user.id} open={isCreateProjectOpen} handleClose={closeNewProjectDialog} />}
 		</Container>
 	);
