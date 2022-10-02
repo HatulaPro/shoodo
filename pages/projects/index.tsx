@@ -22,7 +22,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	}
 	supabase.auth.setAuth(token!);
 
-	const projects = await getUserProjects();
+	const projects = await getUserProjects(user.id);
 
 	return {
 		props: { projects },

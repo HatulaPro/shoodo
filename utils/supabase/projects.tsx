@@ -8,8 +8,8 @@ export type Project = {
 	user_id: string;
 };
 
-export async function getUserProjects(): Promise<Project[]> {
-	const result = await supabase.from('projects').select('*');
+export async function getUserProjects(userId: string): Promise<Project[]> {
+	const result = await supabase.from('projects').select('*').eq('user_id', userId);
 	if (result.error) {
 		console.log(result);
 
