@@ -18,3 +18,14 @@ export async function getUserProjects(): Promise<Project[]> {
 	const data = result.data as Project[];
 	return data;
 }
+
+export async function createProject(user_id: string, name: string, description: string): Promise<Project> {
+	const { data, error } = await supabase.from<Project>('projects').insert([{ user_id, name, description }]);
+
+	if (error) {
+		console.log(error);
+		throw new Error(error.message);
+	}
+
+	return data[0];
+}
