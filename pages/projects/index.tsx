@@ -14,6 +14,7 @@ import Typography from '@mui/material/Typography';
 import Tooltip from '@mui/material/Tooltip';
 import NewProjectDialog from '../../components/NewProjectDialog/NewProjectDialog';
 import { useQuery, useQueryClient } from 'react-query';
+import { useUserProjects } from '../../hooks/useUserProjects';
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	const { user, token } = await supabase.auth.api.getUserByCookie(req);
@@ -23,39 +24,28 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	}
 	supabase.auth.setAuth(token!);
 
+	const projects = await getUserProjects(user.id);
+
 	return {
-		props: {},
+		props: { projects },
 	};
 };
 
-const ProjectsPage: NextPage = () => {
+type ProjectProps = {
+	projects: Project[];
+};
+
+const ProjectsPage: NextPage<ProjectProps> = ({ projects }) => {
 	const router = useRouter();
-	const queryClient = useQueryClient();
 	const { user, isLoading } = useUser();
 	const [isCreateProjectOpen, setIsCreateProjectOpen] = useState<boolean>(false);
 	const [newProjectIndex, setNewProjectIndex] = useState<number>(-1);
 
-	const {
-		isLoading: isLoadingProjects,
-		data: userProjects,
-		refetch: refetchProjects,
-	} = useQuery(
-		['projects'],
-		async () => {
-			if (!user) return [] as Project[];
-			console.log('fethin');
-			return await getUserProjects(user.id);
-		},
-		{
-			refetchOnWindowFocus: false,
-		}
-	);
+	const { isLoading: isLoadingProjects, data: userProjects, refetch, manualUpdate } = useUserProjects(user, projects);
 
 	useEffect(() => {
 		if (!user && !isLoading) {
 			router.push('/');
-		} else {
-			refetchProjects();
 		}
 	}, [user, isLoading]);
 
@@ -70,12 +60,8 @@ const ProjectsPage: NextPage = () => {
 
 		if (project) {
 			setNewProjectIndex(userProjects!.length);
-			queryClient.setQueryData(['projects'], () => [...userProjects!, project]);
+			manualUpdate([...userProjects!, project]);
 		}
-	}
-
-	function refresh() {
-		refetchProjects();
 	}
 
 	return (
@@ -85,7 +71,7 @@ const ProjectsPage: NextPage = () => {
 			</Typography>
 			<Box display="flex" flexDirection="row" m={2}>
 				<Tooltip title="refresh">
-					<IconButton onClick={refresh} disabled={isLoadingProjects}>
+					<IconButton onClick={refetch} disabled={isLoadingProjects}>
 						<RefreshIcon />
 					</IconButton>
 				</Tooltip>
