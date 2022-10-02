@@ -10,6 +10,11 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import styles from './ProjectsView.module.css';
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogActions from '@mui/material/DialogActions';
+import Button from '@mui/material/Button';
 
 type ProjectsViewProps = {
 	projects: Project[];
@@ -20,6 +25,7 @@ const ProjectsView: FC<ProjectsViewProps> = ({ projects, newProject }) => {
 	const projectsListRef = useRef<HTMLDivElement>(null);
 	const [openMenuIndex, setOpenMenuIndex] = useState<number>(-1);
 	const [anchor, setAnchor] = useState<HTMLButtonElement | null>(null);
+	const [showDeleteDialog, setShowDeleteDialog] = useState<boolean>(false);
 
 	useEffect(() => {
 		if (projectsListRef.current && newProject !== -1) {
@@ -29,6 +35,7 @@ const ProjectsView: FC<ProjectsViewProps> = ({ projects, newProject }) => {
 
 	function closeMenu() {
 		setOpenMenuIndex(-1);
+		setShowDeleteDialog(false);
 	}
 
 	function openMenu(index: number) {
@@ -38,8 +45,28 @@ const ProjectsView: FC<ProjectsViewProps> = ({ projects, newProject }) => {
 		};
 	}
 
+	function onDeleteProject() {
+		setShowDeleteDialog(true);
+	}
+
 	return (
 		<Grid container spacing={4} ref={projectsListRef} sx={{ mb: 4 }}>
+			{openMenuIndex !== -1 && (
+				<Dialog open={showDeleteDialog} onClose={closeMenu}>
+					<DialogTitle>Are you sure?</DialogTitle>
+					<DialogContent>
+						Click 'DELETE' to delete <b>{projects[openMenuIndex].name}</b>
+						<br />
+						This action can not be undone!
+					</DialogContent>
+					<DialogActions>
+						<Button onClick={closeMenu}>Cancel</Button>
+						<Button onClick={closeMenu} variant="contained" color="error">
+							DELETE
+						</Button>
+					</DialogActions>
+				</Dialog>
+			)}
 			{projects.map((project, index) => (
 				<Grid item xs={12} sm={6} md={4} key={project.id}>
 					<Card variant="outlined" className={index === newProject ? styles.projectViewNew : ''}>
@@ -53,7 +80,7 @@ const ProjectsView: FC<ProjectsViewProps> = ({ projects, newProject }) => {
 							}
 						/>
 						<Menu open={index === openMenuIndex} onClose={closeMenu} anchorEl={anchor}>
-							<MenuItem onClick={closeMenu}>Delete</MenuItem>
+							<MenuItem onClick={onDeleteProject}>Delete</MenuItem>
 							<MenuItem onClick={closeMenu}>View</MenuItem>
 						</Menu>
 						<CardContent>
