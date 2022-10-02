@@ -39,6 +39,7 @@ const ProjectsPage: NextPage<ProjectProps> = ({ projects }) => {
 	const [isCreateProjectOpen, setIsCreateProjectOpen] = useState<boolean>(false);
 	const [newProjectIndex, setNewProjectIndex] = useState<number>(-1);
 	const [userProjects, setUserProjects] = useState<Project[]>(projects);
+	const [isRefreshing, setRefreshing] = useState<boolean>(false);
 
 	useEffect(() => {
 		if (!user && !isLoading) {
@@ -62,12 +63,17 @@ const ProjectsPage: NextPage<ProjectProps> = ({ projects }) => {
 	}
 
 	function refresh() {
+		setRefreshing(true);
 		getUserProjects(user!.id).then(
 			(updatedProjects) => {
 				setUserProjects(updatedProjects);
 				setNewProjectIndex(-1);
+				setRefreshing(false);
 			},
-			(error) => console.log(error)
+			(error) => {
+				console.log(error);
+				setRefreshing(false);
+			}
 		);
 	}
 
@@ -78,7 +84,7 @@ const ProjectsPage: NextPage<ProjectProps> = ({ projects }) => {
 			</Typography>
 			<Box display="flex" flexDirection="row" m={2}>
 				<Tooltip title="refresh">
-					<IconButton onClick={refresh}>
+					<IconButton onClick={refresh} disabled={isRefreshing}>
 						<RefreshIcon />
 					</IconButton>
 				</Tooltip>
