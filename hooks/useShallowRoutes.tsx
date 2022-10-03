@@ -3,10 +3,10 @@ import { useRouter } from 'next/router';
 
 export function useShallowRoutes<ValidPaths extends string>(base: ValidPaths) {
 	const router = useRouter();
-	const [location, setLocation] = useState<string>(base);
+	const [location, setLocation] = useState<ValidPaths>(base);
 
 	useEffect(() => {
-		const handler = (events: string) => {
+		const handler = (events: ValidPaths) => {
 			setLocation(events);
 		};
 		router.events.on('routeChangeComplete', handler);
