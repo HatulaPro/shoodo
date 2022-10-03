@@ -1,11 +1,20 @@
 import { supabase } from './client';
 
+export type Column = {
+	id: number;
+	project_id: number;
+	name: string;
+	style: string;
+	importance: number;
+};
+
 export type Project = {
 	id: number;
 	created_at: string;
 	name: string;
 	description: string;
 	user_id: string;
+	columns?: Column[];
 };
 
 export async function getUserProjects(userId: string): Promise<Project[]> {
@@ -42,7 +51,7 @@ export async function deleteProject(project_id: number): Promise<boolean> {
 }
 
 export async function getProjectById(project_id: number): Promise<Project> {
-	const { data, error } = await supabase.from<Project>('projects').select('*').eq('id', project_id).single();
+	const { data, error } = await supabase.from<Project>('projects').select('*, columns ( * )').eq('id', project_id).single();
 
 	if (error) {
 		console.log(error);

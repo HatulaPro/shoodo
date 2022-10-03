@@ -15,6 +15,8 @@ export function useQueryProject(user: User | null) {
 		{
 			refetchOnWindowFocus: false,
 			enabled: user !== null && Boolean(query.id),
+			retry: false,
+			cacheTime: 0,
 		}
 	);
 
