@@ -30,7 +30,7 @@ export async function createProject(user_id: string, name: string, description: 
 	return data[0];
 }
 
-export async function deleteProject(project_id: string): Promise<boolean> {
+export async function deleteProject(project_id: number): Promise<boolean> {
 	const { data, error } = await supabase.from<Project>('projects').delete().eq('id', project_id);
 
 	if (error) {
