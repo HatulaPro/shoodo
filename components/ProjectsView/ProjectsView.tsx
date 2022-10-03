@@ -18,6 +18,7 @@ import DialogActions from '@mui/material/DialogActions';
 import Button from '@mui/material/Button';
 import { useMutation } from 'react-query';
 import { cn } from '../../utils/general';
+import Link from 'next/link';
 
 type ProjectsViewProps = {
 	projects: Project[];
@@ -102,7 +103,9 @@ const ProjectsView: FC<ProjectsViewProps> = ({ projects, newProject, updateProje
 						/>
 						<Menu open={index === openMenuIndex} onClose={closeMenu} anchorEl={anchor}>
 							<MenuItem onClick={openDeleteDialog}>Delete</MenuItem>
-							<MenuItem onClick={closeMenu}>View</MenuItem>
+							<Link href={{ pathname: `/projects/[id]`, query: project }} as={`/projects/${project.id}`}>
+								<MenuItem onClick={closeMenu}>View</MenuItem>
+							</Link>
 						</Menu>
 						<CardContent>
 							<Typography variant="body2" className={styles.projectViewCutText}>

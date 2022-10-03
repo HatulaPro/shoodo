@@ -40,3 +40,14 @@ export async function deleteProject(project_id: number): Promise<boolean> {
 
 	return data.length > 0;
 }
+
+export async function getProjectById(project_id: number): Promise<Project> {
+	const { data, error } = await supabase.from<Project>('projects').select('*').eq('id', project_id).single();
+
+	if (error) {
+		console.log(error);
+		throw new Error(error.message);
+	}
+
+	return data;
+}
