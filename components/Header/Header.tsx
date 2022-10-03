@@ -5,8 +5,6 @@ import Toolbar from '@mui/material/Toolbar';
 import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import ButtonBase from '@mui/material/ButtonBase';
-import IconButton from '@mui/material/IconButton';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import Box from '@mui/material/Box';
 import LogoSvg from '../LogoSvg/LogoSvg';
 import Link from 'next/link';
@@ -27,14 +25,6 @@ const Header: FC = () => {
 							Shoodo
 						</ButtonBase>
 					</Link>
-					{user && (
-						<Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center' }}>
-							<IconButton>
-								<AccountCircleIcon fontSize="large" />
-							</IconButton>
-							{user.email}
-						</Box>
-					)}
 					<Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'end' }}>
 						<ButtonGroup>
 							<Link href="/">
