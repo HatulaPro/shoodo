@@ -38,9 +38,8 @@ type ProjectProps = {
 const ProjectsPage: NextPage<ProjectProps> = ({ projects }) => {
 	const router = useRouter();
 	const { user, isLoading } = useUser();
-	const [isCreateProjectOpen, setIsCreateProjectOpen] = useState<boolean>(false);
 	const [newProjectIndex, setNewProjectIndex] = useState<number>(-1);
-	const {} = useShallowRoutes('/projects', ['/projects', '/projects/new'], isCreateProjectOpen ? 1 : 0);
+	const { location, setLocation } = useShallowRoutes<'/projects/new' | '/projects'>('/projects');
 
 	const { isLoading: isLoadingProjects, data: userProjects, refetch, manualUpdate } = useUserProjects(user, projects);
 
@@ -51,11 +50,11 @@ const ProjectsPage: NextPage<ProjectProps> = ({ projects }) => {
 	}, [user, isLoading, router]);
 
 	function createNewProject() {
-		setIsCreateProjectOpen(true);
+		setLocation('/projects/new');
 	}
 
 	function closeNewProjectDialog(project?: Project) {
-		setIsCreateProjectOpen(false);
+		setLocation('/projects');
 
 		if (project) {
 			setNewProjectIndex(userProjects!.length);
@@ -81,7 +80,7 @@ const ProjectsPage: NextPage<ProjectProps> = ({ projects }) => {
 				</Box>
 			</Box>
 			{userProjects && <ProjectsView projects={userProjects} newProject={newProjectIndex} updateProjects={manualUpdate} />}
-			{user && <NewProjectDialog userId={user.id} open={isCreateProjectOpen} handleClose={closeNewProjectDialog} />}
+			{user && <NewProjectDialog userId={user.id} open={location === '/projects/new'} handleClose={closeNewProjectDialog} />}
 		</Container>
 	);
 };

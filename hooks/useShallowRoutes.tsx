@@ -1,14 +1,20 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 
-export function useShallowRoutes(base: string, paths: string[], index: number) {
+export function useShallowRoutes<ValidPaths extends string>(base: ValidPaths) {
 	const router = useRouter();
+	const [location, setLocation] = useState<string>(base);
 
 	useEffect(() => {
-		if (index >= paths.length || index < 0) throw new Error('Invalid index');
+		const handler = (events: string) => {
+			setLocation(events);
+		};
+		router.events.on('routeChangeComplete', handler);
 
-		router.push(base, paths[index], { shallow: true });
-	}, [base, paths, index]);
+		return () => {
+			router.events.off('routeChangeComplete', handler);
+		};
+	}, [router, setLocation]);
 
-	return { base, path: paths[index] };
+	return { location, setLocation: (newLocation: ValidPaths) => router.push(base, newLocation, { shallow: true }) };
 }
