@@ -17,6 +17,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogActions from '@mui/material/DialogActions';
 import Button from '@mui/material/Button';
 import { useMutation } from 'react-query';
+import { cn } from '../../utils/general';
 
 type ProjectsViewProps = {
 	projects: Project[];
@@ -89,7 +90,7 @@ const ProjectsView: FC<ProjectsViewProps> = ({ projects, newProject, updateProje
 			)}
 			{projects.map((project, index) => (
 				<Grid item xs={12} sm={6} md={4} key={project.id}>
-					<Card variant="outlined" className={index === newProject ? styles.projectViewNew : ''}>
+					<Card variant="outlined" className={cn(index === newProject && styles.projectViewNew, openMenuIndex === index && deleteProjectMutation.isLoading && styles.projectViewDeleted)}>
 						<CardHeader
 							title={project.name}
 							subheader={new Date(project.created_at).toLocaleString()}
