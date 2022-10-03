@@ -19,6 +19,7 @@ import Button from '@mui/material/Button';
 import { useMutation } from 'react-query';
 import { cn } from '../../utils/general';
 import Link from 'next/link';
+import { ParsedUrlQueryInput } from 'querystring';
 
 type ProjectsViewProps = {
 	projects: Project[];
@@ -103,7 +104,7 @@ const ProjectsView: FC<ProjectsViewProps> = ({ projects, newProject, updateProje
 						/>
 						<Menu open={index === openMenuIndex} onClose={closeMenu} anchorEl={anchor}>
 							<MenuItem onClick={openDeleteDialog}>Delete</MenuItem>
-							<Link href={{ pathname: `/projects/[id]`, query: project }} as={`/projects/${project.id}`}>
+							<Link href={{ pathname: `/projects/[id]`, query: project as unknown as ParsedUrlQueryInput }} as={`/projects/${project.id}`}>
 								<MenuItem onClick={closeMenu}>View</MenuItem>
 							</Link>
 						</Menu>
