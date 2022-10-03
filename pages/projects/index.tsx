@@ -48,7 +48,7 @@ const ProjectsPage: NextPage<ProjectProps> = ({ projects }) => {
 		if (!user && !isLoading) {
 			router.push('/');
 		}
-	}, [user, isLoading]);
+	}, [user, isLoading, router]);
 
 	function createNewProject() {
 		setIsCreateProjectOpen(true);

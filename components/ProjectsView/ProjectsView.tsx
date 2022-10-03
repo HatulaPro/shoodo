@@ -73,7 +73,7 @@ const ProjectsView: FC<ProjectsViewProps> = ({ projects, newProject, updateProje
 				<Dialog open={showDeleteDialog} onClose={closeMenu}>
 					<DialogTitle>Are you sure?</DialogTitle>
 					<DialogContent>
-						Click 'DELETE' to delete <b>{projects[openMenuIndex]?.name}</b>
+						Click &apos;DELETE&apos; to delete <b>{projects[openMenuIndex]?.name}</b>
 						<br />
 						This action can not be undone!
 						{deleteProjectMutation.isLoading && <LinearProgress color="secondary" />}
