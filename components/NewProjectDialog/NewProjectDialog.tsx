@@ -32,8 +32,8 @@ const NewProjectDialog: FC<NewProjectDialogProps> = ({ userId, open, handleClose
 
 	const { isLoading, isError, mutateAsync } = useMutation(async (data: DialogForm) => {
 		const proj = await createProject(userId, data.name, data.description);
+		reset({ name: '', description: '' });
 		handleClose(proj);
-		reset();
 		return proj;
 	});
 
