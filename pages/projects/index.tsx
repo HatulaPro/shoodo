@@ -36,18 +36,11 @@ type ProjectProps = {
 };
 
 const ProjectsPage: NextPage<ProjectProps> = ({ projects }) => {
-	const router = useRouter();
-	const { user, isLoading } = useUser();
+	const { user } = useUser({ authOnly: true });
 	const [newProjectIndex, setNewProjectIndex] = useState<number>(-1);
 	const { location, setLocation } = useShallowRoutes<'/projects/new' | '/projects'>('/projects');
 
 	const { isLoading: isLoadingProjects, data: userProjects, refetch, manualUpdate } = useUserProjects(user, projects);
-
-	useEffect(() => {
-		if (!user && !isLoading) {
-			router.push('/');
-		}
-	}, [user, isLoading, router]);
 
 	function createNewProject() {
 		setLocation('/projects/new');
