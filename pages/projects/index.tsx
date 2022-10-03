@@ -80,7 +80,7 @@ const ProjectsPage: NextPage<ProjectProps> = ({ projects }) => {
 					</Button>
 				</Box>
 			</Box>
-			{userProjects && <ProjectsView projects={userProjects} newProject={newProjectIndex} />}
+			{userProjects && <ProjectsView projects={userProjects} newProject={newProjectIndex} updateProjects={manualUpdate} />}
 			{user && <NewProjectDialog userId={user.id} open={isCreateProjectOpen} handleClose={closeNewProjectDialog} />}
 		</Container>
 	);
