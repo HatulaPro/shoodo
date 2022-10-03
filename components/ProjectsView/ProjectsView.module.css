@@ -8,14 +8,14 @@
 
 @keyframes newProjectAnimation {
 	0% {
-		background: inherit;
+		background: initial;
 	}
 	30% {
-		background: lightblue;
+		background: lightgray;
 		transform: scale(1.05);
 	}
 	100% {
-		background: inherit;
+		background: initial;
 	}
 }
 
