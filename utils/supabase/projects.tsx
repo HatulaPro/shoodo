@@ -60,3 +60,14 @@ export async function getProjectById(project_id: number): Promise<Project> {
 
 	return data;
 }
+
+export async function updateColumnImportance(column_id: number, importance: number) {
+	const { data, error } = await supabase.from<Column>('columns').update({ importance }).eq('id', column_id).single();
+
+	if (error) {
+		console.log(error);
+		throw new Error(error.message);
+	}
+
+	return data;
+}
