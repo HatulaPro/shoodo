@@ -32,7 +32,7 @@ const ColumnsView: FC<ColumnsViewProps> = ({ columns, mutate }) => {
 				} else {
 					newCols[i].importance = prevImportance + Math.pow(2, 32);
 				}
-				mutate({ column_id: newCols[i].id, importance: newCols[i].importance });
+				mutate({ column_id: newCols[i].id, update: { importance: newCols[i].importance } });
 			}
 			prevImportance = newCols[i].importance;
 		}

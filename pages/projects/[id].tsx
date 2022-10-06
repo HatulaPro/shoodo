@@ -5,18 +5,18 @@ import { useUser } from '../../hooks/useUser';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import { useMutation } from 'react-query';
-import { Project, updateColumnImportance } from '../../utils/supabase/projects';
+import { Column, Project, updateColumnById } from '../../utils/supabase/projects';
 
 export type ColumnMutateArgs = {
 	column_id: number;
-	importance: number;
+	update: Partial<Column>;
 };
 const ProjectByIdPage: NextPage = () => {
 	const { user } = useUser({ authOnly: true });
 	const { data: project, manualUpdate } = useQueryProject(user);
 
 	const { isLoading, mutate: mutateColumnImportance } = useMutation((args: ColumnMutateArgs) => {
-		return updateColumnImportance(args.column_id, args.importance).then((column) => {
+		return updateColumnById(args.column_id, args.update).then((column) => {
 			const index = project!.columns!.findIndex((col) => col.id === column.id);
 			project!.columns![index] = column;
 			manualUpdate(project!);

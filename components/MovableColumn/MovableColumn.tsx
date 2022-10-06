@@ -1,8 +1,7 @@
-import { FC, useState } from 'react';
+import { FC } from 'react';
 import { Column } from '../../utils/supabase/projects';
 import styles from './MovableColumn.module.css';
 import Typography from '@mui/material/Typography';
-import TextField from '@mui/material/TextField';
 import EditableTypography from '../EditableTypography/EditableTypography';
 
 type MovableColumnProps = {
