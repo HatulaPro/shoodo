@@ -23,7 +23,7 @@ const EditableTypography: FC<EditableTypographyProps> = ({ onUpdate, text }) => 
 		setInputContent(e.target.value);
 	};
 
-	const onDoubleClick: React.MouseEventHandler<HTMLDivElement> = () => {
+	const onClick: React.MouseEventHandler<HTMLDivElement> = () => {
 		setInputContent(text);
 	};
 
@@ -36,7 +36,7 @@ const EditableTypography: FC<EditableTypographyProps> = ({ onUpdate, text }) => 
 	};
 
 	return inputContent === null ? (
-		<Typography variant="h6" component={'div'} style={{ cursor: 'text' }} onDoubleClick={onDoubleClick}>
+		<Typography variant="h6" component={'div'} style={{ cursor: 'text' }} onClick={onClick}>
 			{text}
 		</Typography>
 	) : (
