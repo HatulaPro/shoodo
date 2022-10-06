@@ -1,8 +1,7 @@
 .movableColumn {
-	flex-basis: 300px;
+	width: 300px;
 	text-align: center;
 	padding: 8px;
-	margin: 8px;
 	background-color: #dbdbdb;
 	border-radius: 6px;
 }
