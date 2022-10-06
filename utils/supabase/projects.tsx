@@ -82,3 +82,14 @@ export async function updateColumnById(column_id: number, values: Partial<Column
 
 	return data;
 }
+
+export async function deleteColumn(column_id: number): Promise<boolean> {
+	const { data, error } = await supabase.from<Column>('columns').delete().eq('id', column_id);
+
+	if (error) {
+		console.log(error);
+		throw new Error(error.message);
+	}
+
+	return data.length > 0;
+}
