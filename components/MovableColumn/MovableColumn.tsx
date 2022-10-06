@@ -15,7 +15,9 @@ const MovableColumn: FC<MovableColumnProps> = ({ column, mutate }) => {
 	const tasks = ['do this', 'do that'];
 
 	function onColumnRename(text: string) {
-		mutate({ column_id: column.id, update: { name: text } });
+		if (text !== column.name) {
+			mutate({ column_id: column.id, update: { name: text } });
+		}
 	}
 
 	return (
