@@ -61,7 +61,18 @@ export async function getProjectById(project_id: number): Promise<Project> {
 	return data;
 }
 
-export async function updateColumnById(column_id: number, values: Partial<Column>) {
+export async function createColumn(project_id: number, importance: number): Promise<Column> {
+	const { data, error } = await supabase.from<Column>('columns').insert({ importance, project_id, name: '...', style: 'blue' }).single();
+
+	if (error) {
+		console.log(error);
+		throw new Error(error.message);
+	}
+
+	return data;
+}
+
+export async function updateColumnById(column_id: number, values: Partial<Column>): Promise<Column> {
 	const { data, error } = await supabase.from<Column>('columns').update(values).eq('id', column_id).single();
 
 	if (error) {

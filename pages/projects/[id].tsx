@@ -3,9 +3,11 @@ import ColumnsView from '../../components/ColumnsView/ColumnsView';
 import { useQueryProject } from '../../hooks/useQueryProject';
 import { useUser } from '../../hooks/useUser';
 import Typography from '@mui/material/Typography';
+import IconButton from '@mui/material/IconButton';
 import Box from '@mui/material/Box';
 import { useMutation } from 'react-query';
-import { Column, Project, updateColumnById } from '../../utils/supabase/projects';
+import { Column, Project, updateColumnById, createColumn } from '../../utils/supabase/projects';
+import AddIcon from '@mui/icons-material/PostAdd';
 
 export type ColumnMutateArgs = {
 	column_id: number;
@@ -19,16 +21,42 @@ const ProjectByIdPage: NextPage = () => {
 		return updateColumnById(args.column_id, args.update).then((column) => {
 			const index = project!.columns!.findIndex((col) => col.id === column.id);
 			project!.columns![index] = column;
+			project!.columns = [...project!.columns!];
 			manualUpdate(project!);
 		});
 	});
+
+	async function addColumn() {
+		const bestImportance = Math.min(...project!.columns!.map((column) => column.importance));
+		createColumn(project!.id, bestImportance - Math.pow(2, 32)).then((col: Column) => {
+			project!.columns = [col, ...project!.columns!];
+			manualUpdate(project!);
+			console.log(project!.columns);
+		});
+	}
 
 	return (
 		<Box p={4}>
 			<Typography variant="h3" component="h2" sx={{ pb: 4 }}>
 				{project?.name}
 			</Typography>
-			{project?.columns && <ColumnsView columns={project?.columns} mutate={mutateColumn} />}
+			<Box display="flex" flexDirection="row">
+				<Box display="flex" flexDirection="column" mr={2}>
+					<IconButton onClick={addColumn}>
+						<AddIcon color="primary" fontSize="large" />
+					</IconButton>
+				</Box>
+				{project?.columns && (
+					<ColumnsView
+						columns={project?.columns}
+						setColumns={(cols) => {
+							project.columns = [...cols];
+							manualUpdate(project);
+						}}
+						mutate={mutateColumn}
+					/>
+				)}
+			</Box>
 			<Typography variant="body2" component="p" sx={{ my: 4 }}>
 				{isLoading ? 'saving...' : 'saved'}
 			</Typography>

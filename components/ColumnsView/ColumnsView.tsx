@@ -8,20 +8,20 @@ import { ColumnMutateArgs } from '../../pages/projects/[id]';
 
 type ColumnsViewProps = {
 	columns: Column[];
+	setColumns: (cols: Column[]) => void;
 	mutate: UseMutateFunction<void, unknown, ColumnMutateArgs, unknown>;
 };
 
 function sortColumns(columns: Column[]): Column[] {
-	return columns?.sort((a, b) => a.importance - b.importance);
+	return columns.slice().sort((a, b) => a.importance - b.importance);
 }
 
-const ColumnsView: FC<ColumnsViewProps> = ({ columns, mutate }) => {
-	const [cols, setCols] = useState<Column[]>(sortColumns(columns));
-	const sortedCols = useMemo(() => sortColumns(cols), [cols]);
+const ColumnsView: FC<ColumnsViewProps> = ({ setColumns, columns, mutate }) => {
+	const sortedCols = useMemo(() => sortColumns(columns), [columns]);
 
 	function onColsReorder(newCols: Column[]) {
 		console.log(newCols);
-		if (newCols.length === 0) return setCols(newCols);
+		if (newCols.length === 0) return setColumns(newCols);
 
 		let prevImportance = newCols[0].importance;
 		for (let i = 1; i < newCols.length; i++) {
@@ -36,7 +36,7 @@ const ColumnsView: FC<ColumnsViewProps> = ({ columns, mutate }) => {
 			}
 			prevImportance = newCols[i].importance;
 		}
-		setCols(newCols);
+		setColumns(newCols);
 	}
 
 	return (

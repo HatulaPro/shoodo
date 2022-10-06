@@ -27,7 +27,7 @@ const MovableColumn: FC<MovableColumnProps> = ({ column, mutate }) => {
 			</div>
 			<div>
 				{tasks.map((content) => (
-					<div className={styles.movableColumnTask}>
+					<div className={styles.movableColumnTask} key={content}>
 						<Typography variant="body1" component={'p'}>
 							{content}
 						</Typography>
