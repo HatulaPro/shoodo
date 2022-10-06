@@ -1,7 +1,9 @@
-import { FC } from 'react';
+import { FC, useState } from 'react';
 import { Column } from '../../utils/supabase/projects';
 import styles from './MovableColumn.module.css';
 import Typography from '@mui/material/Typography';
+import TextField from '@mui/material/TextField';
+import EditableTypography from '../EditableTypography/EditableTypography';
 
 type MovableColumnProps = {
 	column: Column;
@@ -12,9 +14,7 @@ const MovableColumn: FC<MovableColumnProps> = ({ column }) => {
 	return (
 		<div className={styles.movableColumn}>
 			<div className={styles.movableColumnTitle} style={{ borderBottom: `4px solid ${column.style}` }}>
-				<Typography variant="h6" component={'div'}>
-					{column.name}
-				</Typography>
+				<EditableTypography onUpdate={console.log} text={column.name} />
 			</div>
 			<div>
 				{tasks.map((content) => (
