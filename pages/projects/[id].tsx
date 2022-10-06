@@ -8,6 +8,7 @@ import Box from '@mui/material/Box';
 import { useMutation } from 'react-query';
 import { Column, Project, updateColumnById, createColumn } from '../../utils/supabase/projects';
 import AddIcon from '@mui/icons-material/PostAdd';
+import styles from './Projects.module.css';
 
 export type ColumnMutateArgs = {
 	column_id: number;
@@ -36,7 +37,7 @@ const ProjectByIdPage: NextPage = () => {
 	}
 
 	return (
-		<Box p={4}>
+		<Box p={4} position="relative">
 			<Typography variant="h3" component="h2" sx={{ pb: 4 }}>
 				{project?.name}
 			</Typography>
@@ -57,7 +58,7 @@ const ProjectByIdPage: NextPage = () => {
 					/>
 				)}
 			</Box>
-			<Typography variant="body2" component="p" sx={{ my: 4 }}>
+			<Typography variant="body2" component="p" color="GrayText" sx={{ my: 4 }} className={styles.projectsSaving}>
 				{isLoading ? 'saving...' : 'saved'}
 			</Typography>
 		</Box>
