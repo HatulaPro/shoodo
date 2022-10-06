@@ -1,4 +1,6 @@
 .columnsView {
 	display: flex;
 	gap: 2rem;
+	padding-bottom: 8px;
+	min-height: 70vh;
 }
