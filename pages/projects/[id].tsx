@@ -41,8 +41,8 @@ const ProjectByIdPage: NextPage = () => {
 			<Typography variant="h3" component="h2" sx={{ pb: 4 }}>
 				{project?.name}
 			</Typography>
-			<Box display="flex" flexDirection="row">
-				<Box display="flex" flexDirection="column" mr={2}>
+			<Box display="flex" sx={{ flexDirection: { md: 'row', xs: 'column' } }}>
+				<Box display="flex" sx={{ flexDirection: { md: 'column', xs: 'row' } }} mr={2}>
 					<IconButton onClick={addColumn}>
 						<AddIcon color="primary" fontSize="large" />
 					</IconButton>

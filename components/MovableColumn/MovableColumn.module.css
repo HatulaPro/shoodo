@@ -21,3 +21,20 @@
 	padding: 6px;
 	margin-top: 10px;
 }
+
+@media screen and (max-width: 900px) {
+	.movableColumn {
+		width: 180px;
+		padding: 4px;
+	}
+}
+
+@media screen and (max-width: 600px) {
+	.movableColumn {
+		width: calc(180px * 0.8);
+		padding: 2px;
+	}
+	.movableColumn * {
+		font-size: smaller;
+	}
+}
