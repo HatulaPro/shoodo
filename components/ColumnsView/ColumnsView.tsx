@@ -43,7 +43,7 @@ const ColumnsView: FC<ColumnsViewProps> = ({ columns, mutate }) => {
 		<Reorder.Group axis="x" values={sortedCols} onReorder={onColsReorder} className={styles.columnsView} as="div">
 			{sortedCols?.map((column: Column) => (
 				<Reorder.Item style={{ padding: 0 }} dragTransition={{ bounceDamping: 20, bounceStiffness: 200 }} key={column.id} value={column} as="div" whileDrag={{ scaleY: 1.06, boxShadow: '0px 8px 12px 4px #14141466' }}>
-					<MovableColumn column={column} />
+					<MovableColumn column={column} mutate={mutate} />
 				</Reorder.Item>
 			))}
 		</Reorder.Group>
