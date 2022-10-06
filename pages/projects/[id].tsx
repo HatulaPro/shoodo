@@ -15,7 +15,7 @@ const ProjectByIdPage: NextPage = () => {
 	const { user } = useUser({ authOnly: true });
 	const { data: project, manualUpdate } = useQueryProject(user);
 
-	const { isLoading, mutate: mutateColumnImportance } = useMutation((args: ColumnMutateArgs) => {
+	const { isLoading, mutate: mutateColumn } = useMutation((args: ColumnMutateArgs) => {
 		return updateColumnById(args.column_id, args.update).then((column) => {
 			const index = project!.columns!.findIndex((col) => col.id === column.id);
 			project!.columns![index] = column;
@@ -28,7 +28,7 @@ const ProjectByIdPage: NextPage = () => {
 			<Typography variant="h3" component="h2" sx={{ pb: 4 }}>
 				{project?.name}
 			</Typography>
-			{project?.columns && <ColumnsView columns={project?.columns} mutate={mutateColumnImportance} />}
+			{project?.columns && <ColumnsView columns={project?.columns} mutate={mutateColumn} />}
 			<Typography variant="body2" component="p" sx={{ my: 4 }}>
 				{isLoading ? 'saving...' : 'saved'}
 			</Typography>
