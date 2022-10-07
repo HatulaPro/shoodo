@@ -22,14 +22,6 @@
 	padding: 6px;
 }
 
-.movableColumnTask {
-	background-color: #eee;
-	border: 1px solid #bbb;
-	border-radius: 4px;
-	padding: 6px;
-	margin-top: 10px;
-}
-
 @media screen and (max-width: 900px) {
 	.movableColumn {
 		width: 180px;
