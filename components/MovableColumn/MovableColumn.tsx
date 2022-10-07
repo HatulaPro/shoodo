@@ -21,7 +21,7 @@ const MovableColumn: FC<MovableColumnProps> = ({ column, mutate, removeColumn })
 
 	function onColumnRename(text: string) {
 		if (text !== column.name) {
-			mutate({ column_id: column.id, update: { name: text } });
+			mutate({ column_id: column.id, update: { name: text }, type: 'UPDATE' });
 		}
 	}
 	return (
