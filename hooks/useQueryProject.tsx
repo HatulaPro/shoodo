@@ -24,6 +24,7 @@ export type ColumnMutateArgs =
 	| {
 			type: 'UPDATE_TASK';
 			task_id: number;
+			column_id: number;
 			update: Partial<Task>;
 	  };
 
@@ -76,11 +77,12 @@ export function useQueryProject(user: User | null) {
 
 			manualUpdate(data!);
 		} else if (args.type === 'UPDATE_TASK') {
-			const task = await updateTaskById(args.task_id, args.update);
-			const taskColumn = data!.columns!.find((col) => col.id === task.column_id)!;
-			const taskIndex = taskColumn.tasks!.findIndex((t) => t.id === task.id);
-			taskColumn!.tasks![taskIndex] = task;
-			// data!.columns = [...data!.columns!];
+			updateTaskById(args.task_id, args.update);
+
+			const taskColumn = data!.columns!.find((col) => col.id === args.column_id)!;
+			const taskIndex = taskColumn.tasks!.findIndex((t) => t.id === args.task_id);
+			const task = taskColumn.tasks![taskIndex];
+			taskColumn.tasks![taskIndex] = { ...task, ...args.update };
 			manualUpdate(data!);
 		}
 	});
