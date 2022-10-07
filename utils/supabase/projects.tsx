@@ -79,6 +79,8 @@ export async function createColumn(project_id: number, importance: number): Prom
 		throw new Error(error.message);
 	}
 
+	data.tasks = [];
+
 	return data;
 }
 
