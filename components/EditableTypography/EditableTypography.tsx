@@ -6,9 +6,10 @@ type EditableTypographyProps = {
 	onUpdate: (newText: string) => void;
 	size: 'small' | 'large';
 	placeholder?: boolean;
+	style?: React.CSSProperties;
 };
 
-const EditableTypography: FC<EditableTypographyProps> = ({ onUpdate, text, size, placeholder }) => {
+const EditableTypography: FC<EditableTypographyProps> = ({ onUpdate, text, size, placeholder, style }) => {
 	const [inputContent, setInputContent] = useState<null | string>(null);
 
 	function update() {
@@ -39,11 +40,11 @@ const EditableTypography: FC<EditableTypographyProps> = ({ onUpdate, text, size,
 	};
 
 	return inputContent === null ? (
-		<Typography variant={size === 'large' ? 'h6' : 'body1'} align="left" component={'div'} style={{ cursor: 'text', flex: '1' }} onClick={onClick}>
+		<Typography variant={size === 'large' ? 'h6' : 'body1'} align="left" component={'div'} style={{ cursor: 'text', flex: '1', ...style }} onClick={onClick}>
 			{text}
 		</Typography>
 	) : (
-		<input type="text" placeholder={placeholder ? text : ''} style={{ letterSpacing: '0.001rem', background: 'transparent', border: 'none', flex: '1', outline: 'none', width: '100%', padding: size === 'large' ? '3px' : 0, fontFamily: 'Roboto', fontSize: size === 'large' ? 'larger' : 'initial' }} value={inputContent!} onChange={onChange} onBlur={onBlur} onKeyUp={onKeyUp} autoFocus />
+		<input type="text" placeholder={placeholder ? text : ''} style={{ letterSpacing: '0.001rem', background: 'transparent', border: 'none', flex: '1', outline: 'none', width: '100%', padding: size === 'large' ? '3px' : 0, fontFamily: 'Roboto', fontSize: size === 'large' ? 'larger' : 'initial', ...style }} value={inputContent!} onChange={onChange} onBlur={onBlur} onKeyUp={onKeyUp} autoFocus />
 	);
 };
 

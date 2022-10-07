@@ -25,8 +25,8 @@ const MovableTask: FC<MovableTaskProps> = ({ task, column, mutate }) => {
 			<Box display="flex" alignItems="center">
 				{task ? (
 					<>
-						<Checkbox />
-						<EditableTypography onUpdate={(text) => text.length > 0 && mutate({ type: 'UPDATE_TASK', task_id: task.id, update: { content: text } })} text={task.content} size="small" />
+						<Checkbox checked={task.done} onChange={(e) => mutate({ type: 'UPDATE_TASK', task_id: task.id, update: { done: e.target.checked } })} />
+						<EditableTypography onUpdate={(text) => text.length > 0 && mutate({ type: 'UPDATE_TASK', task_id: task.id, update: { content: text } })} text={task.content} size="small" style={{ textDecoration: task.done ? 'line-through' : 'none' }} />
 					</>
 				) : (
 					<>
