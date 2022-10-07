@@ -9,7 +9,11 @@ type MovableTaskProps = {
 	column: Column;
 };
 
-const MovableTask: FC<MovableTaskProps> = ({ task }) => {
+const MovableTask: FC<MovableTaskProps> = ({ task, column }) => {
+	function createTask(text: string) {
+		console.log(text, column);
+	}
+
 	return (
 		<div className={styles.movableTask}>
 			{task ? (
@@ -18,7 +22,7 @@ const MovableTask: FC<MovableTaskProps> = ({ task }) => {
 				</>
 			) : (
 				<>
-					<EditableTypography onUpdate={console.log} text="Add New..." size="small" placeholder />
+					<EditableTypography onUpdate={createTask} text="Add New..." size="small" placeholder />
 				</>
 			)}
 		</div>
