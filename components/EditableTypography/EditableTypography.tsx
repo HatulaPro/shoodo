@@ -12,7 +12,9 @@ const EditableTypography: FC<EditableTypographyProps> = ({ onUpdate, text, size,
 	const [inputContent, setInputContent] = useState<null | string>(null);
 
 	function update() {
-		onUpdate(inputContent!);
+		if (inputContent !== text) {
+			onUpdate(inputContent!);
+		}
 		setInputContent(null);
 	}
 
@@ -37,11 +39,11 @@ const EditableTypography: FC<EditableTypographyProps> = ({ onUpdate, text, size,
 	};
 
 	return inputContent === null ? (
-		<Typography variant={size === 'large' ? 'h6' : 'body1'} component={'div'} style={{ cursor: 'text' }} onClick={onClick}>
+		<Typography variant={size === 'large' ? 'h6' : 'body1'} align="left" component={'div'} style={{ cursor: 'text', flex: '1' }} onClick={onClick}>
 			{text}
 		</Typography>
 	) : (
-		<input type="text" placeholder={placeholder ? text : ''} style={{ background: 'transparent', border: 'none', outline: 'none', width: '100%', fontSize: size === 'large' ? 'larger' : 'initial' }} value={inputContent!} onChange={onChange} onBlur={onBlur} onKeyUp={onKeyUp} autoFocus />
+		<input type="text" placeholder={placeholder ? text : ''} style={{ letterSpacing: '0.001rem', background: 'transparent', border: 'none', flex: '1', outline: 'none', width: '100%', padding: size === 'large' ? '3px' : 0, fontFamily: 'Roboto', fontSize: size === 'large' ? 'larger' : 'initial' }} value={inputContent!} onChange={onChange} onBlur={onBlur} onKeyUp={onKeyUp} autoFocus />
 	);
 };
 

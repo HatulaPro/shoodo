@@ -1,11 +1,11 @@
+import AddIcon from '@mui/icons-material/PostAdd';
+import Box from '@mui/material/Box';
+import IconButton from '@mui/material/IconButton';
+import Typography from '@mui/material/Typography';
 import { NextPage } from 'next';
 import ColumnsView from '../../components/ColumnsView/ColumnsView';
 import { useQueryProject } from '../../hooks/useQueryProject';
 import { useUser } from '../../hooks/useUser';
-import Typography from '@mui/material/Typography';
-import IconButton from '@mui/material/IconButton';
-import Box from '@mui/material/Box';
-import AddIcon from '@mui/icons-material/PostAdd';
 import styles from './Projects.module.css';
 
 const ProjectByIdPage: NextPage = () => {
@@ -13,7 +13,7 @@ const ProjectByIdPage: NextPage = () => {
 	const { data: project, isLoading, manualUpdate, columnsMutation } = useQueryProject(user);
 
 	return (
-		<Box p={4} position="relative">
+		<Box position="relative" sx={{ p: { md: 4, sm: 1, xs: 0.5 } }}>
 			<Typography variant="h3" component="h2" sx={{ pb: 4 }}>
 				{project?.name}
 			</Typography>

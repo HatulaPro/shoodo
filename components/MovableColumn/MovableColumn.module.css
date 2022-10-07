@@ -32,10 +32,10 @@
 
 @media screen and (max-width: 600px) {
 	.movableColumn {
-		width: calc(180px * 0.8);
+		width: calc(180px * 0.9);
 		padding: 2px;
 	}
 	.movableColumn * {
-		font-size: smaller;
+		font-size: small !important;
 	}
 }

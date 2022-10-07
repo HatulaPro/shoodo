@@ -3,4 +3,12 @@
 	gap: 2rem;
 	padding-bottom: 8px;
 	min-height: 70vh;
+	overflow-y: hidden;
+	overflow-x: scroll;
+}
+
+@media screen and (max-width: 600px) {
+	.columnsView {
+		gap: 0.2rem;
+	}
 }

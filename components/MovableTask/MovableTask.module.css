@@ -3,5 +3,6 @@
 	border: 1px solid #bbb;
 	border-radius: 4px;
 	padding: 6px;
-	margin-top: 10px;
+	margin-block: 4px;
+	flex: 1;
 }
