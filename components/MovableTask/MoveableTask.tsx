@@ -26,7 +26,7 @@ const MovableTask: FC<MovableTaskProps> = ({ task, column, mutate }) => {
 				</>
 			) : (
 				<>
-					<EditableTypography onUpdate={(text) => mutate({ type: 'ADD_TASK', column_id: column.id, content: text })} text="Add New..." size="small" placeholder />
+					<EditableTypography onUpdate={(text) => text.length > 0 && mutate({ type: 'ADD_TASK', column_id: column.id, content: text })} text="Add New..." size="small" placeholder />
 				</>
 			)}
 		</div>
