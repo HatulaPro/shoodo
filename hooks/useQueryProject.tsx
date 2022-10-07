@@ -56,11 +56,12 @@ export function useQueryProject(user: User | null) {
 			data!.columns = [col, ...data!.columns!];
 			manualUpdate(data!);
 		} else if (args.type === 'UPDATE') {
-			const col = await updateColumnById(args.column_id!, args.update);
-			const index = data!.columns!.findIndex((col_1) => col_1.id === col.id);
-			data!.columns![index] = col;
+			const index = data!.columns!.findIndex((c) => c.id === args.column_id);
+			data!.columns![index] = { ...data!.columns![index], ...args.update };
 			data!.columns = [...data!.columns!];
-			manualUpdate(data!);
+			updateColumnById(args.column_id!, args.update).then(() => {
+				manualUpdate(data!);
+			});
 		} else if (args.type === 'DELETE') {
 			data!.columns = data!.columns!.filter((col) => col.id !== args.column_id);
 			deleteColumn(args.column_id);
