@@ -25,12 +25,14 @@ const MovableColumn: FC<MovableColumnProps> = ({ column, mutate, removeColumn })
 	return (
 		<div className={styles.movableColumn} onFocus={() => setOpen(true)} onBlur={() => setOpen(false)} tabIndex={-1}>
 			<div className={styles.movableColumnTitle} style={{ borderBottom: `4px solid ${column.style}` }}>
-				<EditableTypography onUpdate={onColumnRename} text={column.name} />
+				<EditableTypography onUpdate={onColumnRename} text={column.name} size="large" />
 			</div>
 			<div>
 				{column.tasks!.map((task) => (
-					<MovableTask task={task} key={task.id} />
+					<MovableTask key={task.id} task={task} column={column} />
 				))}
+
+				<MovableTask column={column} />
 			</div>
 			<div className={cn(styles.movableColumnTools, open && styles.movableColumnToolsOpen)}>
 				<IconButton sx={{ mb: 0 }} onClick={() => removeColumn(column.id)}>

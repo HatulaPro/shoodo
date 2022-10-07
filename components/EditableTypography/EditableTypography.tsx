@@ -4,9 +4,10 @@ import Typography from '@mui/material/Typography';
 type EditableTypographyProps = {
 	text: string;
 	onUpdate: (newText: string) => void;
+	size: 'small' | 'large';
 };
 
-const EditableTypography: FC<EditableTypographyProps> = ({ onUpdate, text }) => {
+const EditableTypography: FC<EditableTypographyProps> = ({ onUpdate, text, size }) => {
 	const [inputContent, setInputContent] = useState<null | string>(null);
 
 	function update() {
@@ -35,11 +36,11 @@ const EditableTypography: FC<EditableTypographyProps> = ({ onUpdate, text }) => 
 	};
 
 	return inputContent === null ? (
-		<Typography variant="h6" component={'div'} style={{ cursor: 'text' }} onClick={onClick}>
+		<Typography variant={size === 'large' ? 'h6' : 'body1'} component={'div'} style={{ cursor: 'text' }} onClick={onClick}>
 			{text}
 		</Typography>
 	) : (
-		<input type="text" value={inputContent!} onChange={onChange} onBlur={onBlur} onKeyUp={onKeyUp} autoFocus className="MuiTypography-root MuiTypography-h6 css-6nwon9-MuiTypography-root" />
+		<input type="text" style={{ background: 'transparent', border: 'none', outline: 'none', width: '100%', fontSize: size === 'large' ? 'larger' : 'initial' }} value={inputContent!} onChange={onChange} onBlur={onBlur} onKeyUp={onKeyUp} autoFocus />
 	);
 };
 
