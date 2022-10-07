@@ -51,10 +51,13 @@ export function useQueryProject(user: User | null) {
 
 	const columnsMutation = useMutation(async (args: ColumnMutateArgs) => {
 		if (args.type === 'CREATE') {
-			const bestImportance = data!.columns!.length ? Math.min(...data!.columns!.map((column) => column.importance)) : Math.pow(2, 33);
-			const col = await createColumn(data!.id, bestImportance - Math.pow(2, 32));
-			data!.columns = [col, ...data!.columns!];
-			manualUpdate(data!);
+			const prevCols = data!.columns!;
+			const bestImportance = (prevCols.length ? Math.min(...prevCols.map((column) => column.importance)) : Math.pow(2, 33)) - Math.pow(2, 32);
+			data!.columns = [{ id: -1, importance: bestImportance, name: '...', project_id: data!.id, style: 'blue', tasks: [] }, ...prevCols];
+			createColumn(data!.id, bestImportance).then((col) => {
+				data!.columns = [col, ...prevCols];
+				manualUpdate(data!);
+			});
 		} else if (args.type === 'UPDATE') {
 			const index = data!.columns!.findIndex((c) => c.id === args.column_id);
 			data!.columns![index] = { ...data!.columns![index], ...args.update };
