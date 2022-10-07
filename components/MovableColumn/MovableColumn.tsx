@@ -6,7 +6,7 @@ import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditableTypography from '../EditableTypography/EditableTypography';
 import { UseMutateFunction } from 'react-query';
-import { ColumnMutateArgs } from '../../pages/projects/[id]';
+import { ColumnMutateArgs } from '../../hooks/useQueryProject';
 import { cn } from '../../utils/general';
 
 type MovableColumnProps = {

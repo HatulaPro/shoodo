@@ -4,7 +4,7 @@ import MovableColumn from '../MovableColumn/MovableColumn';
 import styles from './ColumnsView.module.css';
 import { Reorder } from 'framer-motion';
 import { UseMutateFunction } from 'react-query';
-import { ColumnMutateArgs } from '../../pages/projects/[id]';
+import { ColumnMutateArgs } from '../../hooks/useQueryProject';
 import { cn } from '../../utils/general';
 
 type ColumnsViewProps = {
