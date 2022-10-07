@@ -46,7 +46,7 @@ export function useQueryProject(user: User | null) {
 	// const { isLoading, mutate: mutateColumn } = useMutation(async (args: ColumnMutateArgs) => {
 	const columnsMutation = useMutation(async (args: ColumnMutateArgs) => {
 		if (args.type === 'CREATE') {
-			const bestImportance = Math.min(...data!.columns!.map((column) => column.importance));
+			const bestImportance = data!.columns!.length ? Math.min(...data!.columns!.map((column) => column.importance)) : Math.pow(2, 33);
 			const col = await createColumn(data!.id, bestImportance - Math.pow(2, 32));
 			data!.columns = [col, ...data!.columns!];
 			manualUpdate(data!);
@@ -66,7 +66,7 @@ export function useQueryProject(user: User | null) {
 				col.tasks = [];
 			}
 
-			const bestImportance = Math.min(...col.tasks.map((task) => task.importance));
+			const bestImportance = col.tasks.length ? Math.min(...col.tasks.map((task) => task.importance)) : Math.pow(2, 33);
 			const task = await createTask(data!.id, col.id, args.content, bestImportance - Math.pow(2, 32));
 			col.tasks = [task, ...col.tasks];
 
