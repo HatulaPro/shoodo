@@ -1,7 +1,7 @@
 import { User } from '@supabase/supabase-js';
 import { useRouter } from 'next/router';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
-import { Column, createColumn, deleteColumn, getProjectById, Project, updateColumnById } from '../utils/supabase/projects';
+import { Column, createColumn, createTask, deleteColumn, getProjectById, Project, updateColumnById } from '../utils/supabase/projects';
 
 export type ColumnMutateArgs =
 	| {
@@ -15,6 +15,11 @@ export type ColumnMutateArgs =
 	| {
 			type: 'DELETE';
 			column_id: number;
+	  }
+	| {
+			type: 'ADD_TASK';
+			column_id: number;
+			content: string;
 	  };
 
 export function useQueryProject(user: User | null) {
@@ -54,6 +59,17 @@ export function useQueryProject(user: User | null) {
 		} else if (args.type === 'DELETE') {
 			data!.columns = data!.columns!.filter((col) => col.id !== args.column_id);
 			deleteColumn(args.column_id);
+			manualUpdate(data!);
+		} else if (args.type === 'ADD_TASK') {
+			const col = data!.columns!.find((col) => col.id === args.column_id)!;
+			if (!col.tasks) {
+				col.tasks = [];
+			}
+
+			const bestImportance = Math.min(...col.tasks.map((task) => task.importance));
+			const task = await createTask(data!.id, col.id, args.content, bestImportance - Math.pow(2, 32));
+			col.tasks = [task, ...col.tasks];
+
 			manualUpdate(data!);
 		}
 	});

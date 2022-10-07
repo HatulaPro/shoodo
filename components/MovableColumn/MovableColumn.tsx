@@ -44,7 +44,7 @@ const MovableColumn: FC<MovableColumnProps> = ({ column, mutate }) => {
 					<MovableTask key={task.id} task={task} column={column} />
 				))}
 
-				<MovableTask column={column} />
+				<MovableTask column={column} mutate={mutate} />
 			</div>
 			<div className={cn(styles.movableColumnTools, open && styles.movableColumnToolsOpen)}>
 				<IconButton sx={{ mb: 0 }} onClick={() => mutate({ type: 'DELETE', column_id: column.id })}>

@@ -105,3 +105,14 @@ export async function deleteColumn(column_id: number): Promise<boolean> {
 
 	return data.length > 0;
 }
+
+export async function createTask(project_id: number, column_id: number, content: string, importance: number): Promise<Task> {
+	const { data, error } = await supabase.from<Task>('tasks').insert({ importance, project_id, column_id, content, done: false }).single();
+
+	if (error) {
+		console.log(error);
+		throw new Error(error.message);
+	}
+
+	return data;
+}

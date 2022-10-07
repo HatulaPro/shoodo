@@ -1,18 +1,23 @@
 import { FC } from 'react';
+import { UseMutateFunction } from 'react-query';
+import { ColumnMutateArgs } from '../../hooks/useQueryProject';
 import { Column, Task } from '../../utils/supabase/projects';
 import EditableTypography from '../EditableTypography/EditableTypography';
 import styles from './MovableTask.module.css';
 
-type MovableTaskProps = {
-	task?: Task;
-	column: Column;
-};
+type MovableTaskProps =
+	| {
+			task: Task;
+			column: Column;
+			mutate?: undefined;
+	  }
+	| {
+			task?: undefined;
+			column: Column;
+			mutate: UseMutateFunction<void, unknown, ColumnMutateArgs, unknown>;
+	  };
 
-const MovableTask: FC<MovableTaskProps> = ({ task, column }) => {
-	function createTask(text: string) {
-		console.log(text, column);
-	}
-
+const MovableTask: FC<MovableTaskProps> = ({ task, column, mutate }) => {
 	return (
 		<div className={styles.movableTask}>
 			{task ? (
@@ -21,7 +26,7 @@ const MovableTask: FC<MovableTaskProps> = ({ task, column }) => {
 				</>
 			) : (
 				<>
-					<EditableTypography onUpdate={createTask} text="Add New..." size="small" placeholder />
+					<EditableTypography onUpdate={(text) => mutate({ type: 'ADD_TASK', column_id: column.id, content: text })} text="Add New..." size="small" placeholder />
 				</>
 			)}
 		</div>
