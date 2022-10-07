@@ -1,11 +1,21 @@
 import { supabase } from './client';
 
+export type Task = {
+	id: number;
+	project_id: number;
+	column_id: number;
+	content: string;
+	done: boolean;
+	importance: number;
+};
+
 export type Column = {
 	id: number;
 	project_id: number;
 	name: string;
 	style: string;
 	importance: number;
+	tasks?: Task[];
 };
 
 export type Project = {
@@ -51,7 +61,7 @@ export async function deleteProject(project_id: number): Promise<boolean> {
 }
 
 export async function getProjectById(project_id: number): Promise<Project> {
-	const { data, error } = await supabase.from<Project>('projects').select('*, columns ( * )').eq('id', project_id).single();
+	const { data, error } = await supabase.from<Project>('projects').select('*, columns ( *, tasks ( * ) )').eq('id', project_id).single();
 
 	if (error) {
 		console.log(error);
