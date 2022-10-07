@@ -9,8 +9,8 @@ Not ready yet, but it will be soon, and it will be awesome.
 - [X] Log in
 - [X] Creating logo
 - [ ] Log in using oauth services (such as Google)
-- [ ] Option to create projects
-- [ ] Adding tasks to projects
+- [X] Option to create projects
+- [X] Adding tasks to projects
 - [ ] Task lists inside projects (trello style)
 - [ ] Sharing projects with other users
 - [ ] Making every user (including me) a millionaire
