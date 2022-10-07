@@ -12,10 +12,9 @@ import MovableTask from '../MovableTask/MoveableTask';
 type MovableColumnProps = {
 	column: Column;
 	mutate: UseMutateFunction<void, unknown, ColumnMutateArgs, unknown>;
-	removeColumn: (column_id: number) => void;
 };
 
-const MovableColumn: FC<MovableColumnProps> = ({ column, mutate, removeColumn }) => {
+const MovableColumn: FC<MovableColumnProps> = ({ column, mutate }) => {
 	const [open, setOpen] = useState<boolean>(false);
 	function onColumnRename(text: string) {
 		if (text !== column.name) {
@@ -41,14 +40,14 @@ const MovableColumn: FC<MovableColumnProps> = ({ column, mutate, removeColumn })
 				<EditableTypography onUpdate={onColumnRename} text={column.name} size="large" />
 			</div>
 			<div>
-				{column.tasks!.map((task) => (
+				{column.tasks?.map((task) => (
 					<MovableTask key={task.id} task={task} column={column} />
 				))}
 
 				<MovableTask column={column} />
 			</div>
 			<div className={cn(styles.movableColumnTools, open && styles.movableColumnToolsOpen)}>
-				<IconButton sx={{ mb: 0 }} onClick={() => removeColumn(column.id)}>
+				<IconButton sx={{ mb: 0 }} onClick={() => mutate({ type: 'DELETE', column_id: column.id })}>
 					<DeleteIcon htmlColor="red" />
 				</IconButton>
 			</div>

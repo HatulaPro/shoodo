@@ -40,16 +40,11 @@ const ColumnsView: FC<ColumnsViewProps> = ({ setColumns, columns, mutate }) => {
 		setColumns(newCols);
 	}
 
-	function removeColumn(column_id: number) {
-		setColumns(columns.filter((col) => col.id !== column_id));
-		deleteColumn(column_id);
-	}
-
 	return (
 		<Reorder.Group axis="x" values={sortedCols} onReorder={onColsReorder} className={cn(styles.columnsView, 'scrollbar')} as="div" layoutScroll style={{ overflowX: 'scroll' }}>
 			{sortedCols?.map((column: Column) => (
 				<Reorder.Item style={{ padding: 0 }} dragTransition={{ bounceDamping: 20, bounceStiffness: 200 }} key={column.id} value={column} as="div" whileDrag={{ scaleY: 1.06, boxShadow: '0px 8px 12px 4px #14141466' }}>
-					<MovableColumn removeColumn={removeColumn} column={column} mutate={mutate} />
+					<MovableColumn column={column} mutate={mutate} />
 				</Reorder.Item>
 			))}
 		</Reorder.Group>

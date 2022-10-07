@@ -1,6 +1,6 @@
 import { User } from '@supabase/supabase-js';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
-import { Column, createColumn, getProjectById, Project, updateColumnById } from '../utils/supabase/projects';
+import { Column, createColumn, deleteColumn, getProjectById, Project, updateColumnById } from '../utils/supabase/projects';
 import { useRouter } from 'next/router';
 
 export type ColumnMutateArgs =
@@ -11,6 +11,10 @@ export type ColumnMutateArgs =
 	  }
 	| {
 			type: 'CREATE';
+	  }
+	| {
+			type: 'DELETE';
+			column_id: number;
 	  };
 
 export function useQueryProject(user: User | null) {
@@ -46,6 +50,10 @@ export function useQueryProject(user: User | null) {
 			const index = data!.columns!.findIndex((col_1) => col_1.id === col.id);
 			data!.columns![index] = col;
 			data!.columns = [...data!.columns!];
+			manualUpdate(data!);
+		} else if (args.type === 'DELETE') {
+			data!.columns = data!.columns!.filter((col) => col.id !== args.column_id);
+			deleteColumn(args.column_id);
 			manualUpdate(data!);
 		}
 	});
