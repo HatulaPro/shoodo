@@ -71,11 +71,13 @@ export function useQueryProject(user: User | null) {
 				col.tasks = [];
 			}
 
+			const prevTasks = col.tasks!;
 			const bestImportance = col.tasks.length ? Math.min(...col.tasks.map((task) => task.importance)) : Math.pow(2, 33);
-			const task = await createTask(data!.id, col.id, args.content, bestImportance - Math.pow(2, 32));
-			col.tasks = [task, ...col.tasks];
-
-			manualUpdate(data!);
+			col.tasks = [{ column_id: col.id, content: args.content, done: false, id: -1, importance: -Infinity, project_id: data!.id }, ...prevTasks];
+			createTask(data!.id, col.id, args.content, bestImportance - Math.pow(2, 32)).then((task) => {
+				col.tasks = [task, ...prevTasks];
+				manualUpdate(data!);
+			});
 		} else if (args.type === 'UPDATE_TASK') {
 			updateTaskById(args.task_id, args.update);
 
