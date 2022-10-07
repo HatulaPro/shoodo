@@ -41,7 +41,7 @@ const MovableColumn: FC<MovableColumnProps> = ({ column, mutate }) => {
 			</div>
 			<div>
 				{column.tasks?.map((task) => (
-					<MovableTask key={task.id} task={task} column={column} />
+					<MovableTask key={task.id} task={task} column={column} mutate={mutate} />
 				))}
 
 				<MovableTask column={column} mutate={mutate} />

@@ -9,7 +9,7 @@ type MovableTaskProps =
 	| {
 			task: Task;
 			column: Column;
-			mutate?: undefined;
+			mutate: UseMutateFunction<void, unknown, ColumnMutateArgs, unknown>;
 	  }
 	| {
 			task?: undefined;
@@ -22,7 +22,7 @@ const MovableTask: FC<MovableTaskProps> = ({ task, column, mutate }) => {
 		<div className={styles.movableTask}>
 			{task ? (
 				<>
-					<EditableTypography onUpdate={console.log} text={task.content} size="small" />
+					<EditableTypography onUpdate={(text) => text.length > 0 && mutate({ type: 'UPDATE_TASK', task_id: task.id, update: { content: text } })} text={task.content} size="small" />
 				</>
 			) : (
 				<>

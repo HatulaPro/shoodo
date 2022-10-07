@@ -1,7 +1,7 @@
 import { User } from '@supabase/supabase-js';
 import { useRouter } from 'next/router';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
-import { Column, createColumn, createTask, deleteColumn, getProjectById, Project, updateColumnById } from '../utils/supabase/projects';
+import { Column, createColumn, createTask, deleteColumn, getProjectById, Project, Task, updateColumnById, updateTaskById } from '../utils/supabase/projects';
 
 export type ColumnMutateArgs =
 	| {
@@ -20,6 +20,11 @@ export type ColumnMutateArgs =
 			type: 'ADD_TASK';
 			column_id: number;
 			content: string;
+	  }
+	| {
+			type: 'UPDATE_TASK';
+			task_id: number;
+			update: Partial<Task>;
 	  };
 
 export function useQueryProject(user: User | null) {
@@ -43,7 +48,6 @@ export function useQueryProject(user: User | null) {
 		queryClient.setQueryData(['project'], () => newProject);
 	}
 
-	// const { isLoading, mutate: mutateColumn } = useMutation(async (args: ColumnMutateArgs) => {
 	const columnsMutation = useMutation(async (args: ColumnMutateArgs) => {
 		if (args.type === 'CREATE') {
 			const bestImportance = data!.columns!.length ? Math.min(...data!.columns!.map((column) => column.importance)) : Math.pow(2, 33);
@@ -70,6 +74,13 @@ export function useQueryProject(user: User | null) {
 			const task = await createTask(data!.id, col.id, args.content, bestImportance - Math.pow(2, 32));
 			col.tasks = [task, ...col.tasks];
 
+			manualUpdate(data!);
+		} else if (args.type === 'UPDATE_TASK') {
+			const task = await updateTaskById(args.task_id, args.update);
+			const taskColumn = data!.columns!.find((col) => col.id === task.column_id)!;
+			const taskIndex = taskColumn.tasks!.findIndex((t) => t.id === task.id);
+			taskColumn!.tasks![taskIndex] = task;
+			// data!.columns = [...data!.columns!];
 			manualUpdate(data!);
 		}
 	});
