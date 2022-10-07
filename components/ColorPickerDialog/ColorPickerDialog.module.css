@@ -1,0 +1,26 @@
+.colorPickerDialogSquare {
+	--size: 40px;
+	width: var(--size);
+	height: var(--size);
+	flex-basis: var(--size);
+	border-radius: 6px;
+	border: 1px solid #ccc;
+	transition: all 0.2s;
+}
+.colorPickerDialogSquareChosen,
+.colorPickerDialogSquare:hover {
+	transform: scale(1.4);
+	cursor: pointer;
+}
+.colorPickerDialogSquare:hover {
+	z-index: 4;
+}
+
+.colorPickerDialogChosenColor {
+	height: 100%;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	z-index: -1;
+}

@@ -1,10 +1,12 @@
 import DeleteIcon from '@mui/icons-material/Delete';
+import PaletteIcon from '@mui/icons-material/Palette';
 import IconButton from '@mui/material/IconButton';
 import { FC, useState } from 'react';
 import { UseMutateFunction } from 'react-query';
 import { ColumnMutateArgs } from '../../hooks/useQueryProject';
 import { cn } from '../../utils/general';
 import { Column } from '../../utils/supabase/projects';
+import ColorPickerDialog from '../ColorPickerDialog/ColorPickerDialog';
 import EditableTypography from '../EditableTypography/EditableTypography';
 import MovableTask from '../MovableTask/MoveableTask';
 import styles from './MovableColumn.module.css';
@@ -15,7 +17,9 @@ type MovableColumnProps = {
 };
 
 const MovableColumn: FC<MovableColumnProps> = ({ column, mutate }) => {
-	const [open, setOpen] = useState<boolean>(false);
+	const [openTools, setOpenTools] = useState<boolean>(false);
+	const [openColorPicker, setOpenColorPicker] = useState<boolean>(false);
+
 	function onColumnRename(text: string) {
 		if (text !== column.name) {
 			mutate({ column_id: column.id, update: { name: text }, type: 'UPDATE' });
@@ -24,15 +28,20 @@ const MovableColumn: FC<MovableColumnProps> = ({ column, mutate }) => {
 
 	const onBlur: React.FocusEventHandler<HTMLDivElement> = (e) => {
 		if (e.relatedTarget?.tagName !== 'input') {
-			setOpen(false);
+			setOpenTools(false);
 		}
 	};
 
 	const onFocus: React.FocusEventHandler<HTMLDivElement> = (e) => {
 		if (e.target.classList.contains('moveableColumn')) {
-			setOpen(true);
+			setOpenTools(true);
 		}
 	};
+
+	function updateColumnColor(newColor: string) {
+		setOpenColorPicker(false);
+		mutate({ column_id: column.id, update: { style: newColor }, type: 'UPDATE' });
+	}
 
 	return (
 		<div className={cn(styles.movableColumn, 'moveableColumn')} onFocusCapture={onFocus} onBlur={onBlur} tabIndex={-1}>
@@ -46,11 +55,15 @@ const MovableColumn: FC<MovableColumnProps> = ({ column, mutate }) => {
 
 				<MovableTask column={column} mutate={mutate} />
 			</div>
-			<div className={cn(styles.movableColumnTools, open && styles.movableColumnToolsOpen)}>
+			<div className={cn(styles.movableColumnTools, openTools && styles.movableColumnToolsOpen)}>
 				<IconButton sx={{ mb: 0 }} onClick={() => mutate({ type: 'DELETE', column_id: column.id })}>
 					<DeleteIcon htmlColor="red" />
 				</IconButton>
+				<IconButton onClick={() => setOpenColorPicker(true)}>
+					<PaletteIcon htmlColor={column.style} />
+				</IconButton>
 			</div>
+			{openColorPicker && <ColorPickerDialog open={openColorPicker} handleClose={() => setOpenColorPicker(false)} defaultColor={column.style} onUpdate={updateColumnColor} />}
 		</div>
 	);
 };
