@@ -9,6 +9,7 @@
 	max-height: 0;
 	overflow-y: hidden;
 	transition: all 0.3s;
+	transition-delay: 0.1s;
 }
 .movableColumnToolsOpen {
 	max-height: 120px;

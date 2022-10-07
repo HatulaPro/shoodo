@@ -22,8 +22,21 @@ const MovableColumn: FC<MovableColumnProps> = ({ column, mutate, removeColumn })
 			mutate({ column_id: column.id, update: { name: text }, type: 'UPDATE' });
 		}
 	}
+
+	const onBlur: React.FocusEventHandler<HTMLDivElement> = (e) => {
+		if (e.relatedTarget?.tagName !== 'input') {
+			setOpen(false);
+		}
+	};
+
+	const onFocus: React.FocusEventHandler<HTMLDivElement> = (e) => {
+		if (e.target.classList.contains('moveableColumn')) {
+			setOpen(true);
+		}
+	};
+
 	return (
-		<div className={styles.movableColumn} onFocus={() => setOpen(true)} onBlur={() => setOpen(false)} tabIndex={-1}>
+		<div className={cn(styles.movableColumn, 'moveableColumn')} onFocusCapture={onFocus} onBlur={onBlur} tabIndex={-1}>
 			<div className={styles.movableColumnTitle} style={{ borderBottom: `4px solid ${column.style}` }}>
 				<EditableTypography onUpdate={onColumnRename} text={column.name} size="large" />
 			</div>
