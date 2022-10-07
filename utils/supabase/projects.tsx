@@ -50,6 +50,20 @@ export async function createProject(user_id: string, name: string, description: 
 }
 
 export async function deleteProject(project_id: number): Promise<boolean> {
+	const { error: tasksError } = await supabase.from<Task>('tasks').delete().eq('project_id', project_id);
+
+	if (tasksError) {
+		console.log(tasksError);
+		throw new Error(tasksError.message);
+	}
+
+	const { error: colsError } = await supabase.from<Column>('columns').delete().eq('project_id', project_id);
+
+	if (colsError) {
+		console.log(colsError);
+		throw new Error(colsError.message);
+	}
+
 	const { data, error } = await supabase.from<Project>('projects').delete().eq('id', project_id);
 
 	if (error) {
@@ -61,7 +75,8 @@ export async function deleteProject(project_id: number): Promise<boolean> {
 }
 
 export async function getProjectById(project_id: number): Promise<Project> {
-	const { data, error } = await supabase.from<Project>('projects').select('*, columns ( *, tasks ( * ) )').eq('id', project_id).single();
+	// bad: tasks!column_id
+	const { data, error } = await supabase.from<Project>('projects').select('*, columns ( *, tasks!tasks_column_id_fkey ( * ) )').eq('id', project_id).single();
 
 	if (error) {
 		console.log(error);
@@ -96,6 +111,13 @@ export async function updateColumnById(column_id: number, values: Partial<Column
 }
 
 export async function deleteColumn(column_id: number): Promise<boolean> {
+	const { error: tasksError } = await supabase.from<Task>('tasks').delete().eq('column_id', column_id);
+
+	if (tasksError) {
+		console.log(tasksError);
+		throw new Error(tasksError.message);
+	}
+
 	const { data, error } = await supabase.from<Column>('columns').delete().eq('id', column_id);
 
 	if (error) {
