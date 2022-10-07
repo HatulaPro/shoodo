@@ -5,9 +5,10 @@ type EditableTypographyProps = {
 	text: string;
 	onUpdate: (newText: string) => void;
 	size: 'small' | 'large';
+	placeholder?: boolean;
 };
 
-const EditableTypography: FC<EditableTypographyProps> = ({ onUpdate, text, size }) => {
+const EditableTypography: FC<EditableTypographyProps> = ({ onUpdate, text, size, placeholder }) => {
 	const [inputContent, setInputContent] = useState<null | string>(null);
 
 	function update() {
@@ -24,7 +25,7 @@ const EditableTypography: FC<EditableTypographyProps> = ({ onUpdate, text, size 
 	};
 
 	const onClick: React.MouseEventHandler<HTMLDivElement> = () => {
-		setInputContent(text);
+		setInputContent(placeholder ? '' : text);
 	};
 
 	const onKeyUp: React.KeyboardEventHandler<HTMLInputElement> = (e) => {
@@ -40,7 +41,7 @@ const EditableTypography: FC<EditableTypographyProps> = ({ onUpdate, text, size 
 			{text}
 		</Typography>
 	) : (
-		<input type="text" style={{ background: 'transparent', border: 'none', outline: 'none', width: '100%', fontSize: size === 'large' ? 'larger' : 'initial' }} value={inputContent!} onChange={onChange} onBlur={onBlur} onKeyUp={onKeyUp} autoFocus />
+		<input type="text" placeholder={placeholder ? text : ''} style={{ background: 'transparent', border: 'none', outline: 'none', width: '100%', fontSize: size === 'large' ? 'larger' : 'initial' }} value={inputContent!} onChange={onChange} onBlur={onBlur} onKeyUp={onKeyUp} autoFocus />
 	);
 };
 

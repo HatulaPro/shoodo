@@ -9,8 +9,20 @@ type MovableTaskProps = {
 	column: Column;
 };
 
-const MovableTask: FC<MovableTaskProps> = ({ task, column }) => {
-	return <div className={styles.movableTask}>{task ? <EditableTypography onUpdate={console.log} text={task.content} size="small" /> : <EditableTypography onUpdate={console.log} text={column.name} size="small" />}</div>;
+const MovableTask: FC<MovableTaskProps> = ({ task }) => {
+	return (
+		<div className={styles.movableTask}>
+			{task ? (
+				<>
+					<EditableTypography onUpdate={console.log} text={task.content} size="small" />
+				</>
+			) : (
+				<>
+					<EditableTypography onUpdate={console.log} text="Add New..." size="small" placeholder />
+				</>
+			)}
+		</div>
+	);
 };
 
 export default MovableTask;
