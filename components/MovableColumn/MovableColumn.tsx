@@ -5,11 +5,15 @@ import { FC, useState } from 'react';
 import { UseMutateFunction } from 'react-query';
 import { ColumnMutateArgs } from '../../hooks/useQueryProject';
 import { cn } from '../../utils/general';
-import { Column } from '../../utils/supabase/projects';
+import { Column, Task } from '../../utils/supabase/projects';
 import ColorPickerDialog from '../ColorPickerDialog/ColorPickerDialog';
 import EditableTypography from '../EditableTypography/EditableTypography';
 import MovableTask from '../MovableTask/MoveableTask';
 import styles from './MovableColumn.module.css';
+
+function sortTasks(tasks: Task[]): Task[] {
+	return tasks.slice().sort((a, b) => a.importance - b.importance);
+}
 
 type MovableColumnProps = {
 	column: Column;
@@ -19,6 +23,7 @@ type MovableColumnProps = {
 const MovableColumn: FC<MovableColumnProps> = ({ column, mutate }) => {
 	const [openTools, setOpenTools] = useState<boolean>(false);
 	const [openColorPicker, setOpenColorPicker] = useState<boolean>(false);
+	const sortedTasks = sortTasks(column.tasks!);
 
 	function onColumnRename(text: string) {
 		if (text !== column.name) {
@@ -49,7 +54,7 @@ const MovableColumn: FC<MovableColumnProps> = ({ column, mutate }) => {
 				<EditableTypography onUpdate={onColumnRename} text={column.name} size="large" />
 			</div>
 			<div>
-				{column.tasks?.map((task) => (
+				{sortedTasks.map((task) => (
 					<MovableTask key={task.id} task={task} column={column} mutate={mutate} />
 				))}
 
