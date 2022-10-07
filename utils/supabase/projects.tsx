@@ -138,3 +138,14 @@ export async function createTask(project_id: number, column_id: number, content:
 
 	return data;
 }
+
+export async function updateTaskById(task_id: number, values: Partial<Task>): Promise<Task> {
+	const { data, error } = await supabase.from<Task>('tasks').update(values).eq('id', task_id).single();
+
+	if (error) {
+		console.log(error);
+		throw new Error(error.message);
+	}
+
+	return data;
+}
