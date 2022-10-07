@@ -1,8 +1,7 @@
 import { FC } from 'react';
 import { Column, Task } from '../../utils/supabase/projects';
-import styles from './MovableTask.module.css';
-import Typography from '@mui/material/Typography';
 import EditableTypography from '../EditableTypography/EditableTypography';
+import styles from './MovableTask.module.css';
 
 type MovableTaskProps = {
 	task?: Task;

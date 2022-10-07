@@ -1,7 +1,7 @@
 import { User } from '@supabase/supabase-js';
+import { useRouter } from 'next/router';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { Column, createColumn, deleteColumn, getProjectById, Project, updateColumnById } from '../utils/supabase/projects';
-import { useRouter } from 'next/router';
 
 export type ColumnMutateArgs =
 	| {

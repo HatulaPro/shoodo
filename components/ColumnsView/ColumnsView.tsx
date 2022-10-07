@@ -1,11 +1,11 @@
-import { FC, useState, useMemo } from 'react';
-import { Column, deleteColumn } from '../../utils/supabase/projects';
-import MovableColumn from '../MovableColumn/MovableColumn';
-import styles from './ColumnsView.module.css';
 import { Reorder } from 'framer-motion';
+import { FC, useMemo } from 'react';
 import { UseMutateFunction } from 'react-query';
 import { ColumnMutateArgs } from '../../hooks/useQueryProject';
 import { cn } from '../../utils/general';
+import { Column } from '../../utils/supabase/projects';
+import MovableColumn from '../MovableColumn/MovableColumn';
+import styles from './ColumnsView.module.css';
 
 type ColumnsViewProps = {
 	columns: Column[];

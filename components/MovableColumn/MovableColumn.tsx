@@ -1,13 +1,13 @@
-import { FC, useState } from 'react';
-import { Column } from '../../utils/supabase/projects';
-import styles from './MovableColumn.module.css';
-import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
-import EditableTypography from '../EditableTypography/EditableTypography';
+import IconButton from '@mui/material/IconButton';
+import { FC, useState } from 'react';
 import { UseMutateFunction } from 'react-query';
 import { ColumnMutateArgs } from '../../hooks/useQueryProject';
 import { cn } from '../../utils/general';
+import { Column } from '../../utils/supabase/projects';
+import EditableTypography from '../EditableTypography/EditableTypography';
 import MovableTask from '../MovableTask/MoveableTask';
+import styles from './MovableColumn.module.css';
 
 type MovableColumnProps = {
 	column: Column;

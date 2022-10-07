@@ -1,5 +1,5 @@
-import { FC, useState } from 'react';
 import Typography from '@mui/material/Typography';
+import { FC, useState } from 'react';
 
 type EditableTypographyProps = {
 	text: string;
