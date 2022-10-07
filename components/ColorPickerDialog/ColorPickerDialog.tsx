@@ -28,8 +28,8 @@ const availableColors = [
 ];
 
 const ColorPickerDialog: FC<ColorPickerDialogProps> = ({ defaultColor, open, onUpdate, handleClose }) => {
-	const index = availableColors.findIndex((style) => style.color === defaultColor);
-	const [chosenColor, setChosenColor] = useState<number>(index === -1 ? 0 : index);
+	const defaultColorIndex = availableColors.findIndex((style) => style.color === defaultColor);
+	const [chosenColor, setChosenColor] = useState<number>(defaultColorIndex === -1 ? 0 : defaultColorIndex);
 
 	return (
 		<Dialog open={open} onClose={handleClose}>
@@ -37,7 +37,7 @@ const ColorPickerDialog: FC<ColorPickerDialogProps> = ({ defaultColor, open, onU
 			<DialogContent style={{ overflow: 'visible' }}>
 				<Box display="flex" gap={1} justifyContent="center" alignItems="center" overflow="visible" style={{ flexWrap: 'wrap' }}>
 					{availableColors.map((style, index) => (
-						<div style={{ background: style.color }} onClick={() => setChosenColor(index)} className={cn(styles.colorPickerDialogSquare, chosenColor === index && styles.colorPickerDialogSquareChosen)}></div>
+						<div key={style.color} style={{ background: style.color }} onClick={() => setChosenColor(index)} className={cn(styles.colorPickerDialogSquare, chosenColor === index && styles.colorPickerDialogSquareChosen)}></div>
 					))}
 				</Box>
 			</DialogContent>
