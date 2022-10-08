@@ -32,7 +32,7 @@ export const ProjectKeyboardNavigationProvider: FC<{ project: Project | undefine
 			if (e.key === 'ArrowRight') {
 				return setPosition((prev) => {
 					const newX = (prev.x + 1) % project.columns!.length;
-					return { x: newX, y: Math.min(prev.y, project!.columns![newX].tasks!.length - 1) };
+					return { x: newX, y: Math.min(prev.y, project!.columns![newX].tasks!.length) };
 				});
 			}
 			if (e.key === 'ArrowUp') {
@@ -45,7 +45,7 @@ export const ProjectKeyboardNavigationProvider: FC<{ project: Project | undefine
 			if (e.key === 'ArrowLeft') {
 				return setPosition((prev) => {
 					const newX = (prev.x + project.columns!.length - 1) % project.columns!.length;
-					return { x: newX, y: Math.min(prev.y, project!.columns![newX].tasks!.length - 1) };
+					return { x: newX, y: Math.min(prev.y, project!.columns![newX].tasks!.length) };
 				});
 			}
 			if (e.key === 'ArrowDown') {
