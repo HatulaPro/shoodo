@@ -33,6 +33,10 @@ export type ColumnMutateArgs =
 			column_id: number;
 	  };
 
+function sortByImportance<T extends { importance: number }>(arr: T[]): T[] {
+	return arr.sort((a, b) => a.importance - b.importance);
+}
+
 export function useQueryProject(user: User | null) {
 	const { query } = useRouter();
 	const queryClient = useQueryClient();
@@ -40,7 +44,12 @@ export function useQueryProject(user: User | null) {
 	const { isLoading, data, refetch } = useQuery(
 		['project'],
 		async () => {
-			return await getProjectById(parseInt(query.id as string));
+			const proj = await getProjectById(parseInt(query.id as string));
+			proj.columns = sortByImportance(proj.columns!);
+			for (const col of proj.columns!) {
+				col.tasks = sortByImportance(col.tasks!);
+			}
+			return proj;
 		},
 		{
 			refetchOnWindowFocus: false,
@@ -58,9 +67,9 @@ export function useQueryProject(user: User | null) {
 		if (args.type === 'CREATE') {
 			const prevCols = data!.columns!;
 			const bestImportance = (prevCols.length ? Math.min(...prevCols.map((column) => column.importance)) : Math.pow(2, 33)) - Math.pow(2, 32);
-			data!.columns = [{ id: -1, importance: bestImportance, name: '...', project_id: data!.id, style: 'blue', tasks: [] }, ...prevCols];
+			data!.columns = sortByImportance([{ id: -1, importance: bestImportance, name: '...', project_id: data!.id, style: 'blue', tasks: [] }, ...prevCols]);
 			createColumn(data!.id, bestImportance).then((col) => {
-				data!.columns = [col, ...prevCols];
+				data!.columns = sortByImportance([col, ...prevCols]);
 				manualUpdate(data!);
 			});
 		} else if (args.type === 'UPDATE') {
@@ -94,6 +103,7 @@ export function useQueryProject(user: User | null) {
 			const taskIndex = taskColumn.tasks!.findIndex((t) => t.id === args.task_id);
 			const task = taskColumn.tasks![taskIndex];
 			taskColumn.tasks![taskIndex] = { ...task, ...args.update };
+			taskColumn.tasks! = sortByImportance(taskColumn.tasks!);
 			manualUpdate(data!);
 		} else if (args.type === 'DELETE_TASK') {
 			deleteTask(args.task_id);

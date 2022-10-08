@@ -13,10 +13,6 @@ import EditableTypography from '../EditableTypography/EditableTypography';
 import MovableTask from '../MovableTask/MoveableTask';
 import styles from './MovableColumn.module.css';
 
-function sortTasks(tasks: Task[]): Task[] {
-	return tasks.slice().sort((a, b) => a.importance - b.importance);
-}
-
 type MovableColumnProps = {
 	column: Column;
 	mutate: UseMutateFunction<void, unknown, ColumnMutateArgs, unknown>;
@@ -26,7 +22,7 @@ const MovableColumn: FC<MovableColumnProps> = ({ column, mutate }) => {
 	const parentRef = useRef(null);
 	const [openTools, setOpenTools] = useState<boolean>(false);
 	const [openColorPicker, setOpenColorPicker] = useState<boolean>(false);
-	const sortedTasks = sortTasks(column.tasks!);
+	const tasks = column.tasks!;
 	const controls = useDragControls();
 
 	function onColumnRename(text: string) {
@@ -84,8 +80,8 @@ const MovableColumn: FC<MovableColumnProps> = ({ column, mutate }) => {
 				</div>
 				<div>
 					<div ref={parentRef}>
-						<Reorder.Group axis="y" as="div" values={sortedTasks} onReorder={onTasksReorder}>
-							{sortedTasks.map((task) => (
+						<Reorder.Group axis="y" as="div" values={tasks} onReorder={onTasksReorder}>
+							{tasks.map((task) => (
 								<Reorder.Item dragConstraints={parentRef} key={task.id} value={task} as="div" dragTransition={{ bounceDamping: 20, bounceStiffness: 200 }}>
 									<MovableTask task={task} column={column} mutate={mutate} />
 								</Reorder.Item>

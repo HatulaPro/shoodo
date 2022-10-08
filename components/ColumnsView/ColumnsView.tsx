@@ -1,5 +1,5 @@
 import { Reorder } from 'framer-motion';
-import { FC, useMemo } from 'react';
+import { FC } from 'react';
 import { UseMutateFunction } from 'react-query';
 import { ColumnMutateArgs } from '../../hooks/useQueryProject';
 import { cn } from '../../utils/general';
@@ -13,13 +13,7 @@ type ColumnsViewProps = {
 	mutate: UseMutateFunction<void, unknown, ColumnMutateArgs, unknown>;
 };
 
-function sortColumns(columns: Column[]): Column[] {
-	return columns.slice().sort((a, b) => a.importance - b.importance);
-}
-
 const ColumnsView: FC<ColumnsViewProps> = ({ setColumns, columns, mutate }) => {
-	const sortedCols = useMemo(() => sortColumns(columns), [columns]);
-
 	function onColsReorder(newCols: Column[]) {
 		if (newCols.length === 0) return setColumns(newCols);
 
@@ -40,8 +34,8 @@ const ColumnsView: FC<ColumnsViewProps> = ({ setColumns, columns, mutate }) => {
 	}
 
 	return (
-		<Reorder.Group axis="x" values={sortedCols} onReorder={onColsReorder} className={cn(styles.columnsView, 'scrollbar')} as="div" layoutScroll>
-			{sortedCols?.map((column: Column) => (
+		<Reorder.Group axis="x" values={columns} onReorder={onColsReorder} className={cn(styles.columnsView, 'scrollbar')} as="div" layoutScroll>
+			{columns?.map((column: Column) => (
 				<MovableColumn column={column} mutate={mutate} key={column.id} />
 			))}
 		</Reorder.Group>
