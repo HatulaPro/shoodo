@@ -1,4 +1,4 @@
-import { Reorder } from 'framer-motion';
+import { Reorder, useDragControls } from 'framer-motion';
 import { FC, useMemo } from 'react';
 import { UseMutateFunction } from 'react-query';
 import { ColumnMutateArgs } from '../../hooks/useQueryProject';
@@ -42,11 +42,15 @@ const ColumnsView: FC<ColumnsViewProps> = ({ setColumns, columns, mutate }) => {
 
 	return (
 		<Reorder.Group axis="x" values={sortedCols} onReorder={onColsReorder} className={cn(styles.columnsView, 'scrollbar')} as="div" layoutScroll>
-			{sortedCols?.map((column: Column) => (
-				<Reorder.Item style={{ padding: 0 }} dragTransition={{ bounceDamping: 20, bounceStiffness: 200 }} key={column.id} value={column} as="div" whileDrag={{ scaleY: 1.06, boxShadow: '0px 8px 12px 4px #14141466' }}>
-					<MovableColumn column={column} mutate={mutate} />
-				</Reorder.Item>
-			))}
+			{sortedCols?.map((column: Column) => {
+				const controls = useDragControls();
+
+				return (
+					<Reorder.Item dragControls={controls} dragListener={false} style={{ padding: 0 }} dragTransition={{ bounceDamping: 20, bounceStiffness: 200 }} key={column.id} value={column} as="div" whileDrag={{ filter: 'brightness(0.97)', boxShadow: '0px 0px 12px 14px #14141466' }}>
+						<MovableColumn column={column} mutate={mutate} controls={controls} />
+					</Reorder.Item>
+				);
+			})}
 		</Reorder.Group>
 	);
 };
