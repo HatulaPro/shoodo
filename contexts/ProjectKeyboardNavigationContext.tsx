@@ -16,6 +16,7 @@ export const ProjectKeyboardNavigationContext = createContext<NavLocation>({ col
 
 export const ProjectKeyboardNavigationProvider: FC<{ project: Project | undefined; children: React.ReactNode }> = ({ project, children }) => {
 	const [position, setPosition] = useState<Pos>({ x: 0, y: 0 });
+	const [isUsingKeys, setUsingKeys] = useState<boolean>(false);
 
 	useEffect(() => {
 		const listener = (e: KeyboardEvent) => {
@@ -26,6 +27,7 @@ export const ProjectKeyboardNavigationProvider: FC<{ project: Project | undefine
 			const target = e.target as HTMLElement;
 			if (target.tagName === 'INPUT') return;
 
+			setUsingKeys(true);
 			// console.log('evented', target.tagName, e.key, project!.columns![position.x].tasks![position.y]);
 			// x: index of column
 			// y: -1: highlight column title, [0, len - 1]: highlight task at [y-1], len: Add new...
@@ -66,13 +68,14 @@ export const ProjectKeyboardNavigationProvider: FC<{ project: Project | undefine
 		};
 	}, [project, setPosition]);
 
-	const value: NavLocation = project?.columns
-		? {
-				column_id: position.y === -1 ? project.columns[position.x].id : null,
-				task_id: position.y >= 0 && position.y < project.columns[position.x].tasks!.length ? project.columns[position.x].tasks![position.y].id : null,
-				util_column_id: project.columns[position.x].id,
-		  }
-		: { column_id: null, task_id: null, util_column_id: null };
+	const value: NavLocation =
+		isUsingKeys && project?.columns
+			? {
+					column_id: position.y === -1 ? project.columns[position.x].id : null,
+					task_id: position.y >= 0 && position.y < project.columns[position.x].tasks!.length ? project.columns[position.x].tasks![position.y].id : null,
+					util_column_id: project.columns[position.x].id,
+			  }
+			: { column_id: null, task_id: null, util_column_id: null };
 
 	console.log(value, position);
 
