@@ -4,6 +4,7 @@ import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import { NextPage } from 'next';
 import ColumnsView from '../../components/ColumnsView/ColumnsView';
+import { useProjectKeyboardNavigation } from '../../hooks/useProjectKeyboardNavigation';
 import { useQueryProject } from '../../hooks/useQueryProject';
 import { useUser } from '../../hooks/useUser';
 import styles from './Projects.module.css';
@@ -11,6 +12,7 @@ import styles from './Projects.module.css';
 const ProjectByIdPage: NextPage = () => {
 	const { user } = useUser({ authOnly: true });
 	const { data: project, isLoading, manualUpdate, columnsMutation } = useQueryProject(user);
+	const {} = useProjectKeyboardNavigation(project!);
 
 	return (
 		<Box position="relative" sx={{ p: { md: 4, sm: 1, xs: 0.5 } }}>
