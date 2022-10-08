@@ -1,5 +1,7 @@
+import CloseIcon from '@mui/icons-material/Close';
 import Box from '@mui/material/Box';
 import Checkbox from '@mui/material/Checkbox';
+import IconButton from '@mui/material/IconButton';
 import { FC } from 'react';
 import { UseMutateFunction } from 'react-query';
 import { ColumnMutateArgs } from '../../hooks/useQueryProject';
@@ -27,6 +29,9 @@ const MovableTask: FC<MovableTaskProps> = ({ task, column, mutate }) => {
 					<>
 						<Checkbox checked={task.done} onChange={(e) => mutate({ type: 'UPDATE_TASK', column_id: column.id, task_id: task.id, update: { done: e.target.checked } })} />
 						<EditableTypography onUpdate={(text) => text.length > 0 && mutate({ type: 'UPDATE_TASK', column_id: column.id, task_id: task.id, update: { content: text } })} text={task.content} size="small" style={{ textDecoration: task.done ? 'line-through' : 'none' }} />
+						<IconButton onClick={() => mutate({ type: 'DELETE_TASK', column_id: column.id, task_id: task.id })}>
+							<CloseIcon htmlColor="red" />
+						</IconButton>
 					</>
 				) : (
 					<>

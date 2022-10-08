@@ -149,3 +149,14 @@ export async function updateTaskById(task_id: number, values: Partial<Task>): Pr
 
 	return data;
 }
+
+export async function deleteTask(task_id: number): Promise<boolean> {
+	const { data, error } = await supabase.from<Task>('tasks').delete().eq('id', task_id).single();
+
+	if (error) {
+		console.log(error);
+		throw new Error(error.message);
+	}
+
+	return Boolean(data);
+}

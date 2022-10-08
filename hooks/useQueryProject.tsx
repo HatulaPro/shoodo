@@ -1,7 +1,7 @@
 import { User } from '@supabase/supabase-js';
 import { useRouter } from 'next/router';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
-import { Column, createColumn, createTask, deleteColumn, getProjectById, Project, Task, updateColumnById, updateTaskById } from '../utils/supabase/projects';
+import { Column, createColumn, createTask, deleteColumn, deleteTask, getProjectById, Project, Task, updateColumnById, updateTaskById } from '../utils/supabase/projects';
 
 export type ColumnMutateArgs =
 	| {
@@ -26,6 +26,11 @@ export type ColumnMutateArgs =
 			task_id: number;
 			column_id: number;
 			update: Partial<Task>;
+	  }
+	| {
+			type: 'DELETE_TASK';
+			task_id: number;
+			column_id: number;
 	  };
 
 export function useQueryProject(user: User | null) {
@@ -89,6 +94,12 @@ export function useQueryProject(user: User | null) {
 			const taskIndex = taskColumn.tasks!.findIndex((t) => t.id === args.task_id);
 			const task = taskColumn.tasks![taskIndex];
 			taskColumn.tasks![taskIndex] = { ...task, ...args.update };
+			manualUpdate(data!);
+		} else if (args.type === 'DELETE_TASK') {
+			deleteTask(args.task_id);
+
+			const taskColumn = data!.columns!.find((col) => col.id === args.column_id)!;
+			taskColumn.tasks = taskColumn.tasks!.filter((t) => t.id !== args.task_id);
 			manualUpdate(data!);
 		}
 	});
