@@ -1,9 +1,9 @@
-import { FC } from 'react';
 import SvgIcon from '@mui/material/SvgIcon';
+import { FC } from 'react';
 
 const LogoSvg: FC = () => {
 	return (
-		<SvgIcon fontSize="large" version="1.1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="100%" viewBox="0 0 504 495" enable-background="new 0 0 504 495">
+		<SvgIcon fontSize="large" version="1.1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="100%" viewBox="0 0 504 495" enableBackground="new 0 0 504 495">
 			<path
 				fill="#000000"
 				opacity="0.000000"

@@ -1,15 +1,15 @@
+import Button from '@mui/material/Button';
+import Grid from '@mui/material/Grid';
+import List from '@mui/material/List';
+import Typography from '@mui/material/Typography';
+import { Container } from '@mui/system';
 import type { NextPage } from 'next';
 import Head from 'next/head';
-import styles from '../styles/Home.module.css';
-import Typography from '@mui/material/Typography';
-import Grid from '@mui/material/Grid';
-import Button from '@mui/material/Button';
-import List from '@mui/material/List';
-import CheckListItem from '../components/CheckListItem/CheckListItem';
 import Image from 'next/image';
-import { Container } from '@mui/system';
 import Link from 'next/link';
+import CheckListItem from '../components/CheckListItem/CheckListItem';
 import { useUser } from '../hooks/useUser';
+import styles from '../styles/Home.module.css';
 
 const Home: NextPage = () => {
 	const { user } = useUser();
@@ -40,8 +40,8 @@ const Home: NextPage = () => {
 							)}
 						</div>
 					</Grid>
-					<Grid container xs={12} md={5} sx={{ flexDirection: { xs: 'row', md: 'column' } }} style={{ alignItems: 'center' }}>
-						<Grid container md={7} xs={5}>
+					<Grid item container xs={12} md={5} sx={{ flexDirection: { xs: 'row', md: 'column' } }} style={{ alignItems: 'center' }}>
+						<Grid item container md={7} xs={5}>
 							<Container style={{ position: 'relative', minHeight: '160px' }}>
 								<Image src="/student.png" alt="A student doing technology things" layout="fill" objectFit="contain" className={styles.mainImage} />
 							</Container>
