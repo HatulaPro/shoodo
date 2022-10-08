@@ -21,7 +21,6 @@ const ColumnsView: FC<ColumnsViewProps> = ({ setColumns, columns, mutate }) => {
 	const sortedCols = useMemo(() => sortColumns(columns), [columns]);
 
 	function onColsReorder(newCols: Column[]) {
-		console.log(newCols);
 		if (newCols.length === 0) return setColumns(newCols);
 
 		let prevImportance = newCols[0].importance;

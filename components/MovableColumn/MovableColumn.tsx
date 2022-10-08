@@ -52,6 +52,26 @@ const MovableColumn: FC<MovableColumnProps> = ({ column, mutate, controls }) => 
 		mutate({ column_id: column.id, update: { style: newColor }, type: 'UPDATE' });
 	}
 
+	function onTasksReorder(newTasks: Task[]) {
+		console.log(newTasks);
+		if (newTasks.length === 0) return (column.tasks = newTasks);
+
+		let prevImportance = newTasks[0].importance;
+		for (let i = 1; i < newTasks.length; i++) {
+			if (newTasks[i].importance < prevImportance) {
+				// this is where swap
+				if (i < newTasks.length - 1) {
+					newTasks[i].importance = (prevImportance + newTasks[i + 1].importance) / 2;
+				} else {
+					newTasks[i].importance = prevImportance + Math.pow(2, 32);
+				}
+				mutate({ task_id: newTasks[i].id, column_id: column.id, update: { importance: newTasks[i].importance }, type: 'UPDATE_TASK' });
+			}
+			prevImportance = newTasks[i].importance;
+		}
+		if (newTasks.length === 0) return (column.tasks = newTasks);
+	}
+
 	return (
 		<div className={cn(styles.movableColumn, 'moveableColumn')} onFocusCapture={onFocus} onBlur={onBlur} tabIndex={-1}>
 			<IconButton onPointerDown={(e) => controls.start(e)}>
@@ -63,7 +83,7 @@ const MovableColumn: FC<MovableColumnProps> = ({ column, mutate, controls }) => 
 			</div>
 			<div>
 				<div ref={parentRef}>
-					<Reorder.Group axis="y" as="div" values={sortedTasks} onReorder={console.log}>
+					<Reorder.Group axis="y" as="div" values={sortedTasks} onReorder={onTasksReorder}>
 						{sortedTasks.map((task) => (
 							<Reorder.Item dragConstraints={parentRef} key={task.id} value={task} as="div" dragTransition={{ bounceDamping: 20, bounceStiffness: 200 }}>
 								<MovableTask task={task} column={column} mutate={mutate} />
