@@ -6,7 +6,13 @@ type Pos = {
 	y: number;
 };
 
-export const ProjectKeyboardNavigationContext = createContext<{ column_id: number | null; task_id: number | null }>({ column_id: null, task_id: null });
+type NavLocation = {
+	column_id: number | null;
+	task_id: number | null;
+	util_column_id: number | null;
+};
+
+export const ProjectKeyboardNavigationContext = createContext<NavLocation>({ column_id: null, task_id: null, util_column_id: null });
 
 export const ProjectKeyboardNavigationProvider: FC<{ project: Project | undefined; children: React.ReactNode }> = ({ project, children }) => {
 	const [position, setPosition] = useState<Pos>({ x: 0, y: 0 });
@@ -60,12 +66,13 @@ export const ProjectKeyboardNavigationProvider: FC<{ project: Project | undefine
 		};
 	}, [project, setPosition]);
 
-	const value = project?.columns
+	const value: NavLocation = project?.columns
 		? {
 				column_id: position.y === -1 ? project.columns[position.x].id : null,
 				task_id: position.y >= 0 && position.y < project.columns[position.x].tasks!.length ? project.columns[position.x].tasks![position.y].id : null,
+				util_column_id: project.columns[position.x].id,
 		  }
-		: { column_id: null, task_id: null };
+		: { column_id: null, task_id: null, util_column_id: null };
 
 	console.log(value, position);
 

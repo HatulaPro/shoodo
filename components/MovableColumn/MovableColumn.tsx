@@ -3,8 +3,9 @@ import DragHandleIcon from '@mui/icons-material/DragHandle';
 import PaletteIcon from '@mui/icons-material/Palette';
 import IconButton from '@mui/material/IconButton';
 import { Reorder, useDragControls } from 'framer-motion';
-import { FC, useRef, useState } from 'react';
+import { FC, useContext, useRef, useState } from 'react';
 import { UseMutateFunction } from 'react-query';
+import { ProjectKeyboardNavigationContext } from '../../contexts/ProjectKeyboardNavigationContext';
 import { ColumnMutateArgs } from '../../hooks/useQueryProject';
 import { cn } from '../../utils/general';
 import { Column, Task } from '../../utils/supabase/projects';
@@ -24,6 +25,7 @@ const MovableColumn: FC<MovableColumnProps> = ({ column, mutate }) => {
 	const [openColorPicker, setOpenColorPicker] = useState<boolean>(false);
 	const tasks = column.tasks!;
 	const controls = useDragControls();
+	const { column_id: activeColumnId } = useContext(ProjectKeyboardNavigationContext);
 
 	function onColumnRename(text: string) {
 		if (text !== column.name) {
@@ -49,7 +51,6 @@ const MovableColumn: FC<MovableColumnProps> = ({ column, mutate }) => {
 	}
 
 	function onTasksReorder(newTasks: Task[]) {
-		console.log(newTasks);
 		if (newTasks.length === 0) return (column.tasks = newTasks);
 
 		let prevImportance = newTasks[0].importance;
@@ -75,7 +76,7 @@ const MovableColumn: FC<MovableColumnProps> = ({ column, mutate }) => {
 					<DragHandleIcon />
 				</IconButton>
 
-				<div className={styles.movableColumnTitle} style={{ borderBottom: `4px solid ${column.style}` }}>
+				<div className={cn(styles.movableColumnTitle)} style={{ borderBottom: `4px solid ${column.style}`, background: column.id === activeColumnId ? '#c7c7c7' : '' }}>
 					<EditableTypography onUpdate={onColumnRename} text={column.name} size="large" />
 				</div>
 				<div>
