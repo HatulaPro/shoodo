@@ -31,6 +31,10 @@ const EditableTypography: FC<EditableTypographyProps> = ({ onUpdate, text, size,
 		setInputContent(placeholder ? '' : text);
 	};
 
+	const onFocus: React.FocusEventHandler<HTMLDivElement> = () => {
+		setInputContent(placeholder ? '' : text);
+	};
+
 	const onKeyUp: React.KeyboardEventHandler<HTMLInputElement> = (e) => {
 		if (e.key === 'Enter') {
 			update();
@@ -40,7 +44,7 @@ const EditableTypography: FC<EditableTypographyProps> = ({ onUpdate, text, size,
 	};
 
 	return inputContent === null ? (
-		<Typography variant={size === 'large' ? 'h6' : 'body1'} align="left" component={'div'} style={{ cursor: 'text', flex: '1', ...style }} onClick={onClick}>
+		<Typography tabIndex={0} variant={size === 'large' ? 'h6' : 'body1'} align="left" component={'div'} style={{ cursor: 'text', flex: '1', ...style }} onClick={onClick} onFocus={onFocus}>
 			{text}
 		</Typography>
 	) : (
