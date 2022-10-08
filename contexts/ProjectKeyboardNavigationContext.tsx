@@ -1,14 +1,17 @@
-import { useEffect, useState } from 'react';
+import React, { createContext, FC, useEffect, useState } from 'react';
 import { Project } from '../utils/supabase/projects';
 
 type Pos = {
 	x: number;
 	y: number;
 };
-export function useProjectKeyboardNavigation(project: Project) {
+
+export const ProjectKeyboardNavigationContext = createContext<Pos>({ x: 0, y: 0 });
+
+export const ProjectKeyboardNavigationProvider: FC<{ project: Project | undefined; children: React.ReactNode }> = ({ project, children }) => {
 	const [position, setPosition] = useState<Pos>({ x: 0, y: 0 });
 
-	// console.log(position, project?.columns && project.columns[position.x].tasks![position.y]);
+	console.log(position, project?.columns && project.columns[position.x].tasks![position.y]);
 	useEffect(() => {
 		const listener = (e: KeyboardEvent) => {
 			if (!project) return;
@@ -55,5 +58,5 @@ export function useProjectKeyboardNavigation(project: Project) {
 		};
 	}, [project, setPosition]);
 
-	return { position };
-}
+	return <ProjectKeyboardNavigationContext.Provider value={position}>{children}</ProjectKeyboardNavigationContext.Provider>;
+};
