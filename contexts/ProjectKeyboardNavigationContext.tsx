@@ -35,29 +35,42 @@ export const ProjectKeyboardNavigationProvider: FC<{ project: Project | undefine
 			// y: -1: highlight column title, [0, len - 1]: highlight task at [y-1], len: Add new...
 			if (e.key === 'ArrowRight') {
 				return setPosition((prev) => {
+					if (prev.x === -1) {
+						return { x: 0, y: -1 };
+					}
 					const newX = (prev.x + 1) % project.columns!.length;
 					return { x: newX, y: Math.min(prev.y, project!.columns![newX].tasks!.length) };
 				});
 			}
 			if (e.key === 'ArrowUp') {
-				return setPosition((prev) => {
-					const mod = project!.columns![prev.x].tasks!.length + 2;
-					const newY = ((prev.y + mod) % mod) - 1;
-					return { x: prev.x, y: newY };
-				});
+				if (position.x !== -1) {
+					return setPosition((prev) => {
+						const mod = project!.columns![prev.x].tasks!.length + 2;
+						const newY = ((prev.y + mod) % mod) - 1;
+						return { x: prev.x, y: newY };
+					});
+				}
 			}
 			if (e.key === 'ArrowLeft') {
 				return setPosition((prev) => {
-					const newX = (prev.x + project.columns!.length - 1) % project.columns!.length;
-					return { x: newX, y: Math.min(prev.y, project!.columns![newX].tasks!.length) };
+					if (prev.x === 0) {
+						return { x: -1, y: -1 };
+					} else if (prev.x === -1) {
+						return { x: project.columns!.length - 1, y: -1 };
+					} else {
+						const newX = (prev.x + project.columns!.length - 1) % project.columns!.length;
+						return { x: newX, y: Math.min(prev.y, project!.columns![newX].tasks!.length) };
+					}
 				});
 			}
 			if (e.key === 'ArrowDown') {
-				return setPosition((prev) => {
-					const mod = project!.columns![prev.x].tasks!.length + 2;
-					const newY = ((prev.y + 2) % mod) - 1;
-					return { x: prev.x, y: newY };
-				});
+				if (position.x !== -1) {
+					return setPosition((prev) => {
+						const mod = project!.columns![prev.x].tasks!.length + 2;
+						const newY = ((prev.y + 2) % mod) - 1;
+						return { x: prev.x, y: newY };
+					});
+				}
 			}
 			if (e.key === 'Enter') return;
 			if (e.key === 'Escape') return;
@@ -66,6 +79,7 @@ export const ProjectKeyboardNavigationProvider: FC<{ project: Project | undefine
 		window.addEventListener('keyup', listener);
 
 		ref.current?.focus();
+		console.log({ position });
 		return () => {
 			window.removeEventListener('keyup', listener);
 		};
@@ -73,10 +87,16 @@ export const ProjectKeyboardNavigationProvider: FC<{ project: Project | undefine
 
 	function register(column_id: number | null, task_id: number | null) {
 		if (!isUsingKeys) return {};
+		const registered = { tabIndex: '-1', autoFocus: true, ref, 'data-highlightedbynav': true };
+
+		if (position.x === -1 && position.y === -1) {
+			// console.log(column_id);
+			if (column_id === -1 && task_id === -1) return { tabIndex: '0', ref };
+		}
+
 		const col = project?.columns![position.x]!;
 		if (!col) return {};
 
-		const registered = { tabIndex: '-1', autoFocus: true, ref, 'data-highlightedByNav': true };
 		if (position.y === -1) {
 			const shouldHighlight = column_id === col.id && task_id === -1;
 

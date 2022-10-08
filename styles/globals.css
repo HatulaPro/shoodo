@@ -36,7 +36,7 @@ a {
 	background-color: #55555580;
 }
 
-*[data-highlightedByNav]:focus {
+*[data-highlightedbynav]:focus {
 	background-color: rgb(208, 208, 250);
 	outline: none;
 }

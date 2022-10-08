@@ -1,6 +1,10 @@
+import AddIcon from '@mui/icons-material/Add';
+import Box from '@mui/material/Box';
+import IconButton from '@mui/material/IconButton';
 import { Reorder } from 'framer-motion';
-import { FC } from 'react';
+import { FC, useContext } from 'react';
 import { UseMutateFunction } from 'react-query';
+import { ProjectKeyboardNavigationContext } from '../../contexts/ProjectKeyboardNavigationContext';
 import { ColumnMutateArgs } from '../../hooks/useQueryProject';
 import { cn } from '../../utils/general';
 import { Column } from '../../utils/supabase/projects';
@@ -14,6 +18,8 @@ type ColumnsViewProps = {
 };
 
 const ColumnsView: FC<ColumnsViewProps> = ({ setColumns, columns, mutate }) => {
+	const register = useContext(ProjectKeyboardNavigationContext);
+
 	function onColsReorder(newCols: Column[]) {
 		if (newCols.length === 0) return setColumns(newCols);
 
@@ -34,11 +40,18 @@ const ColumnsView: FC<ColumnsViewProps> = ({ setColumns, columns, mutate }) => {
 	}
 
 	return (
-		<Reorder.Group axis="x" values={columns} onReorder={onColsReorder} className={cn(styles.columnsView, 'scrollbar')} as="div" layoutScroll>
-			{columns?.map((column: Column) => (
-				<MovableColumn column={column} mutate={mutate} key={column.id} />
-			))}
-		</Reorder.Group>
+		<>
+			<Box display="flex" sx={{ flexDirection: { md: 'column', xs: 'row' } }} mr={2}>
+				<IconButton onClick={() => mutate({ type: 'CREATE' })} {...register(-1, -1)}>
+					<AddIcon color="primary" fontSize="large" />
+				</IconButton>
+			</Box>
+			<Reorder.Group axis="x" values={columns} onReorder={onColsReorder} className={cn(styles.columnsView, 'scrollbar')} as="div" layoutScroll>
+				{columns?.map((column: Column) => (
+					<MovableColumn column={column} mutate={mutate} key={column.id} />
+				))}
+			</Reorder.Group>
+		</>
 	);
 };
 
