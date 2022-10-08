@@ -1,4 +1,4 @@
-import React, { createContext, FC, useEffect, useState } from 'react';
+import React, { createContext, FC, useEffect, useRef, useState } from 'react';
 import { Project } from '../utils/supabase/projects';
 
 type Pos = {
@@ -6,17 +6,18 @@ type Pos = {
 	y: number;
 };
 
-type NavLocation = {
-	column_id: number | null;
-	task_id: number | null;
-	util_column_id: number | null;
-};
+type Props = { [x: string]: unknown };
 
-export const ProjectKeyboardNavigationContext = createContext<NavLocation>({ column_id: null, task_id: null, util_column_id: null });
+type RegisterToNav = (column_id: number | null, task_id: number | null) => Props;
+
+export const ProjectKeyboardNavigationContext = createContext<RegisterToNav>((_a, _b) => {
+	return {};
+});
 
 export const ProjectKeyboardNavigationProvider: FC<{ project: Project | undefined; children: React.ReactNode }> = ({ project, children }) => {
 	const [position, setPosition] = useState<Pos>({ x: 0, y: 0 });
 	const [isUsingKeys, setUsingKeys] = useState<boolean>(false);
+	const ref = useRef<any>(null);
 
 	useEffect(() => {
 		const listener = (e: KeyboardEvent) => {
@@ -28,6 +29,7 @@ export const ProjectKeyboardNavigationProvider: FC<{ project: Project | undefine
 			if (target.tagName === 'INPUT') return;
 
 			setUsingKeys(true);
+
 			// console.log('evented', target.tagName, e.key, project!.columns![position.x].tasks![position.y]);
 			// x: index of column
 			// y: -1: highlight column title, [0, len - 1]: highlight task at [y-1], len: Add new...
@@ -63,21 +65,30 @@ export const ProjectKeyboardNavigationProvider: FC<{ project: Project | undefine
 		};
 		window.addEventListener('keyup', listener);
 
+		ref.current?.focus();
 		return () => {
 			window.removeEventListener('keyup', listener);
 		};
-	}, [project, setPosition]);
+	}, [project, position, setPosition]);
 
-	const value: NavLocation =
-		isUsingKeys && project?.columns
-			? {
-					column_id: position.y === -1 ? project.columns[position.x].id : null,
-					task_id: position.y >= 0 && position.y < project.columns[position.x].tasks!.length ? project.columns[position.x].tasks![position.y].id : null,
-					util_column_id: project.columns[position.x].id,
-			  }
-			: { column_id: null, task_id: null, util_column_id: null };
+	function register(column_id: number | null, task_id: number | null) {
+		if (!isUsingKeys) return {};
+		const col = project?.columns![position.x]!;
+		if (!col) return {};
 
-	console.log(value, position);
+		const registered = { tabIndex: '-1', autoFocus: true, ref, 'data-highlightedByNav': true };
+		if (position.y === -1) {
+			const shouldHighlight = column_id === col.id && task_id === -1;
 
-	return <ProjectKeyboardNavigationContext.Provider value={value}>{children}</ProjectKeyboardNavigationContext.Provider>;
+			return shouldHighlight ? registered : {};
+		}
+
+		const task = col!.tasks![position.y];
+		if (task) {
+			return task.id === task_id ? registered : {};
+		}
+		return col.id === column_id && task_id === null ? registered : {};
+	}
+
+	return <ProjectKeyboardNavigationContext.Provider value={register}>{children}</ProjectKeyboardNavigationContext.Provider>;
 };

@@ -23,12 +23,10 @@ type MovableTaskProps =
 	  };
 
 const MovableTask: FC<MovableTaskProps> = ({ task, column, mutate }) => {
-	const { column_id: activeColumnId, task_id: activeTaskId, util_column_id: utilColumnId } = useContext(ProjectKeyboardNavigationContext);
-
-	const isHighLighted = (utilColumnId === column.id && activeColumnId === null && activeTaskId === null && !task) || task?.id === activeTaskId;
+	const register = useContext(ProjectKeyboardNavigationContext);
 
 	return (
-		<div className={styles.movableTask} style={{ backgroundColor: isHighLighted ? '#c7c7c7' : '' }}>
+		<div className={styles.movableTask} {...register(column.id, task?.id || null)}>
 			<Box display="flex" alignItems="center">
 				{task ? (
 					<>

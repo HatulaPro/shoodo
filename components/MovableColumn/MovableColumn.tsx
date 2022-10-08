@@ -25,7 +25,7 @@ const MovableColumn: FC<MovableColumnProps> = ({ column, mutate }) => {
 	const [openColorPicker, setOpenColorPicker] = useState<boolean>(false);
 	const tasks = column.tasks!;
 	const controls = useDragControls();
-	const { column_id: activeColumnId } = useContext(ProjectKeyboardNavigationContext);
+	const register = useContext(ProjectKeyboardNavigationContext);
 
 	function onColumnRename(text: string) {
 		if (text !== column.name) {
@@ -76,7 +76,7 @@ const MovableColumn: FC<MovableColumnProps> = ({ column, mutate }) => {
 					<DragHandleIcon />
 				</IconButton>
 
-				<div className={cn(styles.movableColumnTitle)} style={{ borderBottom: `4px solid ${column.style}`, background: column.id === activeColumnId ? '#c7c7c7' : '' }}>
+				<div className={cn(styles.movableColumnTitle)} style={{ borderBottom: `4px solid ${column.style}` }} {...register(column.id, -1)}>
 					<EditableTypography onUpdate={onColumnRename} text={column.name} size="large" />
 				</div>
 				<div>
