@@ -83,10 +83,9 @@ export function useQueryProject(user: User | null) {
 			const prevCols = data!.columns!;
 			const bestImportance = (prevCols.length ? Math.min(...prevCols.map((column) => column.importance)) : Math.pow(2, 33)) - Math.pow(2, 32);
 			data!.columns = sortByImportance([{ id: -1, importance: bestImportance, name: '...', project_id: data!.id, style: 'blue', tasks: [] }, ...prevCols]);
-			createColumn(data!.id, bestImportance).then((col) => {
-				data!.columns = sortByImportance([col, ...prevCols]);
-				manualUpdate(data!);
-			});
+			const col = await createColumn(data!.id, bestImportance);
+			data!.columns = sortByImportance([col, ...prevCols]);
+			manualUpdate(data!);
 		} else if (args.type === 'UPDATE') {
 			const index = data!.columns!.findIndex((c) => c.id === args.column_id);
 			data!.columns![index] = { ...data!.columns![index], ...args.update };
