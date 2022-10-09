@@ -2,6 +2,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import DragHandleIcon from '@mui/icons-material/DragHandle';
 import PaletteIcon from '@mui/icons-material/Palette';
 import IconButton from '@mui/material/IconButton';
+import type { PanInfo } from 'framer-motion';
 import { Reorder, useDragControls } from 'framer-motion';
 import { FC, useContext, useRef, useState } from 'react';
 import type { UseMutateFunction } from 'react-query';
@@ -16,16 +17,18 @@ import styles from './MovableColumn.module.css';
 
 type MovableColumnProps = {
 	column: Column;
+	index: number;
 	mutate: UseMutateFunction<void, unknown, ColumnMutateArgs, unknown>;
 };
 
-const MovableColumn: FC<MovableColumnProps> = ({ column, mutate }) => {
+const MovableColumn: FC<MovableColumnProps> = ({ column, mutate, index }) => {
 	const parentRef = useRef(null);
 	const [openTools, setOpenTools] = useState<boolean>(false);
 	const [openColorPicker, setOpenColorPicker] = useState<boolean>(false);
 	const tasks = column.tasks!;
 	const controls = useDragControls();
 	const register = useContext(ProjectKeyboardNavigationContext);
+	const columnRef = useRef<HTMLElement | null>(null);
 
 	function onColumnRename(text: string) {
 		if (text !== column.name) {
@@ -69,8 +72,23 @@ const MovableColumn: FC<MovableColumnProps> = ({ column, mutate }) => {
 		if (newTasks.length === 0) return (column.tasks = newTasks);
 	}
 
+	function onDragEnd(task_id: number) {
+		return (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
+			console.log(event);
+			const colWidth = columnRef.current!.clientWidth; // 300
+			const scrollerWidth = columnRef.current!.parentElement!.scrollWidth; // 964
+			const colCount = columnRef.current!.parentElement!.children.length; // 3
+			const colGap = (scrollerWidth - colCount * colWidth) / (colWidth - 1); // 32
+			const offsetX = info.offset.x;
+			const nextIndex = index + Math.round(offsetX / (colWidth + colGap));
+			if (nextIndex === index) return;
+
+			mutate({ type: 'MOVE_TASK', currentIndex: index, nextIndex, task_id });
+		};
+	}
+
 	return (
-		<Reorder.Item dragControls={controls} dragListener={false} style={{ padding: 0 }} dragTransition={{ bounceDamping: 20, bounceStiffness: 200 }} value={column} as="div" whileDrag={{ filter: 'brightness(0.97)', boxShadow: '0px 0px 12px 14px #14141466' }}>
+		<Reorder.Item ref={columnRef} dragControls={controls} dragListener={false} style={{ padding: 0 }} dragTransition={{ bounceDamping: 20, bounceStiffness: 200 }} value={column} as="div" whileDrag={{ filter: 'brightness(0.97)', boxShadow: '0px 0px 12px 14px #14141466' }}>
 			<div className={cn(styles.movableColumn, 'moveableColumn')} onFocusCapture={onFocus} onBlur={onBlur} tabIndex={-1}>
 				<IconButton onPointerDown={(e) => controls.start(e)}>
 					<DragHandleIcon />
@@ -83,7 +101,7 @@ const MovableColumn: FC<MovableColumnProps> = ({ column, mutate }) => {
 					<div ref={parentRef}>
 						<Reorder.Group axis="y" as="div" values={tasks} onReorder={onTasksReorder}>
 							{tasks.map((task) => (
-								<Reorder.Item dragConstraints={parentRef} key={task.id} value={task} as="div" dragTransition={{ bounceDamping: 20, bounceStiffness: 200 }}>
+								<Reorder.Item drag={true} onDragEnd={onDragEnd(task.id)} key={task.id} value={task} as="div" dragTransition={{ bounceDamping: 20, bounceStiffness: 200 }}>
 									<MovableTask task={task} column={column} mutate={mutate} />
 								</Reorder.Item>
 							))}

@@ -47,8 +47,8 @@ const ColumnsView: FC<ColumnsViewProps> = ({ setColumns, columns, mutate }) => {
 				</IconButton>
 			</Box>
 			<Reorder.Group axis="x" values={columns} onReorder={onColsReorder} className={cn(styles.columnsView, 'scrollbar')} as="div" layoutScroll>
-				{columns?.map((column: Column) => (
-					<MovableColumn column={column} mutate={mutate} key={column.id} />
+				{columns?.map((column: Column, index: number) => (
+					<MovableColumn column={column} index={index} mutate={mutate} key={column.id} />
 				))}
 			</Reorder.Group>
 		</>

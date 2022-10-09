@@ -32,6 +32,12 @@ export type ColumnMutateArgs =
 			type: 'DELETE_TASK';
 			task_id: number;
 			column_id: number;
+	  }
+	| {
+			type: 'MOVE_TASK';
+			nextIndex: number;
+			currentIndex: number;
+			task_id: number;
 	  };
 
 function sortByImportance<T extends { importance: number }>(arr: T[]): T[] {
@@ -119,6 +125,18 @@ export function useQueryProject(user: User | null) {
 
 			const taskColumn = data!.columns!.find((col) => col.id === args.column_id)!;
 			taskColumn.tasks = taskColumn.tasks!.filter((t) => t.id !== args.task_id);
+			manualUpdate(data!);
+		} else if (args.type === 'MOVE_TASK') {
+			const nextIndex = Math.min(Math.max(args.nextIndex, 0), data!.columns!.length - 1);
+			const currentColumn = data!.columns![args.currentIndex];
+			const nextColumn = data!.columns![nextIndex];
+			const taskIndex = currentColumn.tasks!.findIndex((t) => t.id === args.task_id);
+			const task = currentColumn.tasks![taskIndex];
+			currentColumn.tasks = currentColumn.tasks?.filter((t) => t.id !== args.task_id);
+
+			const bestImportance = nextColumn.tasks!.length ? Math.min(...nextColumn.tasks!.map((t) => t.importance)) : Math.pow(2, 33);
+			nextColumn.tasks = [task, ...nextColumn.tasks!];
+			updateTaskById(task.id, { importance: bestImportance, column_id: nextColumn.id });
 			manualUpdate(data!);
 		}
 	});
