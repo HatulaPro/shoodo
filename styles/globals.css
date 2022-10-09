@@ -37,8 +37,8 @@ a {
 }
 
 *[data-highlightedbynav]:focus {
-	background-color: rgb(208, 208, 250);
-	outline: none;
+	background-color: rgb(208, 208, 250) !important;
+	outline: none !important;
 }
 /* 
 @media (prefers-color-scheme: dark) {

@@ -9,8 +9,8 @@ import Typography from '@mui/material/Typography';
 import { NextPage } from 'next';
 import Head from 'next/head';
 import { useState } from 'react';
+import styles from '../../styles/Auth.module.css';
 import { signInWithEmail } from '../../utils/supabase/auth';
-import styles from './Auth.module.css';
 
 const AuthPage: NextPage = () => {
 	const [email, setEmail] = useState<string>('');

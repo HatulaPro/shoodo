@@ -23,8 +23,8 @@
 .mainContent {
 	padding: 16px 4vw;
 	z-index: 2;
-	margin: auto;
-	max-width: 92%;
+	margin: auto !important;
+	max-width: 92% !important;
 }
 
 @keyframes floatBackground {

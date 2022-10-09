@@ -6,7 +6,7 @@ import ColumnsView from '../../components/ColumnsView/ColumnsView';
 import { ProjectKeyboardNavigationProvider } from '../../contexts/ProjectKeyboardNavigationContext';
 import { useQueryProject } from '../../hooks/useQueryProject';
 import { useUser } from '../../hooks/useUser';
-import styles from './Projects.module.css';
+import styles from '../../styles/Projects.module.css';
 
 const ProjectByIdPage: NextPage = () => {
 	const { user } = useUser({ authOnly: true });
