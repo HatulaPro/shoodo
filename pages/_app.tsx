@@ -15,6 +15,7 @@ function MyApp({ Component, pageProps, router }: AppProps) {
 			<ThemeProvider theme={LightTheme}>
 				<Head>
 					<meta name="description" content="An app to help you manage your to do lists" />
+					<meta name="viewport" content="initial-scale=1.0, width=device-width" />
 					<link rel="icon" href="/favicon.ico" />
 				</Head>
 				<Header />

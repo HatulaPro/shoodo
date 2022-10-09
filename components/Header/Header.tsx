@@ -5,7 +5,6 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import ButtonBase from '@mui/material/ButtonBase';
 import ButtonGroup from '@mui/material/ButtonGroup';
-import Container from '@mui/material/Container';
 import Toolbar from '@mui/material/Toolbar';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import Link from 'next/link';
@@ -54,7 +53,7 @@ const Header: FC = () => {
 				setOpen(false);
 			}
 		};
-		router.events.on('routeChangeStart', onRouteChangeHandler);
+		router.events.on('routeChangeComplete', onRouteChangeHandler);
 
 		document.body.style.overflow = isSmallScreen && isOpen ? 'hidden' : 'initial';
 
@@ -66,29 +65,27 @@ const Header: FC = () => {
 
 	return (
 		<AppBar position="sticky">
-			<Container maxWidth="xl">
-				<Toolbar disableGutters>
-					<Link href="/">
-						<ButtonBase className={styles.headerIconBase}>
-							<LogoSvg />
-							Shoodo
-						</ButtonBase>
-					</Link>
-					{isSmallScreen ? (
-						<>
-							<Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'end' }}>
-								<IconButton onClick={() => setOpen(!isOpen)}>
-									<MenuIcon htmlColor="white" />
-								</IconButton>
-							</Box>
-						</>
-					) : (
+			<Toolbar sx={{ p: 1 }}>
+				<Link href="/">
+					<ButtonBase className={styles.headerIconBase}>
+						<LogoSvg />
+						Shoodo
+					</ButtonBase>
+				</Link>
+				{isSmallScreen ? (
+					<>
 						<Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'end' }}>
-							<ButtonGroup>{contents}</ButtonGroup>
+							<IconButton onClick={() => setOpen(!isOpen)}>
+								<MenuIcon htmlColor="white" />
+							</IconButton>
 						</Box>
-					)}
-				</Toolbar>
-			</Container>
+					</>
+				) : (
+					<Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'end' }}>
+						<ButtonGroup>{contents}</ButtonGroup>
+					</Box>
+				)}
+			</Toolbar>
 			<div className={cn(styles.headerOpeningMenu, isOpen && styles.headerOpeningMenuOpen)}>{contents}</div>
 		</AppBar>
 	);
