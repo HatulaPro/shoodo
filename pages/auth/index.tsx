@@ -49,7 +49,7 @@ const AuthPage: NextPage = () => {
 				<title>Shoodo | Log In</title>
 			</Head>
 			<Container className={styles.authPage}>
-				<Box className={styles.authFormWrapper} sx={{ backgroundColor: 'background.default', px: 6, py: 4 }}>
+				<Box className={styles.authFormWrapper} sx={{ backgroundColor: 'background.default', px: { md: 6, xs: 3 }, py: { md: 4, xs: 2 } }}>
 					<Typography variant="h3" component="h1" color="primary.dark">
 						Log In
 					</Typography>
