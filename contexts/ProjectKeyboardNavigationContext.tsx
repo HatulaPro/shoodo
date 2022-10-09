@@ -15,7 +15,7 @@ export const ProjectKeyboardNavigationContext = createContext<RegisterToNav>((_a
 });
 
 export const ProjectKeyboardNavigationProvider: FC<{ project: Project | undefined; children: React.ReactNode }> = ({ project, children }) => {
-	const [position, setPosition] = useState<Pos>({ x: 0, y: 0 });
+	const [position, setPosition] = useState<Pos>({ x: -1, y: -1 });
 	const [isUsingKeys, setUsingKeys] = useState<boolean>(false);
 	const ref = useRef<any>(null);
 
@@ -23,12 +23,12 @@ export const ProjectKeyboardNavigationProvider: FC<{ project: Project | undefine
 		const listener = (e: KeyboardEvent) => {
 			if (!project) return;
 			if (project.columns === undefined) return;
-			if (project.columns.length === 0) return;
 
 			const target = e.target as HTMLElement;
 			if (target.tagName === 'INPUT') return;
 
 			setUsingKeys(true);
+			if (project.columns.length === 0) return setPosition({ x: -1, y: -1 });
 
 			// console.log('evented', target.tagName, e.key, project!.columns![position.x].tasks![position.y]);
 			// x: index of column
@@ -83,15 +83,15 @@ export const ProjectKeyboardNavigationProvider: FC<{ project: Project | undefine
 		return () => {
 			window.removeEventListener('keyup', listener);
 		};
-	}, [project, position, setPosition]);
+	}, [project, project?.columns, project?.columns?.length, position, setPosition]);
 
 	function register(column_id: number | null, task_id: number | null) {
 		if (!isUsingKeys) return {};
-		const registered = { tabIndex: '-1', autoFocus: true, ref, 'data-highlightedbynav': true };
+		const registered = { tabIndex: -1, autoFocus: true, ref, 'data-highlightedbynav': true };
 
 		if (position.x === -1 && position.y === -1) {
 			// console.log(column_id);
-			if (column_id === -1 && task_id === -1) return { tabIndex: '0', ref };
+			if (column_id === -1 && task_id === -1) return { tabIndex: 0, ref };
 		}
 
 		const col = project?.columns![position.x]!;
