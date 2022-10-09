@@ -37,9 +37,13 @@ function sortByImportance<T extends { importance: number }>(arr: T[]): T[] {
 	return arr.sort((a, b) => a.importance - b.importance);
 }
 
-export function useQueryProject(user: User | null) {
+export function useQueryProject(user: User | null, defaultValue?: Project) {
 	const { query } = useRouter();
 	const queryClient = useQueryClient();
+
+	if (defaultValue && !defaultValue.columns) {
+		defaultValue.columns = [];
+	}
 
 	const { isLoading, data, refetch } = useQuery(
 		['project'],
@@ -55,7 +59,8 @@ export function useQueryProject(user: User | null) {
 			refetchOnWindowFocus: false,
 			enabled: user !== null && Boolean(query.id),
 			retry: false,
-			cacheTime: 0,
+			initialData: defaultValue,
+			placeholderData: defaultValue,
 		}
 	);
 

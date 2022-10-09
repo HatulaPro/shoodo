@@ -1,25 +1,25 @@
-import { FC, useRef, useEffect, useState } from 'react';
-import { deleteProject, Project } from '../../utils/supabase/projects';
-import Typography from '@mui/material/Typography';
-import Grid from '@mui/material/Grid';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
-import IconButton from '@mui/material/IconButton';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
-import LinearProgress from '@mui/material/LinearProgress';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import styles from './ProjectsView.module.css';
 import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
-import DialogActions from '@mui/material/DialogActions';
-import Button from '@mui/material/Button';
-import { useMutation } from 'react-query';
-import { cn } from '../../utils/general';
+import Grid from '@mui/material/Grid';
+import IconButton from '@mui/material/IconButton';
+import LinearProgress from '@mui/material/LinearProgress';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import Typography from '@mui/material/Typography';
 import Link from 'next/link';
 import { ParsedUrlQueryInput } from 'querystring';
+import { FC, useEffect, useRef, useState } from 'react';
+import { useMutation } from 'react-query';
+import { cn } from '../../utils/general';
+import { deleteProject, Project } from '../../utils/supabase/projects';
+import styles from './ProjectsView.module.css';
 
 type ProjectsViewProps = {
 	projects: Project[];
@@ -104,7 +104,7 @@ const ProjectsView: FC<ProjectsViewProps> = ({ projects, newProject, updateProje
 						/>
 						<Menu open={index === openMenuIndex} onClose={closeMenu} anchorEl={anchor}>
 							<MenuItem onClick={openDeleteDialog}>Delete</MenuItem>
-							<Link href={{ pathname: `/projects/[id]`, query: project as unknown as ParsedUrlQueryInput }} as={`/projects/${project.id}`}>
+							<Link href={{ pathname: `/projects/[id]`, query: project as unknown as ParsedUrlQueryInput }} as={`/projects/${project.id}`} shallow>
 								<MenuItem onClick={closeMenu}>View</MenuItem>
 							</Link>
 						</Menu>
