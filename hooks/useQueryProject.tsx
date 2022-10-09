@@ -37,18 +37,20 @@ function sortByImportance<T extends { importance: number }>(arr: T[]): T[] {
 	return arr.sort((a, b) => a.importance - b.importance);
 }
 
-export function useQueryProject(user: User | null, defaultValue?: Project) {
+export function useQueryProject(user: User | null) {
 	const { query } = useRouter();
 	const queryClient = useQueryClient();
 
-	if (defaultValue && !defaultValue.columns) {
-		defaultValue.columns = [];
-	}
+	const parsedProject = query.project ? (JSON.parse(query.project as string) as Project) : undefined;
+
+	console.log({ query });
+
+	const projectId = typeof query.id === 'string' ? parseInt(query.id as string) : parsedProject?.id || -1;
 
 	const { isLoading, data, refetch } = useQuery(
-		['project'],
+		['project', projectId],
 		async () => {
-			const proj = await getProjectById(parseInt(query.id as string));
+			const proj = await getProjectById(projectId);
 			proj.columns = sortByImportance(proj.columns!);
 			for (const col of proj.columns!) {
 				col.tasks = sortByImportance(col.tasks!);
@@ -59,8 +61,9 @@ export function useQueryProject(user: User | null, defaultValue?: Project) {
 			refetchOnWindowFocus: false,
 			enabled: user !== null && Boolean(query.id),
 			retry: false,
-			initialData: defaultValue,
-			placeholderData: defaultValue,
+			initialData: parsedProject,
+			placeholderData: parsedProject,
+			staleTime: 30 * 1000,
 		}
 	);
 

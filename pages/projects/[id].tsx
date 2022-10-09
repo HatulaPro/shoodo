@@ -1,26 +1,15 @@
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { NextPage } from 'next';
-import { useRouter } from 'next/router';
 import ColumnsView from '../../components/ColumnsView/ColumnsView';
 import { ProjectKeyboardNavigationProvider } from '../../contexts/ProjectKeyboardNavigationContext';
 import { useQueryProject } from '../../hooks/useQueryProject';
 import { useUser } from '../../hooks/useUser';
-import { Project } from '../../utils/supabase/projects';
 import styles from './Projects.module.css';
-
-function queryToProject(queryProject: any) {
-	if (typeof queryProject.id === 'string') {
-		return { ...queryProject, id: parseInt(queryProject.id) } as unknown as Project;
-	}
-	return { ...queryProject } as unknown as Project;
-}
 
 const ProjectByIdPage: NextPage = () => {
 	const { user } = useUser({ authOnly: true });
-	const { query } = useRouter();
-	const { data: project, isLoading, manualUpdate, columnsMutation } = useQueryProject(user, query?.project ? queryToProject(query.project) : undefined);
-	console.log({ query });
+	const { data: project, isLoading, manualUpdate, columnsMutation } = useQueryProject(user);
 
 	return (
 		<ProjectKeyboardNavigationProvider project={project}>

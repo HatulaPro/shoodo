@@ -14,11 +14,10 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
 import Link from 'next/link';
-import { ParsedUrlQueryInput } from 'querystring';
 import { FC, useEffect, useRef, useState } from 'react';
-import { useMutation } from 'react-query';
+import { useMutation, useQueryClient } from 'react-query';
 import { cn } from '../../utils/general';
-import { deleteProject, Project } from '../../utils/supabase/projects';
+import { deleteProject, getProjectById, Project } from '../../utils/supabase/projects';
 import styles from './ProjectsView.module.css';
 
 type ProjectsViewProps = {
@@ -32,6 +31,7 @@ const ProjectsView: FC<ProjectsViewProps> = ({ projects, newProject, updateProje
 	const [openMenuIndex, setOpenMenuIndex] = useState<number>(-1);
 	const [anchor, setAnchor] = useState<HTMLButtonElement | null>(null);
 	const [showDeleteDialog, setShowDeleteDialog] = useState<boolean>(false);
+	const queryClient = useQueryClient();
 
 	const deleteProjectMutation = useMutation((index: number) => deleteProject(projects[index].id));
 
@@ -50,6 +50,13 @@ const ProjectsView: FC<ProjectsViewProps> = ({ projects, newProject, updateProje
 		return (e: React.MouseEvent<HTMLButtonElement>) => {
 			setAnchor(e.currentTarget);
 			setOpenMenuIndex(index);
+
+			getProjectById(projects[index].id).then((proj) => {
+				queryClient.setQueryData(['project', projects[index].id], proj);
+				const newProjectArray = [...projects];
+				newProjectArray[index] = proj;
+				updateProjects(newProjectArray);
+			});
 		};
 	}
 
@@ -104,7 +111,7 @@ const ProjectsView: FC<ProjectsViewProps> = ({ projects, newProject, updateProje
 						/>
 						<Menu open={index === openMenuIndex} onClose={closeMenu} anchorEl={anchor}>
 							<MenuItem onClick={openDeleteDialog}>Delete</MenuItem>
-							<Link href={{ pathname: `/projects/[id]`, query: project as unknown as ParsedUrlQueryInput }} as={`/projects/${project.id}`} shallow>
+							<Link href={{ pathname: `/projects/[id]`, query: { project: JSON.stringify(project) } }} as={`/projects/${project.id}`} shallow>
 								<MenuItem onClick={closeMenu}>View</MenuItem>
 							</Link>
 						</Menu>
