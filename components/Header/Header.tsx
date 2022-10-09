@@ -11,6 +11,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { FC, useEffect, useState } from 'react';
+import { useHeaderController } from '../../hooks/useHeaderController';
 import { useUser } from '../../hooks/useUser';
 import { cn } from '../../utils/general';
 import { logOut } from '../../utils/supabase/auth';
@@ -21,10 +22,13 @@ const Header: FC = () => {
 	const { user } = useUser();
 	const router = useRouter();
 	const theme = useTheme();
+	const isVisible = useHeaderController();
 	const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
 	const [isOpen, setOpen] = useState<boolean>(false);
 
 	const contentStyles = isSmallScreen ? { color: 'primary' } : { color: 'white' };
+
+	console.log(isVisible);
 
 	const contents = (
 		<>
@@ -65,7 +69,7 @@ const Header: FC = () => {
 	}, [isSmallScreen, router, isOpen, setOpen]);
 
 	return (
-		<AppBar position="sticky">
+		<AppBar position="static" className={cn(styles.header, !isVisible && styles.headerInvisible)}>
 			<Toolbar sx={{ p: 1 }}>
 				<Link href="/">
 					<ButtonBase className={styles.headerIconBase}>
