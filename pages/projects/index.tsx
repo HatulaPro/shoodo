@@ -6,6 +6,7 @@ import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import type { GetServerSideProps, NextPage } from 'next';
+import Head from 'next/head';
 import { useState } from 'react';
 import NewProjectDialog from '../../components/NewProjectDialog/NewProjectDialog';
 import ProjectsView from '../../components/ProjectsView/ProjectsView';
@@ -56,25 +57,31 @@ const ProjectsPage: NextPage<ProjectProps> = ({ projects }) => {
 	}
 
 	return (
-		<Container>
-			<Typography sx={{ my: 3 }} variant="h3" component="h1">
-				Projects
-			</Typography>
-			<Box display="flex" flexDirection="row" m={2}>
-				<Tooltip title="refresh">
-					<IconButton onClick={refetch} disabled={isLoadingProjects}>
-						<RefreshIcon />
-					</IconButton>
-				</Tooltip>
-				<Box display="flex" flexDirection="row" justifyContent="end" flex="1">
-					<Button size="small" color="secondary" variant="contained" onClick={createNewProject}>
-						NEW
-					</Button>
+		<>
+			<Head>
+				<title>Shoodo | My Projects</title>
+				<link rel="icon" href="/favicon.ico" />
+			</Head>
+			<Container>
+				<Typography sx={{ my: 3 }} variant="h3" component="h1">
+					Projects
+				</Typography>
+				<Box display="flex" flexDirection="row" m={2}>
+					<Tooltip title="refresh">
+						<IconButton onClick={refetch} disabled={isLoadingProjects}>
+							<RefreshIcon />
+						</IconButton>
+					</Tooltip>
+					<Box display="flex" flexDirection="row" justifyContent="end" flex="1">
+						<Button size="small" color="secondary" variant="contained" onClick={createNewProject}>
+							NEW
+						</Button>
+					</Box>
 				</Box>
-			</Box>
-			{userProjects && <ProjectsView projects={userProjects} newProject={newProjectIndex} updateProjects={manualUpdate} />}
-			{user && <NewProjectDialog userId={user.id} open={location === '/projects/new'} handleClose={closeNewProjectDialog} />}
-		</Container>
+				{userProjects && <ProjectsView projects={userProjects} newProject={newProjectIndex} updateProjects={manualUpdate} />}
+				{user && <NewProjectDialog userId={user.id} open={location === '/projects/new'} handleClose={closeNewProjectDialog} />}
+			</Container>
+		</>
 	);
 };
 

@@ -1,6 +1,7 @@
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import type { NextPage } from 'next';
+import Head from 'next/head';
 import ColumnsView from '../../components/ColumnsView/ColumnsView';
 import { ProjectKeyboardNavigationProvider } from '../../contexts/ProjectKeyboardNavigationContext';
 import { useQueryProject } from '../../hooks/useQueryProject';
@@ -13,6 +14,10 @@ const ProjectByIdPage: NextPage = () => {
 
 	return (
 		<ProjectKeyboardNavigationProvider project={project}>
+			<Head>
+				<title>Shoodo | {project?.name}</title>
+				<link rel="icon" href="/favicon.ico" />
+			</Head>
 			<Box position="relative" sx={{ p: { md: 4, sm: 1, xs: 0.5 } }}>
 				<Typography variant="h3" component="h2" sx={{ pb: 4 }}>
 					{project?.name}

@@ -1,16 +1,16 @@
+import InfoIcon from '@mui/icons-material/InfoOutlined';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Container from '@mui/material/Container';
+import Divider from '@mui/material/Divider';
+import LinearProgress from '@mui/material/LinearProgress';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
 import { NextPage } from 'next';
 import Head from 'next/head';
-import { signInWithEmail } from '../../utils/supabase/auth';
 import { useState } from 'react';
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
-import Box from '@mui/material/Box';
-import Container from '@mui/material/Container';
-import Typography from '@mui/material/Typography';
+import { signInWithEmail } from '../../utils/supabase/auth';
 import styles from './Auth.module.css';
-import LinearProgress from '@mui/material/LinearProgress';
-import Divider from '@mui/material/Divider';
-import InfoIcon from '@mui/icons-material/InfoOutlined';
 
 const AuthPage: NextPage = () => {
 	const [email, setEmail] = useState<string>('');
@@ -46,8 +46,7 @@ const AuthPage: NextPage = () => {
 	return (
 		<div>
 			<Head>
-				<title>Shoodo</title>
-				<meta name="description" content="An app to help you manage your to do lists" />
+				<title>Shoodo | Log In</title>
 				<link rel="icon" href="/favicon.ico" />
 			</Head>
 			<Container className={styles.authPage}>
