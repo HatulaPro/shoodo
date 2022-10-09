@@ -18,8 +18,6 @@ const Home: NextPage = () => {
 		<div>
 			<Head>
 				<title>Shoodo</title>
-				<meta name="description" content="An app to help you manage your to do lists" />
-				<link rel="icon" href="/favicon.ico" />
 			</Head>
 			<div className={styles.homePage}>
 				<Grid container className={styles.main} sx={{ flexDirection: { xs: 'column', md: 'row' } }}>

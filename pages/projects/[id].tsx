@@ -15,8 +15,7 @@ const ProjectByIdPage: NextPage = () => {
 	return (
 		<ProjectKeyboardNavigationProvider project={project}>
 			<Head>
-				<title>Shoodo | {project?.name}</title>
-				<link rel="icon" href="/favicon.ico" />
+				<title>Shoodo | Project View</title>
 			</Head>
 			<Box position="relative" sx={{ p: { md: 4, sm: 1, xs: 0.5 } }}>
 				<Typography variant="h3" component="h2" sx={{ pb: 4 }}>

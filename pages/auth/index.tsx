@@ -47,7 +47,6 @@ const AuthPage: NextPage = () => {
 		<div>
 			<Head>
 				<title>Shoodo | Log In</title>
-				<link rel="icon" href="/favicon.ico" />
 			</Head>
 			<Container className={styles.authPage}>
 				<Box className={styles.authFormWrapper} sx={{ backgroundColor: 'background.default', px: 6, py: 4 }}>

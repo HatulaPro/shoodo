@@ -60,7 +60,6 @@ const ProjectsPage: NextPage<ProjectProps> = ({ projects }) => {
 		<>
 			<Head>
 				<title>Shoodo | My Projects</title>
-				<link rel="icon" href="/favicon.ico" />
 			</Head>
 			<Container>
 				<Typography sx={{ my: 3 }} variant="h3" component="h1">
