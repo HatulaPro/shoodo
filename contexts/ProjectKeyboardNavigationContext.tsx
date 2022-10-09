@@ -17,7 +17,7 @@ export const ProjectKeyboardNavigationContext = createContext<RegisterToNav>((_a
 export const ProjectKeyboardNavigationProvider: FC<{ project: Project | undefined; children: React.ReactNode }> = ({ project, children }) => {
 	const [position, setPosition] = useState<Pos>({ x: -1, y: -1 });
 	const [isUsingKeys, setUsingKeys] = useState<boolean>(false);
-	const ref = useRef<any>(null);
+	const ref = useRef<HTMLElement | null>(null);
 
 	useEffect(() => {
 		const listener = (e: KeyboardEvent) => {
@@ -72,9 +72,14 @@ export const ProjectKeyboardNavigationProvider: FC<{ project: Project | undefine
 					});
 				}
 			}
-			if (e.key === 'Enter') return;
-			if (e.key === 'Escape') return;
-			if (e.key === ' ') return;
+			if (e.key === 'Escape') setUsingKeys(false);
+			if (e.key === ' ' || e.key === 'Enter') {
+				if (ref.current !== null) {
+					const innerElement = ref.current?.querySelector('.focusable');
+					if (!innerElement) return;
+					(innerElement as HTMLElement).focus();
+				}
+			}
 		};
 		window.addEventListener('keyup', listener);
 

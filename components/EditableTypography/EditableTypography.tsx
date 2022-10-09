@@ -44,7 +44,7 @@ const EditableTypography: FC<EditableTypographyProps> = ({ onUpdate, text, size,
 	};
 
 	return inputContent === null ? (
-		<Typography tabIndex={0} variant={size === 'large' ? 'h6' : 'body1'} align="left" component={'div'} style={{ cursor: 'text', flex: '1', ...style }} onClick={onClick} onFocus={onFocus}>
+		<Typography className="focusable" tabIndex={0} variant={size === 'large' ? 'h6' : 'body1'} align="left" component={'div'} style={{ cursor: 'text', flex: '1', ...style }} onClick={onClick} onFocus={onFocus}>
 			{text}
 		</Typography>
 	) : (
