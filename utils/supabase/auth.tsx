@@ -1,5 +1,5 @@
+import type { ApiError, User } from '@supabase/supabase-js';
 import { supabase } from './client';
-import { User, ApiError } from '@supabase/supabase-js';
 
 export function getUser(): User | null {
 	return supabase.auth.user();

@@ -1,6 +1,6 @@
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import { NextPage } from 'next';
+import type { NextPage } from 'next';
 import ColumnsView from '../../components/ColumnsView/ColumnsView';
 import { ProjectKeyboardNavigationProvider } from '../../contexts/ProjectKeyboardNavigationContext';
 import { useQueryProject } from '../../hooks/useQueryProject';

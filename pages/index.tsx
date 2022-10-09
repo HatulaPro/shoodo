@@ -1,8 +1,8 @@
 import Button from '@mui/material/Button';
+import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import List from '@mui/material/List';
 import Typography from '@mui/material/Typography';
-import { Container } from '@mui/system';
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';

@@ -1,21 +1,21 @@
-import { FC, useState, useEffect } from 'react';
+import MenuIcon from '@mui/icons-material/Menu';
+import { IconButton, useTheme } from '@mui/material';
 import AppBar from '@mui/material/AppBar';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import ButtonBase from '@mui/material/ButtonBase';
+import ButtonGroup from '@mui/material/ButtonGroup';
 import Container from '@mui/material/Container';
 import Toolbar from '@mui/material/Toolbar';
-import Button from '@mui/material/Button';
-import ButtonGroup from '@mui/material/ButtonGroup';
-import ButtonBase from '@mui/material/ButtonBase';
-import Box from '@mui/material/Box';
-import LogoSvg from '../LogoSvg/LogoSvg';
-import Link from 'next/link';
-import styles from './Header.module.css';
-import MenuIcon from '@mui/icons-material/Menu';
-import { useUser } from '../../hooks/useUser';
-import { logOut } from '../../utils/supabase/auth';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import { IconButton, useTheme } from '@mui/material';
-import { cn } from '../../utils/general';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { FC, useEffect, useState } from 'react';
+import { useUser } from '../../hooks/useUser';
+import { cn } from '../../utils/general';
+import { logOut } from '../../utils/supabase/auth';
+import LogoSvg from '../LogoSvg/LogoSvg';
+import styles from './Header.module.css';
 
 const Header: FC = () => {
 	const { user } = useUser();
@@ -63,12 +63,6 @@ const Header: FC = () => {
 			router.events.off('routeChangeStart', onRouteChangeHandler);
 		};
 	}, [isSmallScreen, router, isOpen, setOpen]);
-
-	// useEffect(() => {
-	// 	if (isOpen) {
-	// 		setOpen(false);
-	// 	}
-	// }, [router.asPath]);
 
 	return (
 		<AppBar position="sticky">

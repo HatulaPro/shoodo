@@ -1,9 +1,9 @@
+import type { AuthChangeEvent, Session, User } from '@supabase/supabase-js';
+import { useRouter } from 'next/router';
+import { useEffect } from 'react';
+import { useQuery } from 'react-query';
 import { getUser } from '../utils/supabase/auth';
 import { supabase } from '../utils/supabase/client';
-import { useEffect } from 'react';
-import { AuthChangeEvent, Session, User } from '@supabase/supabase-js';
-import { useQuery } from 'react-query';
-import { useRouter } from 'next/router';
 
 type UseUserOptions = { authOnly?: boolean };
 let prevEvent: AuthChangeEvent | null = null;

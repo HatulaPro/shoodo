@@ -1,5 +1,5 @@
 import React, { createContext, FC, useEffect, useRef, useState } from 'react';
-import { Project } from '../utils/supabase/projects';
+import type { Project } from '../utils/supabase/projects';
 
 type Pos = {
 	x: number;

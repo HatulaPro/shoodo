@@ -3,10 +3,10 @@ import Box from '@mui/material/Box';
 import Checkbox from '@mui/material/Checkbox';
 import IconButton from '@mui/material/IconButton';
 import { FC, useContext } from 'react';
-import { UseMutateFunction } from 'react-query';
+import type { UseMutateFunction } from 'react-query';
 import { ProjectKeyboardNavigationContext } from '../../contexts/ProjectKeyboardNavigationContext';
-import { ColumnMutateArgs } from '../../hooks/useQueryProject';
-import { Column, Task } from '../../utils/supabase/projects';
+import type { ColumnMutateArgs } from '../../hooks/useQueryProject';
+import type { Column, Task } from '../../utils/supabase/projects';
 import EditableTypography from '../EditableTypography/EditableTypography';
 import styles from './MovableTask.module.css';
 

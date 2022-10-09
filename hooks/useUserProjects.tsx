@@ -1,7 +1,8 @@
+import type { User } from '@supabase/supabase-js';
 import { useState } from 'react';
-import { User } from '@supabase/supabase-js';
 import { useQuery, useQueryClient } from 'react-query';
-import { getUserProjects, Project } from '../utils/supabase/projects';
+import type { Project } from '../utils/supabase/projects';
+import { getUserProjects } from '../utils/supabase/projects';
 
 export function useUserProjects(user: User | null, projects: Project[]) {
 	const queryClient = useQueryClient();

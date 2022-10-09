@@ -1,20 +1,20 @@
-import { NextPage, GetServerSideProps } from 'next';
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
-import { useUser } from '../../hooks/useUser';
-import { supabase } from '../../utils/supabase/client';
-import { getUserProjects, Project } from '../../utils/supabase/projects';
-import Container from '@mui/material/Container';
-import ProjectsView from '../../components/ProjectsView/ProjectsView';
-import Button from '@mui/material/Button';
-import IconButton from '@mui/material/IconButton';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import Container from '@mui/material/Container';
+import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
+import Typography from '@mui/material/Typography';
+import type { GetServerSideProps, NextPage } from 'next';
+import { useState } from 'react';
 import NewProjectDialog from '../../components/NewProjectDialog/NewProjectDialog';
-import { useUserProjects } from '../../hooks/useUserProjects';
+import ProjectsView from '../../components/ProjectsView/ProjectsView';
 import { useShallowRoutes } from '../../hooks/useShallowRoutes';
+import { useUser } from '../../hooks/useUser';
+import { useUserProjects } from '../../hooks/useUserProjects';
+import { supabase } from '../../utils/supabase/client';
+import type { Project } from '../../utils/supabase/projects';
+import { getUserProjects } from '../../utils/supabase/projects';
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	const { user, token } = await supabase.auth.api.getUserByCookie(req);

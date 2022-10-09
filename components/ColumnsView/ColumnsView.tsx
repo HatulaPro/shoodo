@@ -7,7 +7,7 @@ import { UseMutateFunction } from 'react-query';
 import { ProjectKeyboardNavigationContext } from '../../contexts/ProjectKeyboardNavigationContext';
 import { ColumnMutateArgs } from '../../hooks/useQueryProject';
 import { cn } from '../../utils/general';
-import { Column } from '../../utils/supabase/projects';
+import type { Column } from '../../utils/supabase/projects';
 import MovableColumn from '../MovableColumn/MovableColumn';
 import styles from './ColumnsView.module.css';
 

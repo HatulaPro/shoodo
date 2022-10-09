@@ -17,7 +17,8 @@ import Link from 'next/link';
 import { FC, useEffect, useRef, useState } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
 import { cn } from '../../utils/general';
-import { deleteProject, getProjectById, Project } from '../../utils/supabase/projects';
+import type { Project } from '../../utils/supabase/projects';
+import { deleteProject, getProjectById } from '../../utils/supabase/projects';
 import styles from './ProjectsView.module.css';
 
 type ProjectsViewProps = {

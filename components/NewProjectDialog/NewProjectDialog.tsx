@@ -1,18 +1,19 @@
-import { FC } from 'react';
+import Alert from '@mui/material/Alert';
+import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
-import DialogActions from '@mui/material/DialogActions';
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
 import LinearProgress from '@mui/material/LinearProgress';
-import Alert from '@mui/material/Alert';
-import LogoSvg from '../LogoSvg/LogoSvg';
 import { useTheme } from '@mui/material/styles';
+import TextField from '@mui/material/TextField';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import { useForm, Controller } from 'react-hook-form';
-import { Project, createProject } from '../../utils/supabase/projects';
+import { FC } from 'react';
+import { Controller, useForm } from 'react-hook-form';
 import { useMutation } from 'react-query';
+import type { Project } from '../../utils/supabase/projects';
+import { createProject } from '../../utils/supabase/projects';
+import LogoSvg from '../LogoSvg/LogoSvg';
 
 type NewProjectDialogProps = {
 	userId: string;
