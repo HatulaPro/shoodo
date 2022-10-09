@@ -1,3 +1,4 @@
+import CloseIcon from '@mui/icons-material/Close';
 import MenuIcon from '@mui/icons-material/Menu';
 import { IconButton, useTheme } from '@mui/material';
 import AppBar from '@mui/material/AppBar';
@@ -76,7 +77,8 @@ const Header: FC = () => {
 					<>
 						<Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'end' }}>
 							<IconButton onClick={() => setOpen(!isOpen)}>
-								<MenuIcon htmlColor="white" />
+								<MenuIcon style={{ transition: 'all 0.2s', opacity: isOpen ? 0 : 1, width: isOpen ? 0 : '' }} htmlColor="white" />
+								<CloseIcon style={{ transition: 'all 0.2s', opacity: isOpen ? 1 : 0, width: isOpen ? '' : 0 }} htmlColor="white" />
 							</IconButton>
 						</Box>
 					</>
