@@ -5,7 +5,7 @@ import Container from '@mui/material/Container';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
-import type { GetServerSideProps, NextPage } from 'next';
+import type { NextPage } from 'next';
 import Head from 'next/head';
 import { useState } from 'react';
 import NewProjectDialog from '../../components/NewProjectDialog/NewProjectDialog';
@@ -13,35 +13,18 @@ import ProjectsView from '../../components/ProjectsView/ProjectsView';
 import { useShallowRoutes } from '../../hooks/useShallowRoutes';
 import { useUser } from '../../hooks/useUser';
 import { useUserProjects } from '../../hooks/useUserProjects';
-import { supabase } from '../../utils/supabase/client';
 import type { Project } from '../../utils/supabase/projects';
-import { getUserProjects } from '../../utils/supabase/projects';
-
-export const getServerSideProps: GetServerSideProps = async ({ req }) => {
-	const { user, token } = await supabase.auth.api.getUserByCookie(req);
-
-	if (user === null) {
-		return { props: {}, redirect: { destination: '/' } };
-	}
-	supabase.auth.setAuth(token!);
-
-	const projects = await getUserProjects(user.id);
-
-	return {
-		props: { projects },
-	};
-};
 
 type ProjectProps = {
 	projects: Project[];
 };
 
-const ProjectsPage: NextPage<ProjectProps> = ({ projects }) => {
+const ProjectsPage: NextPage<ProjectProps> = () => {
 	const { user } = useUser({ authOnly: true });
 	const [newProjectIndex, setNewProjectIndex] = useState<number>(-1);
 	const { location, setLocation } = useShallowRoutes<'/projects/new' | '/projects'>('/projects');
 
-	const { isLoading: isLoadingProjects, data: userProjects, refetch, manualUpdate } = useUserProjects(user, projects);
+	const { isLoading: isLoadingProjects, data: userProjects, refetch, manualUpdate } = useUserProjects(user);
 
 	function createNewProject() {
 		setLocation('/projects/new');
@@ -67,7 +50,7 @@ const ProjectsPage: NextPage<ProjectProps> = ({ projects }) => {
 				</Typography>
 				<Box display="flex" flexDirection="row" m={2}>
 					<Tooltip title="refresh">
-						<IconButton onClick={refetch} disabled={isLoadingProjects}>
+						<IconButton onClick={() => refetch()} disabled={isLoadingProjects}>
 							<RefreshIcon />
 						</IconButton>
 					</Tooltip>

@@ -1,37 +1,28 @@
 import type { User } from '@supabase/supabase-js';
-import { useState } from 'react';
 import { useQuery, useQueryClient } from 'react-query';
 import type { Project } from '../utils/supabase/projects';
 import { getUserProjects } from '../utils/supabase/projects';
 
-export function useUserProjects(user: User | null, projects: Project[]) {
+export function useUserProjects(user: User | null) {
 	const queryClient = useQueryClient();
-	const [mutated, setMutated] = useState<boolean>(false);
 
 	const { isLoading, data, refetch } = useQuery(
-		['projects'],
+		['projects', user?.id],
 		async () => {
 			// No new projects, so we can use the prefetched data;
-			if (!mutated) return projects;
 			return await getUserProjects(user!.id);
 		},
 		{
 			refetchOnWindowFocus: false,
-			initialData: projects,
-			placeholderData: projects,
+			placeholderData: [],
 			enabled: user !== null,
+			staleTime: 60 * 1000,
 		}
 	);
 
 	function manualUpdate(newProjects: Project[]) {
-		setMutated(true);
-		queryClient.setQueryData(['projects'], () => newProjects);
+		queryClient.setQueryData(['projects', user?.id], () => newProjects);
 	}
 
-	function refetchProjects() {
-		setMutated(true);
-		refetch();
-	}
-
-	return { isLoading, data, refetch: refetchProjects, manualUpdate };
+	return { isLoading, data, refetch, manualUpdate };
 }
