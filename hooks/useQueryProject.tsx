@@ -75,7 +75,7 @@ export function useQueryProject(user: User | null) {
 	);
 
 	function manualUpdate(newProject: Project) {
-		queryClient.setQueryData(['project'], () => newProject);
+		queryClient.setQueryData(['project', newProject.id], () => newProject);
 	}
 
 	const columnsMutation = useMutation(async (args: ColumnMutateArgs) => {

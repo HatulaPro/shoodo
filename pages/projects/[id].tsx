@@ -3,10 +3,12 @@ import Typography from '@mui/material/Typography';
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import ColumnsView from '../../components/ColumnsView/ColumnsView';
+import EditableTypography from '../../components/EditableTypography/EditableTypography';
 import { ProjectKeyboardNavigationProvider } from '../../contexts/ProjectKeyboardNavigationContext';
 import { useQueryProject } from '../../hooks/useQueryProject';
 import { useUser } from '../../hooks/useUser';
 import styles from '../../styles/Projects.module.css';
+import { updateProjectById } from '../../utils/supabase/projects';
 
 const ProjectByIdPage: NextPage = () => {
 	const { user } = useUser({ authOnly: true });
@@ -18,9 +20,24 @@ const ProjectByIdPage: NextPage = () => {
 				<title>Shoodo | Project View</title>
 			</Head>
 			<Box position="relative" sx={{ p: { md: 4, sm: 1, xs: 0.5 } }}>
-				<Typography variant="h3" component="h2" sx={{ pb: 4 }}>
-					{project?.name}
-				</Typography>
+				{project && (
+					<EditableTypography
+						onUpdate={(text) => {
+							if (text.length > 0) {
+								updateProjectById(project.id, { name: text });
+								manualUpdate({ ...project, name: text });
+							}
+						}}
+						size="large"
+						text={project.name}
+						style={{
+							fontSize: '3.5rem',
+							padding: '0.5rem !important',
+							lineHeight: '4rem',
+							margin: '0.5rem !important',
+						}}
+					/>
+				)}
 				<Box display="flex" sx={{ flexDirection: { md: 'row', xs: 'column' } }}>
 					{project?.columns && (
 						<ColumnsView
