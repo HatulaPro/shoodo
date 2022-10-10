@@ -1,6 +1,9 @@
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import DeleteIcon from '@mui/icons-material/Delete';
 import DragHandleIcon from '@mui/icons-material/DragHandle';
 import PaletteIcon from '@mui/icons-material/Palette';
+import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import type { PanInfo } from 'framer-motion';
 import { Reorder, useDragControls } from 'framer-motion';
@@ -17,11 +20,12 @@ import styles from './MovableColumn.module.css';
 
 type MovableColumnProps = {
 	column: Column;
+	columns: Column[];
 	index: number;
 	mutate: UseMutateFunction<void, unknown, ColumnMutateArgs, unknown>;
 };
 
-const MovableColumn: FC<MovableColumnProps> = ({ column, mutate, index }) => {
+const MovableColumn: FC<MovableColumnProps> = ({ column, mutate, columns, index }) => {
 	const parentRef = useRef(null);
 	const [openTools, setOpenTools] = useState<boolean>(false);
 	const [openColorPicker, setOpenColorPicker] = useState<boolean>(false);
@@ -87,12 +91,53 @@ const MovableColumn: FC<MovableColumnProps> = ({ column, mutate, index }) => {
 		};
 	}
 
+	function moveLeft() {
+		if (index === 0) return;
+
+		const prev = columns[index - 1];
+		if (index === 1) {
+			columns[0] = column;
+			columns[1] = prev;
+			return mutate({ column_id: column.id, update: { importance: prev.importance - Math.pow(2, 33) }, type: 'UPDATE' });
+		}
+
+		const twoPrev = columns[index - 2];
+		columns[index - 1] = column;
+		columns[index] = prev;
+		return mutate({ column_id: column.id, update: { importance: (prev.importance + twoPrev.importance) / 2 }, type: 'UPDATE' });
+	}
+
+	function moveRight() {
+		if (index === columns.length - 1) return;
+
+		const next = columns[index + 1];
+		if (index === columns.length - 2) {
+			columns[index + 1] = column;
+			columns[index] = next;
+			return mutate({ column_id: column.id, update: { importance: next.importance + Math.pow(2, 33) }, type: 'UPDATE' });
+		}
+
+		const twoNext = columns[index + 2];
+		columns[index + 1] = column;
+		columns[index] = next;
+		return mutate({ column_id: column.id, update: { importance: (next.importance + twoNext.importance) / 2 }, type: 'UPDATE' });
+	}
+
 	return (
 		<Reorder.Item ref={columnRef} dragControls={controls} dragListener={false} style={{ padding: 0 }} dragTransition={{ bounceDamping: 20, bounceStiffness: 200 }} value={column} as="div" whileDrag={{ filter: 'brightness(0.97)', boxShadow: '0px 0px 12px 14px #14141466' }}>
 			<div className={cn(styles.movableColumn, 'moveableColumn')} onFocusCapture={onFocus} onBlur={onBlur} tabIndex={-1}>
-				<IconButton onPointerDown={(e) => controls.start(e)}>
+				<IconButton className="mouseOnly" onPointerDown={(e) => controls.start(e)}>
 					<DragHandleIcon />
 				</IconButton>
+
+				<Box display="flex" className="touchOnly" justifyContent="space-around">
+					<IconButton onClick={moveLeft}>
+						<ArrowBackIcon fontSize="large" />
+					</IconButton>
+					<IconButton onClick={moveRight}>
+						<ArrowForwardIcon fontSize="large" />
+					</IconButton>
+				</Box>
 
 				<div className={cn(styles.movableColumnTitle)} style={{ borderBottom: `4px solid ${column.style}` }} {...register(column.id, -1)}>
 					<EditableTypography onUpdate={onColumnRename} text={column.name} size="large" />

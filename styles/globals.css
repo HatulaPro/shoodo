@@ -40,6 +40,18 @@ a {
 	background-color: rgb(208, 208, 250) !important;
 	outline: none !important;
 }
+
+@media (hover: none) {
+	.mouseOnly {
+		display: none;
+	}
+}
+@media (hover: hover) {
+	.touchOnly {
+		display: none;
+	}
+}
+
 /* 
 @media (prefers-color-scheme: dark) {
 	html {
