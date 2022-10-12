@@ -8,7 +8,7 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { NextPage } from 'next';
 import Head from 'next/head';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useMutation } from 'react-query';
 import styles from '../../styles/Auth.module.css';
@@ -20,15 +20,21 @@ interface LoginForm {
 
 const AuthPage: NextPage = () => {
 	const [showInfo, setShowInfo] = useState<boolean>(false);
-	const { control, handleSubmit } = useForm<LoginForm>();
+	const { control, handleSubmit, watch } = useForm<LoginForm>();
+
+	const { isLoading, isSuccess, mutateAsync, reset } = useMutation(async (data: LoginForm) => {
+		return await signInWithEmail(data.email);
+	});
+	useEffect(() => {
+		const sub = watch(() => {
+			if (isSuccess) reset();
+		});
+		return () => sub.unsubscribe();
+	}, [reset, watch, isSuccess]);
 
 	function changeShowInfo() {
 		setShowInfo((prev) => !prev);
 	}
-
-	const { isLoading, isSuccess, mutateAsync } = useMutation(async (data: LoginForm) => {
-		signInWithEmail(data.email);
-	});
 
 	function onSubmit(data: LoginForm) {
 		mutateAsync(data);
