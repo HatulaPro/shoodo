@@ -9,38 +9,29 @@ import Typography from '@mui/material/Typography';
 import { NextPage } from 'next';
 import Head from 'next/head';
 import { useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import { useMutation } from 'react-query';
 import styles from '../../styles/Auth.module.css';
 import { signInWithEmail } from '../../utils/supabase/auth';
 
+interface LoginForm {
+	email: string;
+}
+
 const AuthPage: NextPage = () => {
-	const [email, setEmail] = useState<string>('');
-	const [isLoading, setLoading] = useState<boolean>(false);
-	const [error, setError] = useState<string | null>(null);
-	const [sent, setSent] = useState<boolean>(false);
 	const [showInfo, setShowInfo] = useState<boolean>(false);
+	const { control, handleSubmit } = useForm<LoginForm>();
 
 	function changeShowInfo() {
 		setShowInfo((prev) => !prev);
 	}
 
-	function sendLogInEmail(e: React.FormEvent<HTMLFormElement>) {
-		e.preventDefault();
-		setLoading(true);
-		signInWithEmail(email).then(({ error: err }) => {
-			if (err?.message) {
-				setError(err.message);
-			} else {
-				setSent(true);
-				setError(null);
-			}
-			setLoading(false);
-		});
-	}
+	const { isLoading, isSuccess, mutateAsync } = useMutation(async (data: LoginForm) => {
+		signInWithEmail(data.email);
+	});
 
-	function onEmailChange(e: React.ChangeEvent<HTMLInputElement>) {
-		setEmail(e.target.value);
-		setError(null);
-		setSent(false);
+	function onSubmit(data: LoginForm) {
+		mutateAsync(data);
 	}
 
 	return (
@@ -53,16 +44,29 @@ const AuthPage: NextPage = () => {
 					<Typography variant="h3" component="h1" color="primary.dark">
 						Log In
 					</Typography>
-					<Box component="form" onSubmit={sendLogInEmail} sx={{ mt: 6 }}>
-						<TextField error={Boolean(error)} helperText={error} disabled={isLoading} fullWidth variant="outlined" color="primary" type="email" value={email} placeholder="example@example.com" label="email" onChange={onEmailChange} />
+					<Box component="form" onSubmit={handleSubmit(onSubmit)} sx={{ mt: 6 }}>
+						<Controller
+							name="email"
+							control={control}
+							rules={{
+								required: { message: 'this field is required', value: true },
+								pattern: {
+									message: 'Must be a valid email',
+									value: /\S+@\S+\.\S+/,
+								},
+							}}
+							render={({ field, fieldState }) => {
+								return <TextField {...field} error={Boolean(fieldState.error)} helperText={fieldState.error?.message} disabled={isLoading} fullWidth variant="outlined" color="primary" type="text" placeholder="example@example.com" label="email" />;
+							}}
+						/>
 						<br />
 						<br />
-						{sent ? (
+						{isSuccess ? (
 							'A magic link has been sent to your email.'
 						) : isLoading ? (
 							<LinearProgress color="secondary" />
 						) : (
-							<Button disabled={!Boolean(email)} type="submit" variant="contained">
+							<Button type="submit" variant="contained">
 								Submit
 							</Button>
 						)}
