@@ -15,9 +15,12 @@ interface UserOrError {
 }
 
 export async function signInWithEmail(email: string): Promise<UserOrError> {
-	const { user, error } = await supabase.auth.signIn({
-		email: email,
-	});
+	const { user, error } = await supabase.auth.signIn(
+		{
+			email: email,
+		},
+		{ redirectTo: `${document.location.origin}/auth/loading` }
+	);
 
 	return { user, error };
 }
