@@ -22,22 +22,25 @@ const AuthPage: NextPage = () => {
 	const [showInfo, setShowInfo] = useState<boolean>(false);
 	const { control, handleSubmit, watch } = useForm<LoginForm>();
 
-	const { isLoading, isSuccess, mutateAsync, reset } = useMutation(async (data: LoginForm) => {
-		return await signInWithEmail(data.email);
+	const { isLoading, isSuccess, isError, mutate, reset } = useMutation((data: LoginForm) => {
+		return signInWithEmail(data.email).then(({ user, error }) => {
+			if (error) throw new Error(error.message);
+			return user;
+		});
 	});
 	useEffect(() => {
 		const sub = watch(() => {
-			if (isSuccess) reset();
+			if (isSuccess || isError) reset();
 		});
 		return () => sub.unsubscribe();
-	}, [reset, watch, isSuccess]);
+	}, [reset, watch, isSuccess, isError]);
 
 	function changeShowInfo() {
 		setShowInfo((prev) => !prev);
 	}
 
 	function onSubmit(data: LoginForm) {
-		mutateAsync(data);
+		mutate(data);
 	}
 
 	return (
@@ -67,7 +70,9 @@ const AuthPage: NextPage = () => {
 						/>
 						<br />
 						<br />
-						{isSuccess ? (
+						{isError ? (
+							'Something went wrong, please try again in a minute'
+						) : isSuccess ? (
 							'A magic link has been sent to your email.'
 						) : isLoading ? (
 							<LinearProgress color="secondary" />
