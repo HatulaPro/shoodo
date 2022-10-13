@@ -13,7 +13,7 @@ import { ProjectKeyboardNavigationContext } from '../../contexts/ProjectKeyboard
 import type { ColumnMutateArgs } from '../../hooks/useQueryProject';
 import { cn } from '../../utils/general';
 import type { Column, Task } from '../../utils/supabase/projects';
-import ColorPickerDialog from '../ColorPickerDialog/ColorPickerDialog';
+import ColorPickerDialog from '../Dialogs/ColorPickerDialog/ColorPickerDialog';
 import EditableTypography from '../EditableTypography/EditableTypography';
 import MovableTask from '../MovableTask/MoveableTask';
 import styles from './MovableColumn.module.css';

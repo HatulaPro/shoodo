@@ -8,7 +8,7 @@ import Typography from '@mui/material/Typography';
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import { useState } from 'react';
-import NewProjectDialog from '../../components/NewProjectDialog/NewProjectDialog';
+import NewProjectDialog from '../../components/Dialogs/NewProjectDialog/NewProjectDialog';
 import ProjectsView from '../../components/ProjectsView/ProjectsView';
 import { useShallowRoutes } from '../../hooks/useShallowRoutes';
 import { useUser } from '../../hooks/useUser';

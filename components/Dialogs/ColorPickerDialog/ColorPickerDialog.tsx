@@ -5,7 +5,7 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import { FC, useState } from 'react';
-import { cn } from '../../utils/general';
+import { cn } from '../../../utils/general';
 import styles from './ColorPickerDialog.module.css';
 
 type ColorPickerDialogProps = {
