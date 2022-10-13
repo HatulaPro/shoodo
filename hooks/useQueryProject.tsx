@@ -49,8 +49,9 @@ export function useQueryProject(user: User | null) {
 	const queryClient = useQueryClient();
 
 	const parsedProject = query.project ? (JSON.parse(query.project as string) as Project) : undefined;
-
-	console.log({ query });
+	if (parsedProject && parsedProject.columns) {
+		parsedProject.columns = sortByImportance(parsedProject.columns);
+	}
 
 	const projectId = typeof query.id === 'string' ? parseInt(query.id as string) : parsedProject?.id || -1;
 
