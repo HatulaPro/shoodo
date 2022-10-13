@@ -31,10 +31,9 @@ const ProjectByIdPage: NextPage = () => {
 						size="large"
 						text={project.name}
 						style={{
-							fontSize: '3.5rem',
-							padding: '0.5rem !important',
+							fontSize: '1.6rem',
+							padding: '0.5rem',
 							lineHeight: '4rem',
-							margin: '0.5rem !important',
 						}}
 					/>
 				)}
