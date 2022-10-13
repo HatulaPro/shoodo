@@ -19,7 +19,7 @@ import LogoSvg from '../LogoSvg/LogoSvg';
 import styles from './Header.module.css';
 
 const Header: FC = () => {
-	const { user } = useUser();
+	const { isLoading, user } = useUser();
 	const router = useRouter();
 	const theme = useTheme();
 	const isVisible = useHeaderController();
@@ -27,8 +27,6 @@ const Header: FC = () => {
 	const [isOpen, setOpen] = useState<boolean>(false);
 
 	const contentStyles = isSmallScreen ? { color: 'primary' } : { color: 'white' };
-
-	console.log(isVisible);
 
 	const contents = (
 		<>
@@ -69,7 +67,7 @@ const Header: FC = () => {
 	}, [isSmallScreen, router, isOpen, setOpen]);
 
 	return (
-		<AppBar position="static" className={cn(styles.header, !isVisible && styles.headerInvisible)}>
+		<AppBar position="static" className={cn(styles.header, (!isVisible || isLoading) && styles.headerInvisible)}>
 			<Toolbar sx={{ p: 1 }}>
 				<Link href="/">
 					<ButtonBase className={styles.headerIconBase}>

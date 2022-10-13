@@ -15,8 +15,6 @@ const LoadingAuthPage: NextPage = () => {
 		if (!user.isLoading) {
 			if (user.user) {
 				router.push('/projects');
-			} else {
-				router.push('/auth');
 			}
 		}
 	}, [user, router]);
