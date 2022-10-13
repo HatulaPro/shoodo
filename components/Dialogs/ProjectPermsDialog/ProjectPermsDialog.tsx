@@ -13,11 +13,9 @@ type ProjectPermsDialogProps = {
 };
 
 const ProjectPermsDialog: FC<ProjectPermsDialogProps> = ({ project, open, handleClose }) => {
-	if (!project) return null;
-
 	return (
 		<Dialog open={open} onClose={handleClose}>
-			<DialogTitle>{project.name} | Permissions</DialogTitle>
+			<DialogTitle>Edit Permissions</DialogTitle>
 			<DialogContent></DialogContent>
 			<DialogActions>
 				<Button variant="contained">SAVE</Button>

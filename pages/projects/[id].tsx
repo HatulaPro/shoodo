@@ -39,7 +39,7 @@ const ProjectByIdPage: NextPage = () => {
 					/>
 				)}
 				<Box display="flex" sx={{ flexDirection: { md: 'row', xs: 'column' } }}>
-					<ColumnsTools mutate={columnsMutation.mutate} />
+					<ColumnsTools project={project} mutate={columnsMutation.mutate} />
 					{project?.columns && (
 						<ColumnsView
 							columns={project?.columns}
