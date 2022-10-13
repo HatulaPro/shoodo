@@ -29,7 +29,7 @@ const ColumnsTools: FC<ColumnsToolsProps> = ({ mutate, project }) => {
 					<GroupIcon color="warning" fontSize="large" />
 				</IconButton>
 			</Box>
-			{project && <ProjectPermsDialog open={projectPermsOpen} handleClose={() => setProjectPermsOpen(false)} project={project} />}
+			{projectPermsOpen && project && <ProjectPermsDialog open={projectPermsOpen} handleClose={() => setProjectPermsOpen(false)} project={project} />}
 		</>
 	);
 };

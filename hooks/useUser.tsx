@@ -16,7 +16,6 @@ export function useUser(options?: UseUserOptions): { user: User | null; isLoadin
 			router.push('/');
 		}
 		const listener = supabase.auth.onAuthStateChange((event: AuthChangeEvent, session: Session | null) => {
-			console.log({ event, prevEvent });
 			if (event !== prevEvent) {
 				fetch('/api/setCookie', {
 					method: 'POST',
