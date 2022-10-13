@@ -1,6 +1,11 @@
 import type { ApiError, User } from '@supabase/supabase-js';
 import { supabase } from './client';
 
+export type PublicUser = {
+	email: string;
+	id: string;
+};
+
 export function getUser(): User | null {
 	return supabase.auth.user();
 }
