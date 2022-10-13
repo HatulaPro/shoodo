@@ -14,6 +14,8 @@ export const ProjectKeyboardNavigationContext = createContext<RegisterToNav>((_a
 	return {};
 });
 
+const NUMBER_OF_ACTIONS = 2;
+
 export const ProjectKeyboardNavigationProvider: FC<{ project: Project | undefined; children: React.ReactNode }> = ({ project, children }) => {
 	const [position, setPosition] = useState<Pos>({ x: -1, y: -1 });
 	const [isUsingKeys, setUsingKeys] = useState<boolean>(false);
@@ -50,11 +52,15 @@ export const ProjectKeyboardNavigationProvider: FC<{ project: Project | undefine
 						return { x: prev.x, y: newY };
 					});
 				}
+				return setPosition((prev) => {
+					const newY = (prev.y + NUMBER_OF_ACTIONS - 1) % NUMBER_OF_ACTIONS;
+					return { x: prev.x, y: newY };
+				});
 			}
 			if (e.key === 'ArrowLeft') {
 				return setPosition((prev) => {
 					if (prev.x === 0) {
-						return { x: -1, y: -1 };
+						return { x: -1, y: 0 };
 					} else if (prev.x === -1) {
 						return { x: project.columns!.length - 1, y: -1 };
 					} else {
@@ -71,6 +77,10 @@ export const ProjectKeyboardNavigationProvider: FC<{ project: Project | undefine
 						return { x: prev.x, y: newY };
 					});
 				}
+				return setPosition((prev) => {
+					const newY = (prev.y + NUMBER_OF_ACTIONS + 1) % NUMBER_OF_ACTIONS;
+					return { x: prev.x, y: newY };
+				});
 			}
 			if (e.key === 'Escape') setUsingKeys(false);
 			if (e.key === ' ' || e.key === 'Enter') {
@@ -94,9 +104,9 @@ export const ProjectKeyboardNavigationProvider: FC<{ project: Project | undefine
 		if (!isUsingKeys) return {};
 		const registered = { tabIndex: -1, autoFocus: true, ref, 'data-highlightedbynav': true };
 
-		if (position.x === -1 && position.y === -1) {
+		if (position.x === -1) {
 			// console.log(column_id);
-			if (column_id === -1 && task_id === -1) return { tabIndex: 0, ref };
+			if (column_id === -1 && task_id === position.y) return { tabIndex: 0, ref };
 		}
 
 		const col = project?.columns![position.x]!;

@@ -1,4 +1,5 @@
 import AddIcon from '@mui/icons-material/Add';
+import GroupIcon from '@mui/icons-material/Group';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import { Reorder } from 'framer-motion';
@@ -42,8 +43,11 @@ const ColumnsView: FC<ColumnsViewProps> = ({ setColumns, columns, mutate }) => {
 	return (
 		<>
 			<Box display="flex" sx={{ flexDirection: { md: 'column', xs: 'row' } }} mr={2}>
-				<IconButton onClick={() => mutate({ type: 'CREATE' })} {...register(-1, -1)}>
+				<IconButton onClick={() => mutate({ type: 'CREATE' })} {...register(-1, 0)}>
 					<AddIcon color="primary" fontSize="large" />
+				</IconButton>
+				<IconButton {...register(-1, 1)}>
+					<GroupIcon color="warning" fontSize="large" />
 				</IconButton>
 			</Box>
 			<Reorder.Group axis="x" values={columns} onReorder={onColsReorder} className={cn(styles.columnsView, 'scrollbar')} as="div" layoutScroll>
