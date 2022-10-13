@@ -1,11 +1,6 @@
-import AddIcon from '@mui/icons-material/Add';
-import GroupIcon from '@mui/icons-material/Group';
-import Box from '@mui/material/Box';
-import IconButton from '@mui/material/IconButton';
 import { Reorder } from 'framer-motion';
-import { FC, useContext } from 'react';
+import { FC } from 'react';
 import { UseMutateFunction } from 'react-query';
-import { ProjectKeyboardNavigationContext } from '../../contexts/ProjectKeyboardNavigationContext';
 import { ColumnMutateArgs } from '../../hooks/useQueryProject';
 import { cn } from '../../utils/general';
 import type { Column } from '../../utils/supabase/projects';
@@ -19,8 +14,6 @@ type ColumnsViewProps = {
 };
 
 const ColumnsView: FC<ColumnsViewProps> = ({ setColumns, columns, mutate }) => {
-	const register = useContext(ProjectKeyboardNavigationContext);
-
 	function onColsReorder(newCols: Column[]) {
 		if (newCols.length === 0) return setColumns(newCols);
 
@@ -41,21 +34,11 @@ const ColumnsView: FC<ColumnsViewProps> = ({ setColumns, columns, mutate }) => {
 	}
 
 	return (
-		<>
-			<Box display="flex" sx={{ flexDirection: { md: 'column', xs: 'row' } }} mr={2}>
-				<IconButton onClick={() => mutate({ type: 'CREATE' })} {...register(-1, 0)}>
-					<AddIcon color="primary" fontSize="large" />
-				</IconButton>
-				<IconButton {...register(-1, 1)}>
-					<GroupIcon color="warning" fontSize="large" />
-				</IconButton>
-			</Box>
-			<Reorder.Group axis="x" values={columns} onReorder={onColsReorder} className={cn(styles.columnsView, 'scrollbar')} as="div" layoutScroll>
-				{columns?.map((column: Column, index: number) => (
-					<MovableColumn column={column} columns={columns} index={index} mutate={mutate} key={column.id} />
-				))}
-			</Reorder.Group>
-		</>
+		<Reorder.Group axis="x" values={columns} onReorder={onColsReorder} className={cn(styles.columnsView, 'scrollbar')} as="div" layoutScroll>
+			{columns?.map((column: Column, index: number) => (
+				<MovableColumn column={column} columns={columns} index={index} mutate={mutate} key={column.id} />
+			))}
+		</Reorder.Group>
 	);
 };
 

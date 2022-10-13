@@ -2,6 +2,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import type { NextPage } from 'next';
 import Head from 'next/head';
+import ColumnsTools from '../../components/ColumnsTools/ColumnsTools';
 import ColumnsView from '../../components/ColumnsView/ColumnsView';
 import EditableTypography from '../../components/EditableTypography/EditableTypography';
 import { ProjectKeyboardNavigationProvider } from '../../contexts/ProjectKeyboardNavigationContext';
@@ -38,6 +39,7 @@ const ProjectByIdPage: NextPage = () => {
 					/>
 				)}
 				<Box display="flex" sx={{ flexDirection: { md: 'row', xs: 'column' } }}>
+					<ColumnsTools mutate={columnsMutation.mutate} />
 					{project?.columns && (
 						<ColumnsView
 							columns={project?.columns}
