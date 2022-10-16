@@ -25,6 +25,7 @@ type ProjectPermsDialogProps = {
 	open: boolean;
 	project: Project;
 	handleClose: () => void;
+	manualUpdate: (newProject: Project) => void;
 };
 
 interface AddUserForm {
@@ -32,7 +33,7 @@ interface AddUserForm {
 	canEdit: 'viewAndEdit' | 'viewOnly';
 }
 
-const ProjectPermsDialog: FC<ProjectPermsDialogProps> = ({ project, open, handleClose }) => {
+const ProjectPermsDialog: FC<ProjectPermsDialogProps> = ({ project, open, handleClose, manualUpdate }) => {
 	const { control, handleSubmit, reset, watch, setValue } = useForm<AddUserForm>();
 	const theme = useTheme();
 
@@ -48,6 +49,9 @@ const ProjectPermsDialog: FC<ProjectPermsDialogProps> = ({ project, open, handle
 			});
 			const jsoned = await res.json();
 			if (jsoned.success) {
+				const result = jsoned.data as Perm;
+				project.perms = [result, ...project.perms!.filter((p) => p.id !== result.id)];
+				manualUpdate(project);
 				return true;
 			} else {
 				throw new Error(jsoned.error);
@@ -60,14 +64,14 @@ const ProjectPermsDialog: FC<ProjectPermsDialogProps> = ({ project, open, handle
 		}
 	);
 	async function removePerm(permId: number) {
-		const res = await fetch('/api/perms/removePerm', {
+		fetch('/api/perms/removePerm', {
 			method: 'POST',
 			headers: new Headers({ 'Content-Type': 'application/json' }),
 			credentials: 'same-origin',
 			body: JSON.stringify({ permId }),
 		});
-		const jsoned = await res.json();
-		console.log(jsoned);
+		project.perms = project.perms!.filter((p) => p.id !== permId);
+		manualUpdate(project);
 	}
 
 	function onSubmit(data: AddUserForm) {

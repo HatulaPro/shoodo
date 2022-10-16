@@ -12,10 +12,11 @@ import ProjectPermsDialog from '../Dialogs/ProjectPermsDialog/ProjectPermsDialog
 
 type ColumnsToolsProps = {
 	mutate: UseMutateFunction<void, unknown, ColumnMutateArgs, unknown>;
+	manualUpdate: (newProject: Project) => void;
 	project?: Project;
 };
 
-const ColumnsTools: FC<ColumnsToolsProps> = ({ mutate, project }) => {
+const ColumnsTools: FC<ColumnsToolsProps> = ({ mutate, project, manualUpdate }) => {
 	const register = useContext(ProjectKeyboardNavigationContext);
 	const [projectPermsOpen, setProjectPermsOpen] = useState<boolean>(false);
 
@@ -29,7 +30,7 @@ const ColumnsTools: FC<ColumnsToolsProps> = ({ mutate, project }) => {
 					<GroupIcon color="warning" fontSize="large" />
 				</IconButton>
 			</Box>
-			{projectPermsOpen && project && <ProjectPermsDialog open={projectPermsOpen} handleClose={() => setProjectPermsOpen(false)} project={project} />}
+			{projectPermsOpen && project && <ProjectPermsDialog open={projectPermsOpen} manualUpdate={manualUpdate} handleClose={() => setProjectPermsOpen(false)} project={project} />}
 		</>
 	);
 };
