@@ -71,8 +71,8 @@ const ProjectPermsDialog: FC<ProjectPermsDialogProps> = ({ project, open, handle
 						{perm.user.email} | {perm.can_edit ? 'View & Edit' : 'View Only'}
 					</div>
 				))}
-				<Box display="flex" alignItems="center" gap={1}>
-					<IconButton size="small" color="primary" disabled={editPermsMutation.isLoading} onClick={handleSubmit(onSubmit)}>
+				<Box display="flex" alignItems="center" gap={1} sx={{ mt: 2 }}>
+					<IconButton size="small" color="primary" style={{ marginBottom: '1.5rem' }} disabled={editPermsMutation.isLoading} onClick={handleSubmit(onSubmit)}>
 						<AddIcon />
 					</IconButton>
 					<Controller
@@ -86,7 +86,7 @@ const ProjectPermsDialog: FC<ProjectPermsDialogProps> = ({ project, open, handle
 							},
 						}}
 						render={({ field, fieldState }) => {
-							return <TextField {...field} disabled={editPermsMutation.isLoading} error={Boolean(fieldState.error)} helperText={fieldState.error?.message} fullWidth variant="outlined" color="primary" type="text" placeholder="example@example.com" label="Your buddy's email" />;
+							return <TextField {...field} disabled={editPermsMutation.isLoading} error={Boolean(fieldState.error)} helperText={fieldState.error?.message || ' '} fullWidth variant="outlined" color="primary" type="text" placeholder="example@example.com" label="Your buddy's email" />;
 						}}
 					/>
 					<Controller
@@ -100,7 +100,7 @@ const ProjectPermsDialog: FC<ProjectPermsDialogProps> = ({ project, open, handle
 										<MenuItem value="viewAndEdit">View & Edit</MenuItem>
 										<MenuItem value="viewOnly">View Only</MenuItem>
 									</Select>
-									{fieldState.error && <FormHelperText error>{fieldState.error.message}</FormHelperText>}
+									<FormHelperText error>{fieldState.error?.message || ' '}</FormHelperText>
 								</FormControl>
 							);
 						}}
