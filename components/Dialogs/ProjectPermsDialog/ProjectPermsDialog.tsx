@@ -12,9 +12,12 @@ import LinearProgress from '@mui/material/LinearProgress';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import TextField from '@mui/material/TextField';
+import { AnimatePresence, motion } from 'framer-motion';
 import type { FC } from 'react';
+import { useMemo } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useMutation } from 'react-query';
+import type { Perm } from '../../../utils/supabase/perms';
 import type { Project } from '../../../utils/supabase/projects';
 
 type ProjectPermsDialogProps = {
@@ -29,7 +32,7 @@ interface AddUserForm {
 }
 
 const ProjectPermsDialog: FC<ProjectPermsDialogProps> = ({ project, open, handleClose }) => {
-	const { control, handleSubmit, reset } = useForm<AddUserForm>();
+	const { control, handleSubmit, reset, watch } = useForm<AddUserForm>();
 	const theme = useTheme();
 
 	const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
@@ -60,18 +63,43 @@ const ProjectPermsDialog: FC<ProjectPermsDialogProps> = ({ project, open, handle
 		editPermsMutation.mutate(data);
 	}
 
+	const queryEmail = watch('email');
+
+	const currentUsersList = useMemo<Perm[]>(() => {
+		return project.perms?.filter((perm) => (queryEmail ? perm.user!.email.toLowerCase().includes(queryEmail.toLowerCase()) : true)) || [];
+	}, [queryEmail, project, project.perms]);
+
 	return (
 		<Dialog open={open} onClose={handleClose} fullWidth={!isSmallScreen} fullScreen={isSmallScreen}>
 			<DialogTitle>Edit Permissions{project.perms && ` (${project.perms.length})`}</DialogTitle>
 			{editPermsMutation.isLoading && <LinearProgress color="secondary" />}
 			<DialogContent style={{ overflow: 'visible', padding: 4 }}>
-				<div className="scrollbar" style={{ maxHeight: '30vh', overflowY: 'auto' }}>
-					{project.perms?.map((perm) => (
-						<ButtonBase style={{ display: 'flex', justifyContent: 'space-around', paddingBlock: '0.8rem', fontSize: '1rem', width: '100%' }}>
-							<div>{perm.user.email}</div>
-							<div>{perm.can_edit ? 'View & Edit' : 'View Only'}</div>
-						</ButtonBase>
-					))}
+				<div className="scrollbar" style={{ maxHeight: '30vh', overflowY: 'scroll', overflowX: 'hidden' }}>
+					<AnimatePresence>
+						{currentUsersList.map((perm) => (
+							<motion.div
+								key={perm.id}
+								initial="initial"
+								animate="animate"
+								exit="initial"
+								variants={{
+									initial: {
+										opacity: 0.5,
+										height: 0,
+									},
+									animate: {
+										opacity: 1,
+										height: 50,
+									},
+								}}
+							>
+								<ButtonBase style={{ display: 'flex', justifyContent: 'space-around', paddingBlock: '0.8rem', fontSize: '1rem', width: '100%' }}>
+									<div>{perm.user.email}</div>
+									<div>{perm.can_edit ? 'View & Edit' : 'View Only'}</div>
+								</ButtonBase>
+							</motion.div>
+						))}
+					</AnimatePresence>
 				</div>
 				<Box display="flex" alignItems="center" gap={1} sx={{ mt: 2 }}>
 					<Button size="small" variant="contained" color="secondary" style={{ marginBottom: '1.5rem' }} disabled={editPermsMutation.isLoading} onClick={handleSubmit(onSubmit)}>
