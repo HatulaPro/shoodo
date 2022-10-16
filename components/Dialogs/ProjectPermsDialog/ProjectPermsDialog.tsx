@@ -32,7 +32,7 @@ interface AddUserForm {
 }
 
 const ProjectPermsDialog: FC<ProjectPermsDialogProps> = ({ project, open, handleClose }) => {
-	const { control, handleSubmit, reset, watch } = useForm<AddUserForm>();
+	const { control, handleSubmit, reset, watch, setValue } = useForm<AddUserForm>();
 	const theme = useTheme();
 
 	const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
@@ -93,7 +93,13 @@ const ProjectPermsDialog: FC<ProjectPermsDialogProps> = ({ project, open, handle
 									},
 								}}
 							>
-								<ButtonBase style={{ display: 'flex', justifyContent: 'space-around', paddingBlock: '0.8rem', fontSize: '1rem', width: '100%' }}>
+								<ButtonBase
+									onClick={() => {
+										setValue('email', perm.user.email);
+										setValue('canEdit', perm.can_edit ? 'viewAndEdit' : 'viewOnly');
+									}}
+									style={{ display: 'flex', justifyContent: 'space-around', paddingBlock: '0.8rem', fontSize: '1rem', width: '100%' }}
+								>
 									<div>{perm.user.email}</div>
 									<div>{perm.can_edit ? 'View & Edit' : 'View Only'}</div>
 								</ButtonBase>
@@ -116,7 +122,7 @@ const ProjectPermsDialog: FC<ProjectPermsDialogProps> = ({ project, open, handle
 							},
 						}}
 						render={({ field, fieldState }) => {
-							return <TextField {...field} disabled={editPermsMutation.isLoading} error={Boolean(fieldState.error)} helperText={fieldState.error?.message || ' '} fullWidth variant="outlined" color="primary" type="text" placeholder="example@example.com" label="Your buddy's email" />;
+							return <TextField {...field} disabled={editPermsMutation.isLoading} error={Boolean(fieldState.error)} helperText={fieldState.error?.message || ' '} fullWidth variant="standard" color="primary" type="text" placeholder="example@example.com" label="Your buddy's email" />;
 						}}
 					/>
 					<Controller
