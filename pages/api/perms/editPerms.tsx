@@ -1,8 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import type { PublicUser } from '../../utils/supabase/auth';
-import { getServiceSupabase } from '../../utils/supabase/client';
-import { Perm } from '../../utils/supabase/perms';
-import { Project } from '../../utils/supabase/projects';
+import type { PublicUser } from '../../../utils/supabase/auth';
+import { getServiceSupabase } from '../../../utils/supabase/client';
+import { Perm } from '../../../utils/supabase/perms';
+import { Project } from '../../../utils/supabase/projects';
 
 type ValidInput = {
 	email: string;
@@ -41,24 +41,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 			return res.json({ error: 'Project not found' });
 		}
 
-		const currentPerm = await supabase.from<Perm>('perms').select('*').eq('guest_id', guest.data.id).eq('project_id', projectId).single();
+		const newPerm = await supabase
+			.from<Perm>('perms')
+			.upsert({ can_edit: canEdit === 'viewAndEdit', guest_id: guest.data.id, project_id: projectId }, { onConflict: 'guest_id,project_id' })
+			.single();
 
-		if (currentPerm.error) {
-			const newPerm = await supabase.from<Perm>('perms').insert({ can_edit: canEdit === 'viewAndEdit', guest_id: guest.data.id, project_id: projectId });
-			console.log(newPerm);
-			return res.json({ success: true });
-		} else {
-			if (currentPerm.data.can_edit === (canEdit === 'viewAndEdit')) {
-				return res.json({ success: true });
-			} else {
-				const newPerm = await supabase
-					.from<Perm>('perms')
-					.update({ can_edit: canEdit === 'viewAndEdit' })
-					.eq('id', currentPerm.data.id);
-				console.log(newPerm);
-				return res.json({ success: true });
-			}
-		}
+		return res.json({ success: true, data: { ...newPerm.data, user: { id: guest.data.id, email: guest.data.email } } });
 	} catch (e: any) {
 		return res.json({ error: e.message });
 	}
