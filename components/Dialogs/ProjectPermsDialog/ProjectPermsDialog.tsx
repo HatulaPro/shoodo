@@ -40,7 +40,7 @@ const ProjectPermsDialog: FC<ProjectPermsDialogProps> = ({ project, open, handle
 
 	const editPermsMutation = useMutation(
 		async (data: AddUserForm) => {
-			const res = await fetch('/api/perms/editPerms', {
+			const res = await fetch('/api/perms/editPerm', {
 				method: 'POST',
 				headers: new Headers({ 'Content-Type': 'application/json' }),
 				credentials: 'same-origin',
@@ -59,8 +59,15 @@ const ProjectPermsDialog: FC<ProjectPermsDialogProps> = ({ project, open, handle
 			},
 		}
 	);
-	function removePerm(permId: number) {
-		console.log(permId);
+	async function removePerm(permId: number) {
+		const res = await fetch('/api/perms/removePerm', {
+			method: 'POST',
+			headers: new Headers({ 'Content-Type': 'application/json' }),
+			credentials: 'same-origin',
+			body: JSON.stringify({ permId }),
+		});
+		const jsoned = await res.json();
+		console.log(jsoned);
 	}
 
 	function onSubmit(data: AddUserForm) {
