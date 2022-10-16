@@ -1,5 +1,4 @@
-import AddIcon from '@mui/icons-material/Add';
-import { useMediaQuery, useTheme } from '@mui/material';
+import { ButtonBase, useMediaQuery, useTheme } from '@mui/material';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
@@ -7,11 +6,11 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import FormControl from '@mui/material/FormControl';
+import FormControlLabel from '@mui/material/FormControlLabel';
 import FormHelperText from '@mui/material/FormHelperText';
-import IconButton from '@mui/material/IconButton';
 import LinearProgress from '@mui/material/LinearProgress';
-import MenuItem from '@mui/material/MenuItem';
-import Select from '@mui/material/Select';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
 import TextField from '@mui/material/TextField';
 import type { FC } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -66,15 +65,18 @@ const ProjectPermsDialog: FC<ProjectPermsDialogProps> = ({ project, open, handle
 			<DialogTitle>Edit Permissions{project.perms && ` (${project.perms.length})`}</DialogTitle>
 			{editPermsMutation.isLoading && <LinearProgress color="secondary" />}
 			<DialogContent style={{ overflow: 'visible', padding: 4 }}>
-				{project.perms?.map((perm) => (
-					<div>
-						{perm.user.email} | {perm.can_edit ? 'View & Edit' : 'View Only'}
-					</div>
-				))}
+				<div className="scrollbar" style={{ maxHeight: '30vh', overflowY: 'auto' }}>
+					{project.perms?.map((perm) => (
+						<ButtonBase style={{ display: 'flex', justifyContent: 'space-around', paddingBlock: '0.8rem', fontSize: '1rem', width: '100%' }}>
+							<div>{perm.user.email}</div>
+							<div>{perm.can_edit ? 'View & Edit' : 'View Only'}</div>
+						</ButtonBase>
+					))}
+				</div>
 				<Box display="flex" alignItems="center" gap={1} sx={{ mt: 2 }}>
-					<IconButton size="small" color="primary" style={{ marginBottom: '1.5rem' }} disabled={editPermsMutation.isLoading} onClick={handleSubmit(onSubmit)}>
-						<AddIcon />
-					</IconButton>
+					<Button size="small" variant="contained" color="secondary" style={{ marginBottom: '1.5rem' }} disabled={editPermsMutation.isLoading} onClick={handleSubmit(onSubmit)}>
+						save
+					</Button>
 					<Controller
 						name="email"
 						control={control}
@@ -91,15 +93,16 @@ const ProjectPermsDialog: FC<ProjectPermsDialogProps> = ({ project, open, handle
 					/>
 					<Controller
 						name="canEdit"
+						defaultValue="viewAndEdit"
 						control={control}
 						rules={{ required: { message: 'this field is required', value: true } }}
 						render={({ field, fieldState }) => {
 							return (
 								<FormControl sx={{ my: 1, minWidth: '130px' }}>
-									<Select {...field} disabled={editPermsMutation.isLoading} error={Boolean(fieldState.error)} variant="outlined">
-										<MenuItem value="viewAndEdit">View & Edit</MenuItem>
-										<MenuItem value="viewOnly">View Only</MenuItem>
-									</Select>
+									<RadioGroup {...field}>
+										<FormControlLabel disabled={editPermsMutation.isLoading} value="viewAndEdit" control={<Radio size="small" />} label="View & Edit" />
+										<FormControlLabel disabled={editPermsMutation.isLoading} value="viewOnly" control={<Radio size="small" />} label="View Only" />
+									</RadioGroup>
 									<FormHelperText error>{fieldState.error?.message || ' '}</FormHelperText>
 								</FormControl>
 							);
