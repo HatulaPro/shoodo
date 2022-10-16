@@ -132,7 +132,23 @@ const ProjectPermsDialog: FC<ProjectPermsDialogProps> = ({ project, open, handle
 							},
 						}}
 						render={({ field, fieldState }) => {
-							return <TextField {...field} disabled={editPermsMutation.isLoading} error={Boolean(fieldState.error)} helperText={fieldState.error?.message || ' '} fullWidth variant="standard" color="primary" type="text" placeholder="example@example.com" />;
+							return (
+								<TextField
+									{...field}
+									onChange={(e) => {
+										editPermsMutation.reset();
+										field.onChange(e);
+									}}
+									disabled={editPermsMutation.isLoading}
+									error={Boolean(fieldState.error)}
+									helperText={fieldState.error?.message || ' '}
+									fullWidth
+									variant="standard"
+									color="primary"
+									type="text"
+									placeholder="example@example.com"
+								/>
+							);
 						}}
 					/>
 					<Controller
@@ -143,7 +159,13 @@ const ProjectPermsDialog: FC<ProjectPermsDialogProps> = ({ project, open, handle
 						render={({ field, fieldState }) => {
 							return (
 								<FormControl sx={{ my: 1, minWidth: '130px' }}>
-									<RadioGroup {...field}>
+									<RadioGroup
+										{...field}
+										onChange={(e) => {
+											editPermsMutation.reset();
+											field.onChange(e);
+										}}
+									>
 										<FormControlLabel disabled={editPermsMutation.isLoading} value="viewAndEdit" control={<Radio size="small" />} label="View & Edit" />
 										<FormControlLabel disabled={editPermsMutation.isLoading} value="viewOnly" control={<Radio size="small" />} label="View Only" />
 									</RadioGroup>
