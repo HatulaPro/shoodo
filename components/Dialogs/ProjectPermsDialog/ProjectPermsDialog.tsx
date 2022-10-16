@@ -1,4 +1,5 @@
-import { ButtonBase, useMediaQuery, useTheme } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
+import { ButtonBase, Divider, IconButton, useMediaQuery, useTheme } from '@mui/material';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
@@ -58,6 +59,9 @@ const ProjectPermsDialog: FC<ProjectPermsDialogProps> = ({ project, open, handle
 			},
 		}
 	);
+	function removePerm(permId: number) {
+		console.log(permId);
+	}
 
 	function onSubmit(data: AddUserForm) {
 		editPermsMutation.mutate(data);
@@ -93,20 +97,26 @@ const ProjectPermsDialog: FC<ProjectPermsDialogProps> = ({ project, open, handle
 									},
 								}}
 							>
-								<ButtonBase
-									onClick={() => {
-										setValue('email', perm.user.email);
-										setValue('canEdit', perm.can_edit ? 'viewAndEdit' : 'viewOnly');
-									}}
-									style={{ display: 'flex', justifyContent: 'space-around', paddingBlock: '0.8rem', fontSize: '1rem', width: '100%' }}
-								>
-									<div>{perm.user.email}</div>
-									<div>{perm.can_edit ? 'View & Edit' : 'View Only'}</div>
-								</ButtonBase>
+								<Box display="flex">
+									<IconButton onClick={() => removePerm(perm.id)}>
+										<CloseIcon color="error" />
+									</IconButton>
+									<ButtonBase
+										onClick={() => {
+											setValue('email', perm.user.email);
+											setValue('canEdit', perm.can_edit ? 'viewAndEdit' : 'viewOnly');
+										}}
+										style={{ display: 'flex', justifyContent: 'space-around', paddingBlock: '0.8rem', fontSize: '1rem', width: '100%' }}
+									>
+										<div>{perm.user.email}</div>
+										<div>{perm.can_edit ? 'View & Edit' : 'View Only'}</div>
+									</ButtonBase>
+								</Box>
 							</motion.div>
 						))}
 					</AnimatePresence>
 				</div>
+				<Divider style={{ marginBlock: '0.5rem' }} />
 				<Box display="flex" alignItems="center" gap={1} sx={{ mt: 2 }}>
 					<Button size="small" variant="contained" color="secondary" style={{ marginBottom: '1.5rem' }} disabled={editPermsMutation.isLoading} onClick={handleSubmit(onSubmit)}>
 						save
@@ -122,7 +132,7 @@ const ProjectPermsDialog: FC<ProjectPermsDialogProps> = ({ project, open, handle
 							},
 						}}
 						render={({ field, fieldState }) => {
-							return <TextField {...field} disabled={editPermsMutation.isLoading} error={Boolean(fieldState.error)} helperText={fieldState.error?.message || ' '} fullWidth variant="standard" color="primary" type="text" placeholder="example@example.com" label="Your buddy's email" />;
+							return <TextField {...field} disabled={editPermsMutation.isLoading} error={Boolean(fieldState.error)} helperText={fieldState.error?.message || ' '} fullWidth variant="standard" color="primary" type="text" placeholder="example@example.com" />;
 						}}
 					/>
 					<Controller
