@@ -78,7 +78,7 @@ const ProjectPermsDialog: FC<ProjectPermsDialogProps> = ({ project, open, handle
 
 	const currentUsersList = useMemo<Perm[]>(() => {
 		return project.perms?.filter((perm) => (queryEmail ? perm.user!.email.toLowerCase().includes(queryEmail.toLowerCase()) : true)) || [];
-	}, [queryEmail, project, project.perms]);
+	}, [queryEmail, project?.perms]);
 
 	return (
 		<Dialog open={open} onClose={handleClose} fullWidth={!isSmallScreen} fullScreen={isSmallScreen}>
