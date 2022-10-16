@@ -1,4 +1,5 @@
 import { supabase } from './client';
+import type { Perm } from './perms';
 
 export type Task = {
 	id: number;
@@ -25,6 +26,7 @@ export type Project = {
 	description: string;
 	user_id: string;
 	columns?: Column[];
+	perms?: Perm[];
 };
 
 export async function getUserProjects(userId: string): Promise<Project[]> {
@@ -76,7 +78,8 @@ export async function deleteProject(project_id: number): Promise<boolean> {
 
 export async function getProjectById(project_id: number): Promise<Project> {
 	// bad: tasks!column_id
-	const { data, error } = await supabase.from<Project>('projects').select('*, columns ( *, tasks!tasks_column_id_fkey ( * ) )').eq('id', project_id).single();
+	const { data, error } = await supabase.from<Project>('projects').select('*, columns ( *, tasks!tasks_column_id_fkey ( * ) ), perms ( *, user:users ( * ) )').eq('id', project_id).single();
+	console.log(data);
 
 	if (error) {
 		console.log(error);

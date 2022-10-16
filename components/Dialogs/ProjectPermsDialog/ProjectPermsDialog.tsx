@@ -63,9 +63,14 @@ const ProjectPermsDialog: FC<ProjectPermsDialogProps> = ({ project, open, handle
 
 	return (
 		<Dialog open={open} onClose={handleClose} fullWidth={!isSmallScreen} fullScreen={isSmallScreen}>
-			<DialogTitle>Edit Permissions</DialogTitle>
+			<DialogTitle>Edit Permissions{project.perms && ` (${project.perms.length})`}</DialogTitle>
 			{editPermsMutation.isLoading && <LinearProgress color="secondary" />}
 			<DialogContent style={{ overflow: 'visible', padding: 4 }}>
+				{project.perms?.map((perm) => (
+					<div>
+						{perm.user.email} | {perm.can_edit ? 'View & Edit' : 'View Only'}
+					</div>
+				))}
 				<Box display="flex" alignItems="center" gap={1}>
 					<IconButton size="small" color="primary" disabled={editPermsMutation.isLoading} onClick={handleSubmit(onSubmit)}>
 						<AddIcon />
