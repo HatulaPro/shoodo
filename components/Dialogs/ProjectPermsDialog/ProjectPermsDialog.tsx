@@ -18,6 +18,7 @@ import type { FC } from 'react';
 import { useMemo } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useMutation } from 'react-query';
+import { useUser } from '../../../hooks/useUser';
 import type { Perm } from '../../../utils/supabase/perms';
 import type { Project } from '../../../utils/supabase/projects';
 
@@ -34,6 +35,8 @@ interface AddUserForm {
 }
 
 const ProjectPermsDialog: FC<ProjectPermsDialogProps> = ({ project, open, handleClose, manualUpdate }) => {
+	const { user } = useUser();
+	const isOwner = Boolean(user) && user?.id === project?.user_id;
 	const { control, handleSubmit, reset, watch, setValue } = useForm<AddUserForm>();
 	const theme = useTheme();
 
@@ -41,6 +44,8 @@ const ProjectPermsDialog: FC<ProjectPermsDialogProps> = ({ project, open, handle
 
 	const editPermsMutation = useMutation(
 		async (data: AddUserForm) => {
+			if (!isOwner) return;
+
 			const res = await fetch('/api/perms/editPerm', {
 				method: 'POST',
 				headers: new Headers({ 'Content-Type': 'application/json' }),
@@ -64,6 +69,8 @@ const ProjectPermsDialog: FC<ProjectPermsDialogProps> = ({ project, open, handle
 		}
 	);
 	async function removePerm(permId: number) {
+		if (!isOwner) return;
+
 		fetch('/api/perms/removePerm', {
 			method: 'POST',
 			headers: new Headers({ 'Content-Type': 'application/json' }),
@@ -86,7 +93,9 @@ const ProjectPermsDialog: FC<ProjectPermsDialogProps> = ({ project, open, handle
 
 	return (
 		<Dialog open={open} onClose={handleClose} fullWidth={!isSmallScreen} fullScreen={isSmallScreen}>
-			<DialogTitle>Edit Permissions{project.perms && ` (${project.perms.length})`}</DialogTitle>
+			<DialogTitle>
+				{isOwner && 'Edit '}Permissions{project.perms && ` (${project.perms.length})`}
+			</DialogTitle>
 			{editPermsMutation.isLoading && <LinearProgress color="secondary" />}
 			<DialogContent style={{ overflow: 'visible', padding: 4 }}>
 				<div className="scrollbar" style={{ maxHeight: '30vh', overflowY: 'scroll', overflowX: 'hidden' }}>
@@ -109,9 +118,11 @@ const ProjectPermsDialog: FC<ProjectPermsDialogProps> = ({ project, open, handle
 								}}
 							>
 								<Box display="flex">
-									<IconButton onClick={() => removePerm(perm.id)}>
-										<CloseIcon color="error" />
-									</IconButton>
+									{isOwner && (
+										<IconButton onClick={() => removePerm(perm.id)}>
+											<CloseIcon color="error" />
+										</IconButton>
+									)}
 									<ButtonBase
 										onClick={() => {
 											setValue('email', perm.user.email);
@@ -128,10 +139,12 @@ const ProjectPermsDialog: FC<ProjectPermsDialogProps> = ({ project, open, handle
 					</AnimatePresence>
 				</div>
 				<Divider style={{ marginBlock: '0.5rem' }} />
-				<Box display="flex" alignItems="center" gap={1} sx={{ mt: 2 }}>
-					<Button size="small" variant="contained" color="secondary" style={{ marginBottom: '1.5rem' }} disabled={editPermsMutation.isLoading} onClick={handleSubmit(onSubmit)}>
-						save
-					</Button>
+				<Box display="flex" alignItems="center" gap={1} sx={{ m: 2 }}>
+					{isOwner && (
+						<Button size="small" variant="contained" color="secondary" style={{ marginBottom: '1.5rem' }} disabled={editPermsMutation.isLoading} onClick={handleSubmit(onSubmit)}>
+							save
+						</Button>
+					)}
 					<Controller
 						name="email"
 						control={control}
@@ -162,29 +175,31 @@ const ProjectPermsDialog: FC<ProjectPermsDialogProps> = ({ project, open, handle
 							);
 						}}
 					/>
-					<Controller
-						name="canEdit"
-						defaultValue="viewAndEdit"
-						control={control}
-						rules={{ required: { message: 'this field is required', value: true } }}
-						render={({ field, fieldState }) => {
-							return (
-								<FormControl sx={{ my: 1, minWidth: '130px' }}>
-									<RadioGroup
-										{...field}
-										onChange={(e) => {
-											editPermsMutation.reset();
-											field.onChange(e);
-										}}
-									>
-										<FormControlLabel disabled={editPermsMutation.isLoading} value="viewAndEdit" control={<Radio size="small" />} label="View & Edit" />
-										<FormControlLabel disabled={editPermsMutation.isLoading} value="viewOnly" control={<Radio size="small" />} label="View Only" />
-									</RadioGroup>
-									<FormHelperText error>{fieldState.error?.message || ' '}</FormHelperText>
-								</FormControl>
-							);
-						}}
-					/>
+					{isOwner && (
+						<Controller
+							name="canEdit"
+							defaultValue="viewAndEdit"
+							control={control}
+							rules={{ required: { message: 'this field is required', value: true } }}
+							render={({ field, fieldState }) => {
+								return (
+									<FormControl sx={{ my: 1, minWidth: '130px' }}>
+										<RadioGroup
+											{...field}
+											onChange={(e) => {
+												editPermsMutation.reset();
+												field.onChange(e);
+											}}
+										>
+											<FormControlLabel disabled={editPermsMutation.isLoading} value="viewAndEdit" control={<Radio size="small" />} label="View & Edit" />
+											<FormControlLabel disabled={editPermsMutation.isLoading} value="viewOnly" control={<Radio size="small" />} label="View Only" />
+										</RadioGroup>
+										<FormHelperText error>{fieldState.error?.message || ' '}</FormHelperText>
+									</FormControl>
+								);
+							}}
+						/>
+					)}
 				</Box>
 				{editPermsMutation.isError && <FormHelperText error>{(editPermsMutation.error as Error).message}</FormHelperText>}
 				{editPermsMutation.isSuccess && <FormHelperText color="success">Permissions updated successfully</FormHelperText>}
