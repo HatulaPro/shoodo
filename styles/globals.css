@@ -43,12 +43,12 @@ a {
 
 @media (hover: none) {
 	.mouseOnly {
-		display: none;
+		display: none !important;
 	}
 }
 @media (hover: hover) {
 	.touchOnly {
-		display: none;
+		display: none !important;
 	}
 }
 
