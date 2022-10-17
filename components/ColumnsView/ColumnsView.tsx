@@ -11,9 +11,10 @@ type ColumnsViewProps = {
 	columns: Column[];
 	setColumns: (cols: Column[]) => void;
 	mutate: UseMutateFunction<void, unknown, ColumnMutateArgs, unknown>;
+	editPerms: boolean;
 };
 
-const ColumnsView: FC<ColumnsViewProps> = ({ setColumns, columns, mutate }) => {
+const ColumnsView: FC<ColumnsViewProps> = ({ setColumns, columns, mutate, editPerms }) => {
 	function onColsReorder(newCols: Column[]) {
 		if (newCols.length === 0) return setColumns(newCols);
 
@@ -36,7 +37,7 @@ const ColumnsView: FC<ColumnsViewProps> = ({ setColumns, columns, mutate }) => {
 	return (
 		<Reorder.Group axis="x" values={columns} onReorder={onColsReorder} className={cn(styles.columnsView, 'scrollbar')} as="div" layoutScroll>
 			{columns?.map((column: Column, index: number) => (
-				<MovableColumn column={column} columns={columns} index={index} mutate={mutate} key={column.id} />
+				<MovableColumn column={column} columns={columns} index={index} mutate={mutate} key={column.id} editPerms={editPerms} />
 			))}
 		</Reorder.Group>
 	);

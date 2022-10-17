@@ -14,18 +14,21 @@ type ColumnsToolsProps = {
 	mutate: UseMutateFunction<void, unknown, ColumnMutateArgs, unknown>;
 	manualUpdate: (newProject: Project) => void;
 	project?: Project;
+	editPerms: boolean;
 };
 
-const ColumnsTools: FC<ColumnsToolsProps> = ({ mutate, project, manualUpdate }) => {
+const ColumnsTools: FC<ColumnsToolsProps> = ({ mutate, project, manualUpdate, editPerms }) => {
 	const register = useContext(ProjectKeyboardNavigationContext);
 	const [projectPermsOpen, setProjectPermsOpen] = useState<boolean>(false);
 
 	return (
 		<>
 			<Box display="flex" sx={{ flexDirection: { md: 'column', xs: 'row' } }} mr={2}>
-				<IconButton onClick={() => mutate({ type: 'CREATE' })} {...register(-1, 0)}>
-					<AddIcon color="primary" fontSize="large" />
-				</IconButton>
+				{editPerms && (
+					<IconButton onClick={() => mutate({ type: 'CREATE' })} {...register(-1, 0)}>
+						<AddIcon color="primary" fontSize="large" />
+					</IconButton>
+				)}
 				<IconButton onClick={() => setProjectPermsOpen(true)} {...register(-1, 1)}>
 					<GroupIcon color="warning" fontSize="large" />
 				</IconButton>

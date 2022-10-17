@@ -23,9 +23,10 @@ type MovableColumnProps = {
 	columns: Column[];
 	index: number;
 	mutate: UseMutateFunction<void, unknown, ColumnMutateArgs, unknown>;
+	editPerms: boolean;
 };
 
-const MovableColumn: FC<MovableColumnProps> = ({ column, mutate, columns, index }) => {
+const MovableColumn: FC<MovableColumnProps> = ({ column, mutate, columns, index, editPerms }) => {
 	const parentRef = useRef(null);
 	const [openTools, setOpenTools] = useState<boolean>(false);
 	const [openColorPicker, setOpenColorPicker] = useState<boolean>(false);
@@ -126,43 +127,49 @@ const MovableColumn: FC<MovableColumnProps> = ({ column, mutate, columns, index 
 	return (
 		<Reorder.Item ref={columnRef} dragControls={controls} dragListener={false} style={{ padding: 0 }} dragTransition={{ bounceDamping: 20, bounceStiffness: 200 }} value={column} as="div" whileDrag={{ filter: 'brightness(0.97)', boxShadow: '0px 0px 12px 14px #14141466' }}>
 			<div className={cn(styles.movableColumn, 'moveableColumn')} onFocusCapture={onFocus} onBlur={onBlur} tabIndex={-1}>
-				<IconButton className="mouseOnly" onPointerDown={(e) => controls.start(e)}>
-					<DragHandleIcon />
-				</IconButton>
+				{editPerms && (
+					<>
+						<IconButton className="mouseOnly" onPointerDown={(e) => controls.start(e)}>
+							<DragHandleIcon />
+						</IconButton>
 
-				<Box display="flex" className="touchOnly" justifyContent="space-around">
-					<IconButton onClick={moveLeft}>
-						<ArrowBackIcon fontSize="large" />
-					</IconButton>
-					<IconButton onClick={moveRight}>
-						<ArrowForwardIcon fontSize="large" />
-					</IconButton>
-				</Box>
+						<Box display="flex" className="touchOnly" justifyContent="space-around">
+							<IconButton onClick={moveLeft}>
+								<ArrowBackIcon fontSize="large" />
+							</IconButton>
+							<IconButton onClick={moveRight}>
+								<ArrowForwardIcon fontSize="large" />
+							</IconButton>
+						</Box>
+					</>
+				)}
 
 				<div className={cn(styles.movableColumnTitle)} style={{ borderBottom: `4px solid ${column.style}` }} {...register(column.id, -1)}>
-					<EditableTypography onUpdate={onColumnRename} text={column.name} size="large" />
+					<EditableTypography onUpdate={onColumnRename} text={column.name} size="large" disabled={!editPerms} />
 				</div>
 				<div>
 					<div ref={parentRef}>
 						<Reorder.Group axis="y" as="div" values={tasks} onReorder={onTasksReorder}>
 							{tasks.map((task) => (
-								<Reorder.Item drag={true} onDragEnd={onDragEnd(task.id)} key={task.id} value={task} as="div" dragTransition={{ bounceDamping: 20, bounceStiffness: 200 }}>
-									<MovableTask task={task} column={column} mutate={mutate} />
+								<Reorder.Item drag={editPerms} onDragEnd={onDragEnd(task.id)} key={task.id} value={task} as="div" dragTransition={{ bounceDamping: 20, bounceStiffness: 200 }}>
+									<MovableTask task={task} column={column} mutate={mutate} editPerms={editPerms} />
 								</Reorder.Item>
 							))}
 						</Reorder.Group>
 					</div>
 
-					<MovableTask column={column} mutate={mutate} />
+					{editPerms && <MovableTask column={column} mutate={mutate} editPerms={true} />}
 				</div>
-				<div className={cn(styles.movableColumnTools, openTools && styles.movableColumnToolsOpen)}>
-					<IconButton sx={{ mb: 0 }} onClick={() => mutate({ type: 'DELETE', column_id: column.id })}>
-						<DeleteIcon htmlColor="red" />
-					</IconButton>
-					<IconButton onClick={() => setOpenColorPicker(true)}>
-						<PaletteIcon htmlColor={column.style} />
-					</IconButton>
-				</div>
+				{editPerms && (
+					<div className={cn(styles.movableColumnTools, openTools && styles.movableColumnToolsOpen)}>
+						<IconButton sx={{ mb: 0 }} onClick={() => mutate({ type: 'DELETE', column_id: column.id })}>
+							<DeleteIcon htmlColor="red" />
+						</IconButton>
+						<IconButton onClick={() => setOpenColorPicker(true)}>
+							<PaletteIcon htmlColor={column.style} />
+						</IconButton>
+					</div>
+				)}
 				{openColorPicker && <ColorPickerDialog open={openColorPicker} handleClose={() => setOpenColorPicker(false)} defaultColor={column.style} onUpdate={updateColumnColor} />}
 			</div>
 		</Reorder.Item>

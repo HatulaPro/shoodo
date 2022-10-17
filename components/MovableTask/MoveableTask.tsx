@@ -15,14 +15,16 @@ type MovableTaskProps =
 			task: Task;
 			column: Column;
 			mutate: UseMutateFunction<void, unknown, ColumnMutateArgs, unknown>;
+			editPerms: boolean;
 	  }
 	| {
 			task?: undefined;
 			column: Column;
 			mutate: UseMutateFunction<void, unknown, ColumnMutateArgs, unknown>;
+			editPerms: boolean;
 	  };
 
-const MovableTask: FC<MovableTaskProps> = ({ task, column, mutate }) => {
+const MovableTask: FC<MovableTaskProps> = ({ task, column, mutate, editPerms }) => {
 	const register = useContext(ProjectKeyboardNavigationContext);
 
 	return (
@@ -30,11 +32,13 @@ const MovableTask: FC<MovableTaskProps> = ({ task, column, mutate }) => {
 			<Box display="flex" alignItems="center">
 				{task ? (
 					<>
-						<Checkbox checked={task.done} onChange={(e) => mutate({ type: 'UPDATE_TASK', column_id: column.id, task_id: task.id, update: { done: e.target.checked } })} />
-						<EditableTypography onUpdate={(text) => text.length > 0 && mutate({ type: 'UPDATE_TASK', column_id: column.id, task_id: task.id, update: { content: text } })} text={task.content} size="small" style={{ textDecoration: task.done ? 'line-through' : 'none' }} />
-						<IconButton onClick={() => mutate({ type: 'DELETE_TASK', column_id: column.id, task_id: task.id })}>
-							<CloseIcon htmlColor="red" />
-						</IconButton>
+						{editPerms && <Checkbox checked={task.done} onChange={(e) => mutate({ type: 'UPDATE_TASK', column_id: column.id, task_id: task.id, update: { done: e.target.checked } })} />}
+						<EditableTypography onUpdate={(text) => text.length > 0 && mutate({ type: 'UPDATE_TASK', column_id: column.id, task_id: task.id, update: { content: text } })} text={task.content} size="small" style={{ textDecoration: task.done ? 'line-through' : 'none' }} disabled={!editPerms} />
+						{editPerms && (
+							<IconButton onClick={() => mutate({ type: 'DELETE_TASK', column_id: column.id, task_id: task.id })}>
+								<CloseIcon htmlColor="red" />
+							</IconButton>
+						)}
 					</>
 				) : (
 					<>

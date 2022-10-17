@@ -2,6 +2,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import type { NextPage } from 'next';
 import Head from 'next/head';
+import { useMemo } from 'react';
 import ColumnsTools from '../../components/ColumnsTools/ColumnsTools';
 import ColumnsView from '../../components/ColumnsView/ColumnsView';
 import EditableTypography from '../../components/EditableTypography/EditableTypography';
@@ -14,6 +15,7 @@ import { updateProjectById } from '../../utils/supabase/projects';
 const ProjectByIdPage: NextPage = () => {
 	const { user } = useUser({ authOnly: true });
 	const { data: project, isLoading, manualUpdate, columnsMutation } = useQueryProject(user);
+	const hasEditPerms = useMemo(() => project?.user_id === user?.id || Boolean(project?.perms?.find((p) => p.guest_id === user?.id && p.can_edit)), [user, project?.perms, project?.user_id]);
 
 	return (
 		<ProjectKeyboardNavigationProvider project={project}>
@@ -36,10 +38,11 @@ const ProjectByIdPage: NextPage = () => {
 							padding: '0.5rem',
 							lineHeight: '4rem',
 						}}
+						disabled={!hasEditPerms}
 					/>
 				)}
 				<Box display="flex" sx={{ flexDirection: { md: 'row', xs: 'column' } }}>
-					<ColumnsTools project={project} mutate={columnsMutation.mutate} manualUpdate={manualUpdate} />
+					<ColumnsTools project={project} mutate={columnsMutation.mutate} manualUpdate={manualUpdate} editPerms={hasEditPerms} />
 					{project?.columns && (
 						<ColumnsView
 							columns={project?.columns}
@@ -48,6 +51,7 @@ const ProjectByIdPage: NextPage = () => {
 								manualUpdate(project);
 							}}
 							mutate={columnsMutation.mutate}
+							editPerms={hasEditPerms}
 						/>
 					)}
 				</Box>

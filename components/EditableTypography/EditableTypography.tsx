@@ -5,11 +5,12 @@ type EditableTypographyProps = {
 	text: string;
 	onUpdate: (newText: string) => void;
 	size: 'small' | 'large';
+	disabled?: boolean;
 	placeholder?: boolean;
 	style?: React.CSSProperties;
 };
 
-const EditableTypography: FC<EditableTypographyProps> = ({ onUpdate, text, size, placeholder, style }) => {
+const EditableTypography: FC<EditableTypographyProps> = ({ onUpdate, text, size, placeholder, style, disabled }) => {
 	const [inputContent, setInputContent] = useState<null | string>(null);
 
 	function update() {
@@ -43,7 +44,7 @@ const EditableTypography: FC<EditableTypographyProps> = ({ onUpdate, text, size,
 		}
 	};
 
-	return inputContent === null ? (
+	return inputContent === null || disabled === true ? (
 		<Typography className="focusable" tabIndex={0} variant={size === 'large' ? 'h6' : 'body1'} align="left" component={'div'} style={{ cursor: 'text', flex: '1', ...style }} onClick={onClick} onFocus={onFocus}>
 			{text}
 		</Typography>
