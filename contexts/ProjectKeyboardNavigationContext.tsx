@@ -32,7 +32,6 @@ export const ProjectKeyboardNavigationProvider: FC<{ project: Project | undefine
 			setUsingKeys(true);
 			if (project.columns.length === 0) return setPosition({ x: -1, y: -1 });
 
-			// console.log('evented', target.tagName, e.key, project!.columns![position.x].tasks![position.y]);
 			// x: index of column
 			// y: -1: highlight column title, [0, len - 1]: highlight task at [y-1], len: Add new...
 			if (e.key === 'ArrowRight') {
@@ -94,7 +93,6 @@ export const ProjectKeyboardNavigationProvider: FC<{ project: Project | undefine
 		window.addEventListener('keyup', listener);
 
 		ref.current?.focus();
-		console.log({ position });
 		return () => {
 			window.removeEventListener('keyup', listener);
 		};
@@ -105,7 +103,6 @@ export const ProjectKeyboardNavigationProvider: FC<{ project: Project | undefine
 		const registered = { tabIndex: -1, autoFocus: true, ref, 'data-highlightedbynav': true };
 
 		if (position.x === -1) {
-			// console.log(column_id);
 			if (column_id === -1 && task_id === position.y) return { tabIndex: 0, ref };
 		}
 

@@ -80,7 +80,6 @@ export async function deleteProject(project_id: number): Promise<boolean> {
 export async function getProjectById(project_id: number): Promise<Project> {
 	// bad: tasks!column_id
 	const { data, error } = await supabase.from<Project>('projects').select('*, columns ( *, tasks!tasks_column_id_fkey ( * ) ), perms ( *, user:users ( * ) ), user:users ( * )').eq('id', project_id).single();
-	console.log(data);
 
 	if (error) {
 		console.log(error);

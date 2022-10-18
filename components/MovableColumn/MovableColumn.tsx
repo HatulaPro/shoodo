@@ -85,7 +85,6 @@ const MovableColumn: FC<MovableColumnProps> = ({ column, mutate, columns, index,
 
 	function onDragEnd(task_id: number) {
 		return (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
-			console.log(event);
 			const colWidth = columnRef.current!.clientWidth; // 300
 			const scrollerWidth = columnRef.current!.parentElement!.scrollWidth; // 964
 			const colCount = columnRef.current!.parentElement!.children.length; // 3
