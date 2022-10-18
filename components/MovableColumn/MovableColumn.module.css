@@ -25,14 +25,13 @@
 
 @media screen and (max-width: 900px) {
 	.movableColumn {
-		width: 180px;
 		padding: 4px;
 	}
 }
 
 @media screen and (max-width: 600px) {
 	.movableColumn {
-		width: calc(180px * 0.9);
+		width: 94vw;
 		padding: 2px;
 	}
 	.movableColumn * {

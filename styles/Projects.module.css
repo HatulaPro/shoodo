@@ -1,7 +1,8 @@
 .projectsSaving {
 	position: absolute;
-	top: 0;
-	right: 1rem;
+
+	top: -24px;
+	right: 0.5rem;
 	text-align: center;
 	padding-inline-start: 2rem;
 }
