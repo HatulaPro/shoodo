@@ -40,7 +40,7 @@ export type ColumnMutateArgs =
 			task_id: number;
 	  };
 
-function sortByImportance<T extends { importance: number }>(arr: T[]): T[] {
+export function sortByImportance<T extends { importance: number }>(arr: T[]): T[] {
 	return arr.sort((a, b) => a.importance - b.importance);
 }
 

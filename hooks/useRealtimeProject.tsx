@@ -1,7 +1,8 @@
 import { useEffect } from 'react';
 import { supabase } from '../utils/supabase/client';
 import { getPermById, Perm } from '../utils/supabase/perms';
-import type { Project } from '../utils/supabase/projects';
+import type { Column, Project } from '../utils/supabase/projects';
+import { sortByImportance } from './useQueryProject';
 
 export default function useRealtimeProject(project: Project | undefined, onUpdate: (proj: Project) => void) {
 	useEffect(() => {
@@ -20,7 +21,6 @@ export default function useRealtimeProject(project: Project | undefined, onUpdat
 		const realtimePermsSubscription = supabase
 			.from<Perm>(`perms:project_id=eq.${project.id}`)
 			.on('*', (payload) => {
-				console.log(payload);
 				if (payload.eventType === 'UPDATE') {
 					const newPerms = project.perms!.map((oldPerm) => {
 						if (oldPerm.id === payload.new.id) {
@@ -49,9 +49,39 @@ export default function useRealtimeProject(project: Project | undefined, onUpdat
 			})
 			.subscribe();
 
+		const realtimeColumnSubscription = supabase
+			.from<Column>(`columns:project_id=eq.${project.id}`)
+			.on('*', (payload) => {
+				console.log(payload);
+				if (payload.eventType === 'UPDATE') {
+					const newColumns = project.columns!.map((oldColumn) => {
+						if (oldColumn.id === payload.new.id) {
+							return { ...oldColumn, ...payload.new } as Column;
+						}
+						return oldColumn;
+					});
+					project.columns = sortByImportance(newColumns);
+					onUpdate(project);
+				} else if (payload.eventType === 'DELETE') {
+					const newColumns = project.columns!.filter((oldColumn) => oldColumn.id !== payload.old.id);
+					project.columns = newColumns;
+					onUpdate(project);
+				} else if (payload.eventType === 'INSERT') {
+					const originalColumns = project.columns!;
+					const alreadyHasNewId = Boolean(originalColumns.find((c) => c.id === payload.new.id));
+					if (!alreadyHasNewId) {
+						const newColumns = [{ ...payload.new, tasks: [] } as Column, ...originalColumns];
+						project.columns = newColumns;
+						onUpdate(project);
+					}
+				}
+			})
+			.subscribe();
+
 		return () => {
 			supabase.removeSubscription(realtimeProjectSubscription);
 			supabase.removeSubscription(realtimePermsSubscription);
+			supabase.removeSubscription(realtimeColumnSubscription);
 		};
 	}, [supabase, project]);
 
