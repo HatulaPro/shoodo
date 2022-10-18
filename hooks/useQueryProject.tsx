@@ -1,8 +1,7 @@
 import type { User } from '@supabase/supabase-js';
 import { useRouter } from 'next/router';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
-import type { Column, Project, Task } from '../utils/supabase/projects';
-import { createColumn, createTask, deleteColumn, deleteTask, getProjectById, updateColumnById, updateTaskById } from '../utils/supabase/projects';
+import { Column, createColumn, createTask, deleteColumn, deleteTask, getProjectById, Project, Task, updateColumnById, updateTaskById, updateTaskImportances } from '../utils/supabase/projects';
 
 export type ColumnMutateArgs =
 	| {
@@ -38,6 +37,10 @@ export type ColumnMutateArgs =
 			nextIndex: number;
 			currentIndex: number;
 			task_id: number;
+	  }
+	| {
+			type: 'UPDATE_TASK_INDEXES';
+			column: Column;
 	  };
 
 export function sortByImportance<T extends { importance: number }>(arr: T[]): T[] {
@@ -138,6 +141,11 @@ export function useQueryProject(user: User | null) {
 			nextColumn.tasks = [task, ...nextColumn.tasks!];
 			updateTaskById(task.id, { importance: bestImportance, column_id: nextColumn.id });
 			manualUpdate(data!);
+		} else if (args.type === 'UPDATE_TASK_INDEXES') {
+			updateTaskImportances(args.column).then((tasks) => {
+				args.column.tasks = tasks;
+				manualUpdate(data!);
+			});
 		}
 	});
 

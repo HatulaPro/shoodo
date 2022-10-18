@@ -61,6 +61,11 @@ const MovableColumn: FC<MovableColumnProps> = ({ column, mutate, columns, index,
 	function onTasksReorder(newTasks: Task[]) {
 		if (newTasks.length === 0) return (column.tasks = newTasks);
 
+		if (new Set(newTasks.map((t) => t.importance)).size < newTasks.length) {
+			mutate({ type: 'UPDATE_TASK_INDEXES', column });
+			return;
+		}
+
 		let prevImportance = newTasks[0].importance;
 		for (let i = 1; i < newTasks.length; i++) {
 			if (newTasks[i].importance < prevImportance) {
@@ -74,6 +79,7 @@ const MovableColumn: FC<MovableColumnProps> = ({ column, mutate, columns, index,
 			}
 			prevImportance = newTasks[i].importance;
 		}
+
 		if (newTasks.length === 0) return (column.tasks = newTasks);
 	}
 

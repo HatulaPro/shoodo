@@ -175,3 +175,18 @@ export async function deleteTask(task_id: number): Promise<boolean> {
 
 	return Boolean(data);
 }
+
+export async function updateTaskImportances(column: Column): Promise<Task[]> {
+	const { data, error } = await supabase.from<Task>('tasks').upsert(
+		column.tasks!.map((t, i) => {
+			return { ...t, importance: i * Math.pow(2, 32) };
+		})
+	);
+
+	if (error) {
+		console.log(error);
+		throw new Error(error.message);
+	}
+
+	return data;
+}
