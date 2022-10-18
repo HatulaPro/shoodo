@@ -8,6 +8,7 @@ import ColumnsView from '../../components/ColumnsView/ColumnsView';
 import EditableTypography from '../../components/EditableTypography/EditableTypography';
 import { ProjectKeyboardNavigationProvider } from '../../contexts/ProjectKeyboardNavigationContext';
 import { useQueryProject } from '../../hooks/useQueryProject';
+import useRealtimeProject from '../../hooks/useRealtimeProject';
 import { useUser } from '../../hooks/useUser';
 import styles from '../../styles/Projects.module.css';
 import { updateProjectById } from '../../utils/supabase/projects';
@@ -16,6 +17,8 @@ const ProjectByIdPage: NextPage = () => {
 	const { user } = useUser({ authOnly: true });
 	const { data: project, isLoading, manualUpdate, columnsMutation } = useQueryProject(user);
 	const hasEditPerms = useMemo(() => project?.user_id === user?.id || Boolean(project?.perms?.find((p) => p.guest_id === user?.id && p.can_edit)), [user, project?.perms, project?.user_id]);
+	const res = useRealtimeProject(project, manualUpdate);
+	console.log(res);
 
 	return (
 		<ProjectKeyboardNavigationProvider project={project}>
