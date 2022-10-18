@@ -81,7 +81,6 @@ export default function useRealtimeProject(project: Project | undefined, onUpdat
 			.from<Task>(`tasks:project_id=eq.${project.id}`)
 			.on('*', (payload) => {
 				if (payload.eventType === 'UPDATE') {
-					console.log(payload);
 					const newColId = payload.new.column_id;
 					const newCol = project.columns!.find((c) => c.id === newColId);
 
@@ -118,7 +117,6 @@ export default function useRealtimeProject(project: Project | undefined, onUpdat
 
 					onUpdate({ ...project, columns: [...project.columns!] });
 				} else if (payload.eventType === 'DELETE') {
-					console.log({ payload, project });
 					for (const col of project.columns!) {
 						const newTasks = col.tasks!.filter((oldTask) => {
 							const res = oldTask.id !== payload.old.id;
@@ -127,7 +125,6 @@ export default function useRealtimeProject(project: Project | undefined, onUpdat
 						col.tasks = newTasks;
 					}
 
-					console.log({ payload, project });
 					onUpdate({ ...project, columns: [...project.columns!] });
 				} else if (payload.eventType === 'INSERT') {
 					const colId = payload.new.column_id;

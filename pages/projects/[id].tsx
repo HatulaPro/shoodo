@@ -17,8 +17,7 @@ const ProjectByIdPage: NextPage = () => {
 	const { user } = useUser({ authOnly: true });
 	const { data: project, isLoading, manualUpdate, columnsMutation } = useQueryProject(user);
 	const hasEditPerms = useMemo(() => project?.user_id === user?.id || Boolean(project?.perms?.find((p) => p.guest_id === user?.id && p.can_edit)), [user, project?.perms, project?.user_id]);
-	const res = useRealtimeProject(project, manualUpdate);
-	console.log(project);
+	useRealtimeProject(project, manualUpdate);
 
 	return (
 		<ProjectKeyboardNavigationProvider project={project}>
