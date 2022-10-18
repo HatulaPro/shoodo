@@ -24,22 +24,35 @@ const ProjectByIdPage: NextPage = () => {
 			</Head>
 			<Box position="relative" sx={{ p: { md: 4, sm: 1, xs: 0.5 } }}>
 				{project && (
-					<EditableTypography
-						onUpdate={(text) => {
-							if (text.length > 0) {
-								updateProjectById(project.id, { name: text });
-								manualUpdate({ ...project, name: text });
-							}
-						}}
-						size="large"
-						text={project.name}
-						style={{
-							fontSize: '1.6rem',
-							padding: '0.5rem',
-							lineHeight: '4rem',
-						}}
-						disabled={!hasEditPerms}
-					/>
+					<>
+						<EditableTypography
+							onUpdate={(text) => {
+								if (text.length > 0) {
+									updateProjectById(project.id, { name: text });
+									manualUpdate({ ...project, name: text });
+								}
+							}}
+							size="large"
+							text={project.name}
+							style={{
+								fontSize: '1.6rem',
+								padding: '0.2rem',
+								paddingBottom: '0',
+								lineHeight: '4rem',
+							}}
+							disabled={!hasEditPerms}
+						/>
+						<Typography
+							style={{
+								padding: '0.5rem',
+								paddingTop: '0',
+							}}
+							variant="subtitle2"
+							color="GrayText"
+						>
+							By {project.user?.email}
+						</Typography>
+					</>
 				)}
 				<Box display="flex" sx={{ flexDirection: { md: 'row', xs: 'column' } }}>
 					<ColumnsTools project={project} mutate={columnsMutation.mutate} manualUpdate={manualUpdate} editPerms={hasEditPerms} />

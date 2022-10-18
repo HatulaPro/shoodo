@@ -1,18 +1,23 @@
 import CloseIcon from '@mui/icons-material/Close';
-import { ButtonBase, Divider, IconButton, useMediaQuery, useTheme } from '@mui/material';
+import { useTheme } from '@mui/material';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
+import ButtonBase from '@mui/material/ButtonBase';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
+import Divider from '@mui/material/Divider';
 import FormControl from '@mui/material/FormControl';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormHelperText from '@mui/material/FormHelperText';
+import IconButton from '@mui/material/IconButton';
 import LinearProgress from '@mui/material/LinearProgress';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import { AnimatePresence, motion } from 'framer-motion';
 import type { FC } from 'react';
 import { useMemo } from 'react';
@@ -98,6 +103,10 @@ const ProjectPermsDialog: FC<ProjectPermsDialogProps> = ({ project, open, handle
 			</DialogTitle>
 			{editPermsMutation.isLoading && <LinearProgress color="secondary" />}
 			<DialogContent style={{ overflow: 'visible', padding: 4 }}>
+				<Typography variant="caption" style={{ padding: '0.5rem' }}>
+					owned and managed by <b>{project?.user?.email}</b> {isOwner && '(you)'}
+				</Typography>
+
 				<div className="scrollbar" style={{ maxHeight: '30vh', overflowY: 'scroll', overflowX: 'hidden' }}>
 					<AnimatePresence>
 						{currentUsersList.map((perm) => (

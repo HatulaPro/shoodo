@@ -27,6 +27,7 @@ export type Project = {
 	user_id: string;
 	columns?: Column[];
 	perms?: Perm[];
+	user?: { id: string; email: string };
 };
 
 export async function getUserProjects(userId: string): Promise<Project[]> {
@@ -78,7 +79,7 @@ export async function deleteProject(project_id: number): Promise<boolean> {
 
 export async function getProjectById(project_id: number): Promise<Project> {
 	// bad: tasks!column_id
-	const { data, error } = await supabase.from<Project>('projects').select('*, columns ( *, tasks!tasks_column_id_fkey ( * ) ), perms ( *, user:users ( * ) )').eq('id', project_id).single();
+	const { data, error } = await supabase.from<Project>('projects').select('*, columns ( *, tasks!tasks_column_id_fkey ( * ) ), perms ( *, user:users ( * ) ), user:users ( * )').eq('id', project_id).single();
 	console.log(data);
 
 	if (error) {
