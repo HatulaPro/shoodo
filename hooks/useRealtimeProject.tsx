@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { supabase } from '../utils/supabase/client';
 import { getPermById, Perm } from '../utils/supabase/perms';
-import type { Column, Project } from '../utils/supabase/projects';
+import type { Column, Project, Task } from '../utils/supabase/projects';
 import { sortByImportance } from './useQueryProject';
 
 export default function useRealtimeProject(project: Project | undefined, onUpdate: (proj: Project) => void) {
@@ -52,7 +52,6 @@ export default function useRealtimeProject(project: Project | undefined, onUpdat
 		const realtimeColumnSubscription = supabase
 			.from<Column>(`columns:project_id=eq.${project.id}`)
 			.on('*', (payload) => {
-				console.log(payload);
 				if (payload.eventType === 'UPDATE') {
 					const newColumns = project.columns!.map((oldColumn) => {
 						if (oldColumn.id === payload.new.id) {
@@ -78,10 +77,79 @@ export default function useRealtimeProject(project: Project | undefined, onUpdat
 			})
 			.subscribe();
 
+		const realtimeTaskSubscription = supabase
+			.from<Task>(`tasks:project_id=eq.${project.id}`)
+			.on('*', (payload) => {
+				if (payload.eventType === 'UPDATE') {
+					console.log(payload);
+					const newColId = payload.new.column_id;
+					const newCol = project.columns!.find((c) => c.id === newColId);
+
+					if (newCol === undefined) return;
+
+					const newColHasTask = Boolean(newCol.tasks!.find((c) => c.id === payload.new.id));
+
+					// If the column_id has not changed:
+					if (newColHasTask) {
+						const newTasks = newCol.tasks!.map((oldTask) => {
+							if (oldTask.id === payload.new.id) {
+								return { ...oldTask, ...payload.new } as Task;
+							}
+							return oldTask;
+						});
+
+						newCol.tasks = sortByImportance(newTasks);
+					}
+					// Finding the old column of current task:
+					else {
+						for (const col of project.columns!) {
+							// Deleting from old column_id
+							const newTasks = col.tasks!.filter((oldTask) => {
+								const res = oldTask.id !== payload.new.id;
+								return res;
+							});
+							col.tasks = newTasks;
+
+							if (col.id === newColId) {
+								col.tasks = sortByImportance([{ ...payload.new, column_id: col.id }, ...col.tasks!]);
+							}
+						}
+					}
+
+					onUpdate({ ...project, columns: [...project.columns!] });
+				} else if (payload.eventType === 'DELETE') {
+					console.log({ payload, project });
+					for (const col of project.columns!) {
+						const newTasks = col.tasks!.filter((oldTask) => {
+							const res = oldTask.id !== payload.old.id;
+							return res;
+						});
+						col.tasks = newTasks;
+					}
+
+					console.log({ payload, project });
+					onUpdate({ ...project, columns: [...project.columns!] });
+				} else if (payload.eventType === 'INSERT') {
+					const colId = payload.new.column_id;
+					const col = project.columns!.find((c) => c.id === colId);
+					if (col === undefined) return;
+
+					const originalTasks = col.tasks!;
+					const alreadyHasNewId = Boolean(originalTasks.find((c) => c.id === payload.new.id));
+					if (!alreadyHasNewId) {
+						const newTasks = [{ ...payload.new } as Task, ...originalTasks];
+						col.tasks = newTasks;
+						onUpdate(project);
+					}
+				}
+			})
+			.subscribe();
+
 		return () => {
 			supabase.removeSubscription(realtimeProjectSubscription);
 			supabase.removeSubscription(realtimePermsSubscription);
 			supabase.removeSubscription(realtimeColumnSubscription);
+			supabase.removeSubscription(realtimeTaskSubscription);
 		};
 	}, [supabase, project]);
 
