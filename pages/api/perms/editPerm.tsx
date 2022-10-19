@@ -28,15 +28,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
 		if (email === user.email) return res.json({ error: 'Self invite is not allowed' });
 
-		supabase
-			.rpc<Perm>('edit_perm', { email, pid: projectId, can_edit: canEdit === 'viewAndEdit', auth_id: user.id })
-			.single()
-			.then(({ data, error }) => {
-				if (error) {
-					return res.json({ error });
-				}
-				return res.json({ success: true, data: { ...data, user: { email: email, guest_id: data.guest_id } } });
-			});
+		const { data, error } = await supabase.rpc<Perm>('edit_perm', { email, pid: projectId, can_edit: canEdit === 'viewAndEdit', auth_id: user.id }).single();
+		if (error) {
+			return res.json({ error });
+		}
+		return res.json({ success: true, data: { ...data, user: { email: email, guest_id: data.guest_id } } });
 	} catch (e: any) {
 		return res.json({ error: e.message });
 	}
