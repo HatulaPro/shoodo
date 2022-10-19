@@ -1,6 +1,7 @@
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
+import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
 import Dialog from '@mui/material/Dialog';
@@ -17,6 +18,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import Link from 'next/link';
 import { FC, useEffect, useRef, useState } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
+import { useUser } from '../../hooks/useUser';
 import { cn } from '../../utils/general';
 import type { Project } from '../../utils/supabase/projects';
 import { getProjectById } from '../../utils/supabase/projects';
@@ -35,6 +37,7 @@ const ProjectsView: FC<ProjectsViewProps> = ({ projects, newProject, updateProje
 	const [anchor, setAnchor] = useState<HTMLButtonElement | null>(null);
 	const [showDeleteDialog, setShowDeleteDialog] = useState<boolean>(false);
 	const queryClient = useQueryClient();
+	const { user } = useUser();
 
 	const deleteProjectMutation = useMutation((index: number) => deleteProject(projects[index].id));
 
@@ -125,6 +128,13 @@ const ProjectsView: FC<ProjectsViewProps> = ({ projects, newProject, updateProje
 										{project.description}
 									</Typography>
 								</CardContent>
+								{project.user && (
+									<CardActions>
+										<Typography variant="caption" color="GrayText" className={styles.projectViewCutText}>
+											By {project.user.email}
+										</Typography>
+									</CardActions>
+								)}
 							</Card>
 						</motion.div>
 					</Grid>
