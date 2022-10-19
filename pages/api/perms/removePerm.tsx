@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
+import { getUserFromJWT } from '../../../utils/supabase/auth';
 import { getServiceSupabase } from '../../../utils/supabase/client';
-import { Perm } from '../../../utils/supabase/perms';
+import type { Perm } from '../../../utils/supabase/perms';
 
 type ValidInput = {
 	permId: number;
@@ -13,11 +14,11 @@ function isValid(data: any): ValidInput {
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
 	const supabase = getServiceSupabase();
-	const { user } = await supabase.auth.api.getUserByCookie(req);
-
-	if (!user) return res.json({ error: 'Not authenticated' });
 
 	try {
+		const token = req.cookies['sb-access-token'];
+		const user = getUserFromJWT(token);
+
 		const { permId } = isValid(req.body);
 
 		// Checking if the project belongs to the user

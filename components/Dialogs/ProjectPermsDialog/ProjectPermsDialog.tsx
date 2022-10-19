@@ -50,7 +50,6 @@ const ProjectPermsDialog: FC<ProjectPermsDialogProps> = ({ project, open, handle
 	const editPermsMutation = useMutation(
 		async (data: AddUserForm) => {
 			if (!isOwner) return;
-
 			const res = await fetch('/api/perms/editPerm', {
 				method: 'POST',
 				headers: new Headers({ 'Content-Type': 'application/json' }),

@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
+import { getUserFromJWT } from '../../../utils/supabase/auth';
 import { getServiceSupabase } from '../../../utils/supabase/client';
-import { Perm } from '../../../utils/supabase/perms';
+import type { Perm } from '../../../utils/supabase/perms';
 
 type ValidInput = {
 	email: string;
@@ -19,11 +20,11 @@ function isValid(data: any): ValidInput {
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
 	const supabase = getServiceSupabase();
-	const { user } = await supabase.auth.api.getUserByCookie(req);
-
-	if (!user) return res.json({ error: 'Not authenticated' });
 
 	try {
+		const token = req.cookies['sb-access-token'];
+		const user = getUserFromJWT(token);
+
 		const { email, canEdit, projectId } = isValid(req.body);
 
 		if (email === user.email) return res.json({ error: 'Self invite is not allowed' });
