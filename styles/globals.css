@@ -6,6 +6,7 @@ body {
 	margin: 0;
 	font-family: Roboto;
 	background: #f4f0f0;
+	overflow-x: hidden;
 }
 
 a {
