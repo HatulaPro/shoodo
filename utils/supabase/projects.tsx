@@ -77,6 +77,13 @@ export async function deleteProject(project_id: number): Promise<boolean> {
 		throw new Error(colsError.message);
 	}
 
+	const { error: permsError } = await supabase.from<Perm>('perms').delete().eq('project_id', project_id);
+
+	if (permsError) {
+		console.log(permsError);
+		throw new Error(permsError.message);
+	}
+
 	const { data, error } = await supabase.from<Project>('projects').delete().eq('id', project_id);
 
 	if (error) {
