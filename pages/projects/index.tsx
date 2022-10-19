@@ -76,10 +76,14 @@ const ProjectsPage: NextPage<ProjectProps> = () => {
 					My Projects
 				</Typography>
 				{userProjects && <ProjectsView projects={userProjects} newProject={newProjectIndex} updateProjects={manualUpdateProjects} deleteProject={deleteProject} />}
-				<Typography sx={{ my: 3 }} variant="h5" component="h2">
-					Shared With Me
-				</Typography>
-				{userInvites && <ProjectsView projects={userInvites} newProject={-1} updateProjects={manualUpdateInvites} deleteProject={deletePermByProjectId} />}
+				{userInvites && userInvites.length > 0 && (
+					<>
+						<Typography sx={{ my: 3 }} variant="h5" component="h2">
+							Shared With Me
+						</Typography>
+						<ProjectsView projects={userInvites} newProject={-1} updateProjects={manualUpdateInvites} deleteProject={deletePermByProjectId} />
+					</>
+				)}
 				{user && <NewProjectDialog userId={user.id} open={location === '/projects/new'} handleClose={closeNewProjectDialog} />}
 			</Container>
 		</>
