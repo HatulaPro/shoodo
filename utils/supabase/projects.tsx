@@ -31,14 +31,24 @@ export type Project = {
 };
 
 export async function getUserProjects(userId: string): Promise<Project[]> {
-	const result = await supabase.from('projects').select('*').eq('user_id', userId);
+	const result = await supabase.from<Project>('projects').select('*').eq('user_id', userId);
 	if (result.error) {
 		console.log(result);
 
 		throw new Error(result.error.message);
 	}
-	const data = result.data as Project[];
-	return data;
+	return result.data;
+}
+
+export async function getUserInvites(userId: string): Promise<Project[]> {
+	const result = await supabase.from<Perm>('perms').select('*, project:projects ( *, user:users( * ) )').eq('guest_id', userId);
+	if (result.error) {
+		console.log(result);
+
+		throw new Error(result.error.message);
+	}
+
+	return result.data.map(({ project }) => project!);
 }
 
 export async function createProject(user_id: string, name: string, description: string): Promise<Project> {

@@ -19,16 +19,17 @@ import { FC, useEffect, useRef, useState } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
 import { cn } from '../../utils/general';
 import type { Project } from '../../utils/supabase/projects';
-import { deleteProject, getProjectById } from '../../utils/supabase/projects';
+import { getProjectById } from '../../utils/supabase/projects';
 import styles from './ProjectsView.module.css';
 
 type ProjectsViewProps = {
 	projects: Project[];
 	newProject: number;
 	updateProjects: (projects: Project[]) => void;
+	deleteProject: (projectId: number) => Promise<boolean>;
 };
 
-const ProjectsView: FC<ProjectsViewProps> = ({ projects, newProject, updateProjects }) => {
+const ProjectsView: FC<ProjectsViewProps> = ({ projects, newProject, updateProjects, deleteProject }) => {
 	const projectsListRef = useRef<HTMLDivElement>(null);
 	const [openMenuIndex, setOpenMenuIndex] = useState<number>(-1);
 	const [anchor, setAnchor] = useState<HTMLButtonElement | null>(null);

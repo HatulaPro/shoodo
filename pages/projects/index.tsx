@@ -13,7 +13,8 @@ import ProjectsView from '../../components/ProjectsView/ProjectsView';
 import { useShallowRoutes } from '../../hooks/useShallowRoutes';
 import { useUser } from '../../hooks/useUser';
 import { useUserProjects } from '../../hooks/useUserProjects';
-import type { Project } from '../../utils/supabase/projects';
+import { deleteOwnPerm } from '../../utils/supabase/perms';
+import { deleteProject, Project } from '../../utils/supabase/projects';
 
 type ProjectProps = {
 	projects: Project[];
@@ -24,7 +25,13 @@ const ProjectsPage: NextPage<ProjectProps> = () => {
 	const [newProjectIndex, setNewProjectIndex] = useState<number>(-1);
 	const { location, setLocation } = useShallowRoutes<'/projects/new' | '/projects'>('/projects');
 
-	const { isLoading: isLoadingProjects, data: userProjects, refetch, manualUpdate } = useUserProjects(user);
+	const { isLoading: isLoadingProjects, data: userProjects, refetch: refetchProjects, manualUpdate: manualUpdateProjects } = useUserProjects(user, false);
+	const { isLoading: isLoadingInvites, data: userInvites, refetch: refetchInvites, manualUpdate: manualUpdateInvites } = useUserProjects(user, true);
+
+	function refetch() {
+		refetchInvites();
+		refetchProjects();
+	}
 
 	function createNewProject() {
 		setLocation('/projects/new');
@@ -35,8 +42,13 @@ const ProjectsPage: NextPage<ProjectProps> = () => {
 
 		if (project) {
 			setNewProjectIndex(userProjects!.length);
-			manualUpdate([...userProjects!, project]);
+			manualUpdateProjects([...userProjects!, project]);
 		}
+	}
+
+	function deletePermByProjectId(project_id: number) {
+		if (!user) throw new Error('You should be logged in');
+		return deleteOwnPerm(user.id, project_id);
 	}
 
 	return (
@@ -50,7 +62,7 @@ const ProjectsPage: NextPage<ProjectProps> = () => {
 				</Typography>
 				<Box display="flex" flexDirection="row" m={2}>
 					<Tooltip title="refresh">
-						<IconButton onClick={() => refetch()} disabled={isLoadingProjects}>
+						<IconButton onClick={refetch} disabled={isLoadingProjects || isLoadingInvites}>
 							<RefreshIcon />
 						</IconButton>
 					</Tooltip>
@@ -60,7 +72,14 @@ const ProjectsPage: NextPage<ProjectProps> = () => {
 						</Button>
 					</Box>
 				</Box>
-				{userProjects && <ProjectsView projects={userProjects} newProject={newProjectIndex} updateProjects={manualUpdate} />}
+				<Typography sx={{ my: 3 }} variant="h5" component="h2">
+					My Projects
+				</Typography>
+				{userProjects && <ProjectsView projects={userProjects} newProject={newProjectIndex} updateProjects={manualUpdateProjects} deleteProject={deleteProject} />}
+				<Typography sx={{ my: 3 }} variant="h5" component="h2">
+					Shared With Me
+				</Typography>
+				{userInvites && <ProjectsView projects={userInvites} newProject={-1} updateProjects={manualUpdateInvites} deleteProject={deletePermByProjectId} />}
 				{user && <NewProjectDialog userId={user.id} open={location === '/projects/new'} handleClose={closeNewProjectDialog} />}
 			</Container>
 		</>
