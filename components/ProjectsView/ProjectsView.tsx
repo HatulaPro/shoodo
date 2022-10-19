@@ -13,6 +13,7 @@ import LinearProgress from '@mui/material/LinearProgress';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
+import { AnimatePresence, motion } from 'framer-motion';
 import Link from 'next/link';
 import { FC, useEffect, useRef, useState } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
@@ -98,32 +99,36 @@ const ProjectsView: FC<ProjectsViewProps> = ({ projects, newProject, updateProje
 					</DialogActions>
 				</Dialog>
 			)}
-			{projects.map((project, index) => (
-				<Grid item xs={12} sm={6} md={4} key={project.id}>
-					<Card variant="outlined" className={cn(index === newProject && styles.projectViewNew, openMenuIndex === index && deleteProjectMutation.isLoading && styles.projectViewDeleted)}>
-						<CardHeader
-							title={project.name}
-							subheader={new Date(project.created_at).toLocaleString()}
-							action={
-								<IconButton onClick={openMenu(index)}>
-									<MoreVertIcon />
-								</IconButton>
-							}
-						/>
-						<Menu open={index === openMenuIndex} onClose={closeMenu} anchorEl={anchor}>
-							<MenuItem onClick={openDeleteDialog}>Delete</MenuItem>
-							<Link href={{ pathname: `/projects/[id]`, query: { project: JSON.stringify(project) } }} as={`/projects/${project.id}`} shallow>
-								<MenuItem onClick={closeMenu}>View</MenuItem>
-							</Link>
-						</Menu>
-						<CardContent>
-							<Typography variant="body2" className={styles.projectViewCutText}>
-								{project.description}
-							</Typography>
-						</CardContent>
-					</Card>
-				</Grid>
-			))}
+			<AnimatePresence>
+				{projects.map((project, index) => (
+					<Grid item key={project.id} xs={12} sm={6} md={4}>
+						<motion.div initial={{ opacity: 0, y: 100 }} animate={{ opacity: 1, y: 0 }}>
+							<Card variant="outlined" className={cn(index === newProject && styles.projectViewNew, openMenuIndex === index && deleteProjectMutation.isLoading && styles.projectViewDeleted)}>
+								<CardHeader
+									title={project.name}
+									subheader={new Date(project.created_at).toLocaleString()}
+									action={
+										<IconButton onClick={openMenu(index)}>
+											<MoreVertIcon />
+										</IconButton>
+									}
+								/>
+								<Menu open={index === openMenuIndex} onClose={closeMenu} anchorEl={anchor}>
+									<MenuItem onClick={openDeleteDialog}>Delete</MenuItem>
+									<Link href={{ pathname: `/projects/[id]`, query: { project: JSON.stringify(project) } }} as={`/projects/${project.id}`} shallow>
+										<MenuItem onClick={closeMenu}>View</MenuItem>
+									</Link>
+								</Menu>
+								<CardContent>
+									<Typography variant="body2" className={styles.projectViewCutText}>
+										{project.description}
+									</Typography>
+								</CardContent>
+							</Card>
+						</motion.div>
+					</Grid>
+				))}
+			</AnimatePresence>
 		</Grid>
 	);
 };
