@@ -19,6 +19,7 @@ import Link from 'next/link';
 import { FC, useEffect, useRef, useState } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
 import { sortByImportance } from '../../hooks/useQueryProject';
+import { useUser } from '../../hooks/useUser';
 import { cn } from '../../utils/general';
 import type { Project } from '../../utils/supabase/projects';
 import { getProjectById } from '../../utils/supabase/projects';
@@ -37,6 +38,7 @@ const ProjectsView: FC<ProjectsViewProps> = ({ projects, newProject, updateProje
 	const [anchor, setAnchor] = useState<HTMLButtonElement | null>(null);
 	const [showDeleteDialog, setShowDeleteDialog] = useState<boolean>(false);
 	const queryClient = useQueryClient();
+	const { user } = useUser();
 
 	const deleteProjectMutation = useMutation((index: number) => deleteProject(projects[index].id));
 
@@ -133,7 +135,7 @@ const ProjectsView: FC<ProjectsViewProps> = ({ projects, newProject, updateProje
 										{project.description}
 									</Typography>
 								</CardContent>
-								{project.user && (
+								{project.user && project.user_id !== user?.id && (
 									<CardActions>
 										<Typography variant="caption" color="GrayText" className={styles.projectViewCutText}>
 											By {project.user.email}
