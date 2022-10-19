@@ -3,6 +3,7 @@ import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import List from '@mui/material/List';
 import Typography from '@mui/material/Typography';
+import { motion } from 'framer-motion';
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
@@ -53,6 +54,60 @@ const Home: NextPage = () => {
 						</Grid>
 					</Grid>
 				</Grid>
+				<motion.div initial={{ x: -300, opacity: 0 }} whileInView={{ x: 0, opacity: 1 }} transition={{ duration: 0.6 }} viewport={{ once: true }}>
+					<Grid container className={styles.section}>
+						<Grid item sm={5} xs={12} display="flex" flexDirection="column" justifyContent="center">
+							<Container style={{ position: 'relative', minHeight: '300px' }}>
+								<Image alt="share your work" src="/sharing.png" layout="fill" objectFit="contain" />
+							</Container>
+						</Grid>
+						<Grid item sm={7} xs={12} display="flex" flexDirection="column" justifyContent="center">
+							<Typography variant="h3" component="h3" className={styles.sectionHeading}>
+								Share with your friends!
+							</Typography>
+							<Typography variant="body1" component="p">
+								Shoodo allows you to edit your to do lists with your friends, colleagues and whoever else you want. Create a project, share it with your buddies and have fun!
+								<br />
+								Teamwork makes the dream work!
+							</Typography>
+						</Grid>
+					</Grid>
+				</motion.div>
+				<motion.div initial={{ x: 300, opacity: 0 }} whileInView={{ x: 0, opacity: 1 }} transition={{ duration: 0.6 }} viewport={{ once: true }}>
+					<Grid container className={styles.section} sx={{ flexDirection: { xs: 'column-reverse', sm: 'row' } }}>
+						<Grid item sm={1} xs={12} />
+						<Grid item sm={6} xs={12} display="flex" flexDirection="column" justifyContent="center">
+							<Typography variant="h3" component="h3" className={styles.sectionHeading}>
+								Anywhere, Anytime!
+							</Typography>
+							<Typography variant="body1" component="p">
+								From your phone, personal computer or even your Samsung smart fridge. Work on your project with anyone you wish in <u>realtime</u> from all over the globe. Performence is guaranteed!
+							</Typography>
+						</Grid>
+						<Grid item sm={5} xs={12} display="flex" flexDirection="column" justifyContent="center">
+							<Container style={{ position: 'relative', minHeight: '300px' }}>
+								<Image alt="work online" src="/online.png" layout="fill" objectFit="contain" />
+							</Container>
+						</Grid>
+					</Grid>
+				</motion.div>
+				<motion.div initial={{ x: -300, opacity: 0 }} whileInView={{ x: 0, opacity: 1 }} transition={{ duration: 0.6 }} viewport={{ once: true }}>
+					<Grid container className={styles.section}>
+						<Grid item sm={5} xs={12} display="flex" flexDirection="column" justifyContent="center">
+							<Container style={{ position: 'relative', minHeight: '300px' }}>
+								<Image alt="keep your data safe" src="/security.png" layout="fill" objectFit="contain" />
+							</Container>
+						</Grid>
+						<Grid item sm={7} xs={12} display="flex" flexDirection="column" justifyContent="center">
+							<Typography variant="h3" component="h3" className={styles.sectionHeading}>
+								Your data is safe with us!
+							</Typography>
+							<Typography variant="body1" component="p">
+								Shoodo uses modern technologies to make sure your information is kept safe. No passwords are required, so you can keep your mind focused on the real issues.
+							</Typography>
+						</Grid>
+					</Grid>
+				</motion.div>
 			</div>
 		</div>
 	);
