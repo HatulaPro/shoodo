@@ -18,7 +18,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import Link from 'next/link';
 import { FC, useEffect, useRef, useState } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
-import { useUser } from '../../hooks/useUser';
+import { sortByImportance } from '../../hooks/useQueryProject';
 import { cn } from '../../utils/general';
 import type { Project } from '../../utils/supabase/projects';
 import { getProjectById } from '../../utils/supabase/projects';
@@ -37,7 +37,6 @@ const ProjectsView: FC<ProjectsViewProps> = ({ projects, newProject, updateProje
 	const [anchor, setAnchor] = useState<HTMLButtonElement | null>(null);
 	const [showDeleteDialog, setShowDeleteDialog] = useState<boolean>(false);
 	const queryClient = useQueryClient();
-	const { user } = useUser();
 
 	const deleteProjectMutation = useMutation((index: number) => deleteProject(projects[index].id));
 
@@ -58,7 +57,13 @@ const ProjectsView: FC<ProjectsViewProps> = ({ projects, newProject, updateProje
 			setOpenMenuIndex(index);
 
 			getProjectById(projects[index].id).then((proj) => {
+				proj.columns = sortByImportance(proj.columns!);
+				for (const col of proj.columns) {
+					col.tasks = sortByImportance(col.tasks!);
+				}
+
 				queryClient.setQueryData(['project', projects[index].id], proj);
+
 				const newProjectArray = [...projects];
 				newProjectArray[index] = proj;
 				updateProjects(newProjectArray);
