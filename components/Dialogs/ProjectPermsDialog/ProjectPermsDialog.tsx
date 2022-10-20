@@ -63,7 +63,7 @@ const ProjectPermsDialog: FC<ProjectPermsDialogProps> = ({ project, open, handle
 				manualUpdate(project);
 				return true;
 			} else {
-				throw new Error(jsoned.error);
+				throw new Error(jsoned.error.message);
 			}
 		},
 		{
