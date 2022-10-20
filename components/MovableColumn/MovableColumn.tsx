@@ -134,15 +134,15 @@ const MovableColumn: FC<MovableColumnProps> = ({ column, mutate, columns, index,
 			<div className={cn(styles.movableColumn, 'moveableColumn')} onFocusCapture={onFocus} onBlur={onBlur} tabIndex={-1}>
 				{editPerms && (
 					<>
-						<IconButton className="mouseOnly" onPointerDown={(e) => controls.start(e)}>
+						<IconButton className="mouseOnly" onPointerDown={(e) => controls.start(e)} aria-label="Column drag handler">
 							<DragHandleIcon />
 						</IconButton>
 
 						<Box display="flex" className="touchOnly" justifyContent="space-around">
-							<IconButton onClick={moveLeft}>
+							<IconButton onClick={moveLeft} aria-label="Move column to the left">
 								<ArrowBackIcon fontSize="large" />
 							</IconButton>
-							<IconButton onClick={moveRight}>
+							<IconButton onClick={moveRight} aria-label="Move column to the right">
 								<ArrowForwardIcon fontSize="large" />
 							</IconButton>
 						</Box>
@@ -167,10 +167,10 @@ const MovableColumn: FC<MovableColumnProps> = ({ column, mutate, columns, index,
 				</div>
 				{editPerms && (
 					<div className={cn(styles.movableColumnTools, openTools && styles.movableColumnToolsOpen)}>
-						<IconButton sx={{ mb: 0 }} onClick={() => mutate({ type: 'DELETE', column_id: column.id })}>
+						<IconButton sx={{ mb: 0 }} onClick={() => mutate({ type: 'DELETE', column_id: column.id })} aria-label="Delete column">
 							<DeleteIcon htmlColor="red" />
 						</IconButton>
-						<IconButton onClick={() => setOpenColorPicker(true)}>
+						<IconButton onClick={() => setOpenColorPicker(true)} aria-label="Change column color">
 							<PaletteIcon htmlColor={column.style} />
 						</IconButton>
 					</div>

@@ -35,7 +35,7 @@ const MovableTask: FC<MovableTaskProps> = ({ task, column, mutate, editPerms }) 
 						{editPerms && <Checkbox checked={task.done} onChange={(e) => mutate({ type: 'UPDATE_TASK', column_id: column.id, task_id: task.id, update: { done: e.target.checked } })} />}
 						<EditableTypography onUpdate={(text) => text.length > 0 && mutate({ type: 'UPDATE_TASK', column_id: column.id, task_id: task.id, update: { content: text } })} text={task.content} size="small" style={{ textDecoration: task.done ? 'line-through' : 'none' }} disabled={!editPerms} />
 						{editPerms && (
-							<IconButton onClick={() => mutate({ type: 'DELETE_TASK', column_id: column.id, task_id: task.id })}>
+							<IconButton onClick={() => mutate({ type: 'DELETE_TASK', column_id: column.id, task_id: task.id })} aria-label="Remove task">
 								<CloseIcon htmlColor="red" />
 							</IconButton>
 						)}

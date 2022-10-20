@@ -25,11 +25,11 @@ const ColumnsTools: FC<ColumnsToolsProps> = ({ mutate, project, manualUpdate, ed
 		<>
 			<Box display="flex" sx={{ flexDirection: { md: 'column', xs: 'row' } }} mr={2}>
 				{editPerms && (
-					<IconButton onClick={() => mutate({ type: 'CREATE' })} {...register(-1, 0)}>
+					<IconButton onClick={() => mutate({ type: 'CREATE' })} {...register(-1, 0)} aria-label="Add Column">
 						<AddIcon color="primary" fontSize="large" />
 					</IconButton>
 				)}
-				<IconButton onClick={() => setProjectPermsOpen(true)} {...register(-1, 1)}>
+				<IconButton onClick={() => setProjectPermsOpen(true)} {...register(-1, 1)} aria-label="View Permissions">
 					<GroupIcon color="warning" fontSize="large" />
 				</IconButton>
 			</Box>
