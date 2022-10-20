@@ -1,4 +1,5 @@
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import Badge from '@mui/material/Badge';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
@@ -114,16 +115,18 @@ const ProjectsView: FC<ProjectsViewProps> = ({ projects, newProject, updateProje
 				{projects.map((project, index) => (
 					<Grid item key={project.id} xs={12} sm={6} md={4}>
 						<motion.div initial={{ opacity: 0, y: 100 }} animate={{ opacity: 1, y: 0 }}>
-							<Card variant="outlined" className={cn(index === newProject && styles.projectViewNew, openMenuIndex === index && deleteProjectMutation.isLoading && styles.projectViewDeleted)}>
-								<CardHeader
-									title={project.name}
-									subheader={new Date(project.created_at).toLocaleString()}
-									action={
-										<IconButton onClick={openMenu(index)}>
-											<MoreVertIcon />
-										</IconButton>
-									}
-								/>
+							<Card variant="outlined" style={{ overflow: 'visible' }} className={cn(index === newProject && styles.projectViewNew, openMenuIndex === index && deleteProjectMutation.isLoading && styles.projectViewDeleted)}>
+								<Badge badgeContent={project.history?.length === 0 ? 'new' : undefined} color="secondary">
+									<CardHeader
+										title={project.name}
+										subheader={new Date(project.created_at).toLocaleString()}
+										action={
+											<IconButton onClick={openMenu(index)}>
+												<MoreVertIcon />
+											</IconButton>
+										}
+									/>
+								</Badge>
 								<Menu open={index === openMenuIndex} onClose={closeMenu} anchorEl={anchor}>
 									<MenuItem onClick={openDeleteDialog}>Delete</MenuItem>
 									<Link href={{ pathname: `/projects/[id]`, query: { project: JSON.stringify(project) } }} as={`/projects/${project.id}`} shallow>

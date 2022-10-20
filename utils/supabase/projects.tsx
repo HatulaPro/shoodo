@@ -26,30 +26,33 @@ export type Project = {
 	name: string;
 	description: string;
 	user_id: string;
+	history?: History[];
 	columns?: Column[];
 	perms?: Perm[];
 	user?: { id: string; email: string };
 };
 
 export async function getUserProjects(userId: string): Promise<Project[]> {
-	const result = await supabase.from<Project>('projects').select('*').eq('user_id', userId);
+	const result = await supabase.from<Project>('projects').select('*, history ( id )').eq('user_id', userId);
+
 	if (result.error) {
 		console.log(result);
-
 		throw new Error(result.error.message);
 	}
+	console.log(result);
 	return result.data;
 }
 
 export async function getUserInvites(userId: string): Promise<Project[]> {
-	const result = await supabase.from<Perm>('perms').select('*, project:projects ( *, user:users( * ) )').eq('guest_id', userId);
+	const result = await supabase.from<Perm>('perms').select('*, project:projects ( *, user:users( * ), history ( id ) )').eq('guest_id', userId);
 	if (result.error) {
 		console.log(result);
-
 		throw new Error(result.error.message);
 	}
 
-	return result.data.map(({ project }) => project!);
+	return result.data.map(({ project }) => {
+		return project!;
+	});
 }
 
 export async function createProject(user_id: string, name: string, description: string): Promise<Project> {
@@ -60,6 +63,7 @@ export async function createProject(user_id: string, name: string, description: 
 		throw new Error(error.message);
 	}
 
+	data[0].history = [];
 	return data[0];
 }
 
