@@ -48,6 +48,17 @@ const ProjectByIdPage: NextPage = () => {
 							}}
 							disabled={!hasEditPerms}
 						/>
+						<EditableTypography
+							onUpdate={(text) => {
+								if (text.length > 0) {
+									updateProjectById(project.id, { description: text });
+									manualUpdate({ ...project, description: text });
+								}
+							}}
+							size="small"
+							text={project.description}
+							disabled={!hasEditPerms}
+						/>
 						<Typography
 							style={{
 								padding: '0.5rem',
