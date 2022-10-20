@@ -28,7 +28,7 @@ const ProjectByIdPage: NextPage = () => {
 			<Head>
 				<title>Shoodo | Project View</title>
 			</Head>
-			<Box position="relative" sx={{ p: { md: 4, sm: 1, xs: 0.5 } }}>
+			<Box position="relative" sx={{ p: { md: 2, sm: 1, xs: 0.5 } }}>
 				{project && (
 					<>
 						<EditableTypography
