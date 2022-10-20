@@ -45,11 +45,11 @@ const EditableTypography: FC<EditableTypographyProps> = ({ onUpdate, text, size,
 	};
 
 	return inputContent === null || disabled === true ? (
-		<Typography className="focusable" tabIndex={0} variant={size === 'large' ? 'h6' : 'body1'} align="left" component={'div'} style={{ letterSpacing: '0.00938em', cursor: 'text', flex: '1', margin: '0', ...style }} onClick={onClick} onFocus={onFocus}>
+		<Typography className="focusable" tabIndex={0} variant="body1" align="left" component={'div'} style={{ fontSize: size === 'large' ? 'larger' : 'initial', letterSpacing: '0.00938em', cursor: 'text', flex: '1', padding: 0, lineHeight: '1.5rem', margin: '0', ...style }} onClick={onClick} onFocus={onFocus}>
 			{text}
 		</Typography>
 	) : (
-		<input type="text" placeholder={placeholder ? text : ''} style={{ ...{ letterSpacing: '0.00938em', background: 'transparent', border: 'none', flex: '1', outline: 'none', width: '100%', padding: size === 'large' ? '3px' : 0, fontFamily: 'Roboto', fontSize: size === 'large' ? 'larger' : 'initial' }, ...style }} value={inputContent!} onChange={onChange} onBlur={onBlur} onKeyUp={onKeyUp} autoFocus />
+		<input type="text" placeholder={placeholder ? text : ''} style={{ ...{ letterSpacing: '0.00938em', background: 'transparent', border: 'none', flex: '1', outline: 'none', width: '100%', padding: 0, fontFamily: 'Roboto', lineHeight: '1.5rem', fontSize: size === 'large' ? 'larger' : 'initial' }, ...style }} value={inputContent!} onChange={onChange} onBlur={onBlur} onKeyUp={onKeyUp} autoFocus />
 	);
 };
 
