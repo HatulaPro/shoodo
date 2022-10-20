@@ -3,7 +3,7 @@ import { useQuery } from 'react-query';
 import { getHistories } from '../utils/supabase/history';
 
 export function useRecentProjects(user: User | null) {
-	const { isLoading, data } = useQuery(['histories', user?.id], () => getHistories(5), {
+	const { isLoading, data } = useQuery(['histories', user?.id], () => getHistories(3), {
 		refetchOnWindowFocus: false,
 		enabled: user !== null,
 		retry: false,
