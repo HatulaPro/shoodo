@@ -56,6 +56,10 @@ const ProjectByIdPage: NextPage = () => {
 								}
 							}}
 							size="small"
+							style={{
+								padding: '0.5rem',
+								paddingTop: '0',
+							}}
 							text={project.description}
 							disabled={!hasEditPerms}
 						/>
