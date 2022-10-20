@@ -3,6 +3,7 @@ import Typography from '@mui/material/Typography';
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import { useMemo } from 'react';
+import { useQuery } from 'react-query';
 import ColumnsTools from '../../components/ColumnsTools/ColumnsTools';
 import ColumnsView from '../../components/ColumnsView/ColumnsView';
 import EditableTypography from '../../components/EditableTypography/EditableTypography';
@@ -11,11 +12,14 @@ import { useQueryProject } from '../../hooks/useQueryProject';
 import useRealtimeProject from '../../hooks/useRealtimeProject';
 import { useUser } from '../../hooks/useUser';
 import styles from '../../styles/Projects.module.css';
+import { setHistory } from '../../utils/supabase/history';
 import { updateProjectById } from '../../utils/supabase/projects';
 
 const ProjectByIdPage: NextPage = () => {
 	const { user } = useUser({ authOnly: true });
 	const { data: project, isLoading, manualUpdate, columnsMutation } = useQueryProject(user);
+	useQuery(['history', project?.id, user?.id], () => setHistory(project!.id, user!.id), { refetchInterval: 1000 * 60 * 3, refetchOnWindowFocus: false, enabled: Boolean(project && user) });
+
 	const hasEditPerms = useMemo(() => project?.user_id === user?.id || Boolean(project?.perms?.find((p) => p.guest_id === user?.id && p.can_edit)), [user, project?.perms, project?.user_id]);
 	useRealtimeProject(project, manualUpdate);
 

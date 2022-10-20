@@ -1,4 +1,8 @@
 import Button from '@mui/material/Button';
+import Card from '@mui/material/Card';
+import CardActionArea from '@mui/material/CardActionArea';
+import CardContent from '@mui/material/CardContent';
+import CardHeader from '@mui/material/CardHeader';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import List from '@mui/material/List';
@@ -9,11 +13,14 @@ import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
 import CheckListItem from '../components/CheckListItem/CheckListItem';
+import { useRecentProjects } from '../hooks/useRecentProjects';
 import { useUser } from '../hooks/useUser';
 import styles from '../styles/Home.module.css';
+import { cn } from '../utils/general';
 
 const Home: NextPage = () => {
 	const { user } = useUser();
+	const { data: recentProjects } = useRecentProjects(user);
 
 	return (
 		<div>
@@ -54,7 +61,39 @@ const Home: NextPage = () => {
 						</Grid>
 					</Grid>
 				</Grid>
-				<motion.div initial={{ x: -300, opacity: 0 }} whileInView={{ x: 0, opacity: 1 }} transition={{ duration: 0.6 }} viewport={{ once: true }}>
+				{recentProjects && user && (
+					<Grid item className={cn(styles.section, styles.quickAccessSection)}>
+						<Typography className={styles.sectionHeading} variant="h3" component="h3">
+							Quick Access
+						</Typography>
+						{recentProjects.length > 0 ? (
+							<Grid container className={styles.quickAccessGrid}>
+								{recentProjects.map((project) => (
+									<motion.div initial={{ opacity: 0, y: 100 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+										<Card variant="outlined">
+											<Link href={{ pathname: `/projects/[id]` }} as={`/projects/${project.id}`} shallow>
+												<CardActionArea>
+													<CardHeader title={project.name} subheader={new Date(project.created_at).toLocaleString()} />
+
+													<CardContent>
+														<Typography variant="body2">{project.description}</Typography>
+													</CardContent>
+												</CardActionArea>
+											</Link>
+										</Card>
+									</motion.div>
+								))}
+							</Grid>
+						) : (
+							<Link href="/projects">
+								<Button color="primary" variant="contained" sx={{ mt: 8 }}>
+									Start Creating Projects
+								</Button>
+							</Link>
+						)}
+					</Grid>
+				)}
+				<motion.div initial={{ x: -300, opacity: 0, scaleX: 0 }} whileInView={{ x: 0, opacity: 1, scaleX: 1 }} transition={{ duration: 0.6 }} viewport={{ once: true }}>
 					<Grid container className={styles.section}>
 						<Grid item sm={5} xs={12} display="flex" flexDirection="column" justifyContent="center">
 							<Container style={{ position: 'relative', minHeight: '300px' }}>
@@ -73,7 +112,7 @@ const Home: NextPage = () => {
 						</Grid>
 					</Grid>
 				</motion.div>
-				<motion.div initial={{ x: 300, opacity: 0 }} whileInView={{ x: 0, opacity: 1 }} transition={{ duration: 0.6 }} viewport={{ once: true }}>
+				<motion.div initial={{ x: 300, opacity: 0, scaleX: 0 }} whileInView={{ x: 0, opacity: 1, scaleX: 1 }} transition={{ duration: 0.6 }} viewport={{ once: true }}>
 					<Grid container className={styles.section} sx={{ flexDirection: { xs: 'column-reverse', sm: 'row' } }}>
 						<Grid item sm={1} xs={12} />
 						<Grid item sm={6} xs={12} display="flex" flexDirection="column" justifyContent="center">
@@ -91,7 +130,7 @@ const Home: NextPage = () => {
 						</Grid>
 					</Grid>
 				</motion.div>
-				<motion.div initial={{ x: -300, opacity: 0 }} whileInView={{ x: 0, opacity: 1 }} transition={{ duration: 0.6 }} viewport={{ once: true }}>
+				<motion.div initial={{ x: -300, opacity: 0, scaleX: 0 }} whileInView={{ x: 0, opacity: 1, scaleX: 1 }} transition={{ duration: 0.6 }} viewport={{ once: true }}>
 					<Grid container className={styles.section}>
 						<Grid item sm={5} xs={12} display="flex" flexDirection="column" justifyContent="center">
 							<Container style={{ position: 'relative', minHeight: '300px' }}>

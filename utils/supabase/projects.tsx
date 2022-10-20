@@ -1,4 +1,5 @@
 import { supabase } from './client';
+import type { History } from './history';
 import type { Perm } from './perms';
 
 export type Task = {
@@ -82,6 +83,13 @@ export async function deleteProject(project_id: number): Promise<boolean> {
 	if (permsError) {
 		console.log(permsError);
 		throw new Error(permsError.message);
+	}
+
+	const { error: historyError } = await supabase.from<History>('history').delete().eq('project_id', project_id);
+
+	if (historyError) {
+		console.log(historyError);
+		throw new Error(historyError.message);
 	}
 
 	const { data, error } = await supabase.from<Project>('projects').delete().eq('id', project_id);

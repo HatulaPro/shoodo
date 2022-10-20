@@ -32,7 +32,17 @@
 	margin-bottom: 16px;
 	margin-left: -8px;
 }
-
+.quickAccessSection {
+	min-height: unset;
+	margin: 0 2rem;
+}
+.quickAccessGrid {
+	display: flex;
+	gap: 1rem;
+}
+.quickAccessGrid * {
+	flex-basis: 33%;
+}
 .mainContent {
 	padding: 16px 4vw;
 	z-index: 2;
