@@ -1,15 +1,22 @@
 import type { User } from '@supabase/supabase-js';
 import { useQuery, useQueryClient } from 'react-query';
-import { getUserInvites, getUserProjects, Project } from '../utils/supabase/projects';
+import { Project } from '../utils/supabase/projects';
 
-export function useUserProjects(user: User | null, invited: boolean) {
+type UserProjectsResult<B extends Project> = {
+	isLoading: boolean;
+	data: B[] | undefined;
+	refetch: () => void;
+	manualUpdate: (newProjects: B[]) => void;
+};
+
+export function useUserProjects<B extends Project>(user: User | null, func: (userId: string) => Promise<B[]>): UserProjectsResult<B> {
 	const queryClient = useQueryClient();
 
 	const { isLoading, data, refetch } = useQuery(
-		['projects', user?.id, invited],
+		['projects', user?.id, func],
 		() => {
 			// No new projects, so we can use the prefetched data;
-			return invited ? getUserInvites(user!.id) : getUserProjects(user!.id);
+			return func(user!.id);
 		},
 		{
 			refetchOnWindowFocus: false,
@@ -19,8 +26,8 @@ export function useUserProjects(user: User | null, invited: boolean) {
 		}
 	);
 
-	function manualUpdate(newProjects: Project[]) {
-		queryClient.setQueryData(['projects', user?.id, invited], () => newProjects);
+	function manualUpdate(newProjects: B[]) {
+		queryClient.setQueryData(['projects', user?.id, func], () => newProjects);
 	}
 
 	return { isLoading, data, refetch, manualUpdate };

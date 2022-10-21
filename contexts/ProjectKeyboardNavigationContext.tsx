@@ -1,5 +1,5 @@
 import React, { createContext, FC, useEffect, useRef, useState } from 'react';
-import type { Project } from '../utils/supabase/projects';
+import type { FullProject } from '../utils/supabase/projects';
 
 type Pos = {
 	x: number;
@@ -16,7 +16,7 @@ export const ProjectKeyboardNavigationContext = createContext<RegisterToNav>((_a
 
 const NUMBER_OF_ACTIONS = 2;
 
-export const ProjectKeyboardNavigationProvider: FC<{ project: Project | undefined; children: React.ReactNode }> = ({ project, children }) => {
+export const ProjectKeyboardNavigationProvider: FC<{ project: FullProject | undefined; children: React.ReactNode }> = ({ project, children }) => {
 	const [position, setPosition] = useState<Pos>({ x: -1, y: -1 });
 	const [isUsingKeys, setUsingKeys] = useState<boolean>(false);
 	const ref = useRef<HTMLElement | null>(null);

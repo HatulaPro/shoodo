@@ -3,19 +3,19 @@ import { FC } from 'react';
 import { UseMutateFunction } from 'react-query';
 import { ColumnMutateArgs } from '../../hooks/useQueryProject';
 import { cn } from '../../utils/general';
-import type { Column } from '../../utils/supabase/projects';
+import type { ColumnWithTasks } from '../../utils/supabase/projects';
 import MovableColumn from '../MovableColumn/MovableColumn';
 import styles from './ColumnsView.module.css';
 
 type ColumnsViewProps = {
-	columns: Column[];
-	setColumns: (cols: Column[]) => void;
+	columns: ColumnWithTasks[];
+	setColumns: (cols: ColumnWithTasks[]) => void;
 	mutate: UseMutateFunction<void, unknown, ColumnMutateArgs, unknown>;
 	editPerms: boolean;
 };
 
 const ColumnsView: FC<ColumnsViewProps> = ({ setColumns, columns, mutate, editPerms }) => {
-	function onColsReorder(newCols: Column[]) {
+	function onColsReorder(newCols: ColumnWithTasks[]) {
 		if (newCols.length === 0) return setColumns(newCols);
 
 		let prevImportance = newCols[0].importance;
@@ -36,7 +36,7 @@ const ColumnsView: FC<ColumnsViewProps> = ({ setColumns, columns, mutate, editPe
 
 	return (
 		<Reorder.Group axis="x" values={columns} onReorder={onColsReorder} className={cn(styles.columnsView, 'scrollbar')} as="div" layoutScroll>
-			{columns?.map((column: Column, index: number) => (
+			{columns?.map((column, index) => (
 				<MovableColumn column={column} columns={columns} index={index} mutate={mutate} key={column.id} editPerms={editPerms} />
 			))}
 		</Reorder.Group>

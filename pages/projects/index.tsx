@@ -14,19 +14,15 @@ import { useShallowRoutes } from '../../hooks/useShallowRoutes';
 import { useUser } from '../../hooks/useUser';
 import { useUserProjects } from '../../hooks/useUserProjects';
 import { deleteOwnPerm } from '../../utils/supabase/perms';
-import { deleteProject, Project } from '../../utils/supabase/projects';
+import { deleteProject, getUserInvites, getUserProjects, ProjectWithHistory } from '../../utils/supabase/projects';
 
-type ProjectProps = {
-	projects: Project[];
-};
-
-const ProjectsPage: NextPage<ProjectProps> = () => {
+const ProjectsPage: NextPage = () => {
 	const { user } = useUser({ authOnly: true });
 	const [newProjectIndex, setNewProjectIndex] = useState<number>(-1);
 	const { location, setLocation } = useShallowRoutes<'/projects/new' | '/projects'>('/projects');
 
-	const { isLoading: isLoadingProjects, data: userProjects, refetch: refetchProjects, manualUpdate: manualUpdateProjects } = useUserProjects(user, false);
-	const { isLoading: isLoadingInvites, data: userInvites, refetch: refetchInvites, manualUpdate: manualUpdateInvites } = useUserProjects(user, true);
+	const { isLoading: isLoadingProjects, data: userProjects, refetch: refetchProjects, manualUpdate: manualUpdateProjects } = useUserProjects(user, getUserProjects);
+	const { isLoading: isLoadingInvites, data: userInvites, refetch: refetchInvites, manualUpdate: manualUpdateInvites } = useUserProjects(user, getUserInvites);
 
 	function refetch() {
 		refetchInvites();
@@ -37,7 +33,7 @@ const ProjectsPage: NextPage<ProjectProps> = () => {
 		setLocation('/projects/new');
 	}
 
-	function closeNewProjectDialog(project?: Project) {
+	function closeNewProjectDialog(project?: ProjectWithHistory) {
 		setLocation('/projects');
 
 		if (project) {

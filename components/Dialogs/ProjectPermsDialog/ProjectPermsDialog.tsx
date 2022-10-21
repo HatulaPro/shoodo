@@ -24,14 +24,14 @@ import { useMemo } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useMutation } from 'react-query';
 import { useUser } from '../../../hooks/useUser';
-import type { Perm } from '../../../utils/supabase/perms';
-import type { Project } from '../../../utils/supabase/projects';
+import type { PermWithUser } from '../../../utils/supabase/perms';
+import type { FullProject } from '../../../utils/supabase/projects';
 
 type ProjectPermsDialogProps = {
 	open: boolean;
-	project: Project;
+	project: FullProject;
 	handleClose: () => void;
-	manualUpdate: (newProject: Project) => void;
+	manualUpdate: (newProject: FullProject) => void;
 };
 
 interface AddUserForm {
@@ -40,7 +40,7 @@ interface AddUserForm {
 }
 
 const ProjectPermsDialog: FC<ProjectPermsDialogProps> = ({ project, open, handleClose, manualUpdate }) => {
-	const { user } = useUser();
+	const { user, access_token } = useUser();
 	const isOwner = Boolean(user) && user?.id === project?.user_id;
 	const { control, handleSubmit, reset, watch, setValue } = useForm<AddUserForm>();
 	const theme = useTheme();
@@ -52,14 +52,14 @@ const ProjectPermsDialog: FC<ProjectPermsDialogProps> = ({ project, open, handle
 			if (!isOwner) return;
 			const res = await fetch('/api/perms/editPerm', {
 				method: 'POST',
-				headers: new Headers({ 'Content-Type': 'application/json' }),
+				headers: new Headers({ 'Content-Type': 'application/json', Authorization: `Bearer ${access_token}` }),
 				credentials: 'same-origin',
 				body: JSON.stringify({ ...data, projectId: project.id }),
 			});
 			const jsoned = await res.json();
 			if (jsoned.success) {
-				const result = jsoned.data as Perm;
-				project.perms = [result, ...project.perms!.filter((p) => p.id !== result.id)];
+				const result = jsoned.data as PermWithUser;
+				project.perms = [result, ...project.perms.filter((p) => p.id !== result.id)];
 				manualUpdate(project);
 				return true;
 			} else {
@@ -81,7 +81,7 @@ const ProjectPermsDialog: FC<ProjectPermsDialogProps> = ({ project, open, handle
 			credentials: 'same-origin',
 			body: JSON.stringify({ permId }),
 		});
-		project.perms = project.perms!.filter((p) => p.id !== permId);
+		project.perms = project.perms.filter((p) => p.id !== permId);
 		manualUpdate(project);
 	}
 
@@ -91,8 +91,8 @@ const ProjectPermsDialog: FC<ProjectPermsDialogProps> = ({ project, open, handle
 
 	const queryEmail = watch('email');
 
-	const currentUsersList = useMemo<Perm[]>(() => {
-		return project.perms?.filter((perm) => (queryEmail ? perm.user!.email.toLowerCase().includes(queryEmail.toLowerCase()) : true)) || [];
+	const currentUsersList = useMemo<PermWithUser[]>(() => {
+		return project.perms?.filter((perm) => (queryEmail ? perm!.user!.email!.toLowerCase().includes(queryEmail.toLowerCase()) : true)) || [];
 	}, [queryEmail, project?.perms]);
 
 	return (
@@ -133,7 +133,7 @@ const ProjectPermsDialog: FC<ProjectPermsDialogProps> = ({ project, open, handle
 									)}
 									<ButtonBase
 										onClick={() => {
-											setValue('email', perm.user.email);
+											setValue('email', perm.user.email!);
 											setValue('canEdit', perm.can_edit ? 'viewAndEdit' : 'viewOnly');
 										}}
 										style={{ display: 'flex', justifyContent: 'space-around', paddingBlock: '0.8rem', fontSize: '1rem', width: '100%' }}

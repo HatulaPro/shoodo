@@ -7,13 +7,13 @@ import { useContext, useState } from 'react';
 import type { UseMutateFunction } from 'react-query';
 import { ProjectKeyboardNavigationContext } from '../../contexts/ProjectKeyboardNavigationContext';
 import type { ColumnMutateArgs } from '../../hooks/useQueryProject';
-import type { Project } from '../../utils/supabase/projects';
+import type { FullProject } from '../../utils/supabase/projects';
 import ProjectPermsDialog from '../Dialogs/ProjectPermsDialog/ProjectPermsDialog';
 
 type ColumnsToolsProps = {
 	mutate: UseMutateFunction<void, unknown, ColumnMutateArgs, unknown>;
-	manualUpdate: (newProject: Project) => void;
-	project?: Project;
+	manualUpdate: (newProject: FullProject) => void;
+	project?: FullProject;
 	editPerms: boolean;
 };
 

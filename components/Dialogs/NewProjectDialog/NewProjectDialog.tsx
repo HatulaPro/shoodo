@@ -11,14 +11,14 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { FC } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useMutation } from 'react-query';
-import type { Project } from '../../../utils/supabase/projects';
+import type { ProjectWithHistory } from '../../../utils/supabase/projects';
 import { createProject } from '../../../utils/supabase/projects';
 import LogoSvg from '../../LogoSvg/LogoSvg';
 
 type NewProjectDialogProps = {
 	userId: string;
 	open: boolean;
-	handleClose: (project?: Project) => void;
+	handleClose: (project?: ProjectWithHistory) => void;
 };
 
 interface DialogForm {

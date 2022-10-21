@@ -74,7 +74,7 @@ const Home: NextPage = () => {
 											<Card variant="outlined" style={{ margin: '4px' }}>
 												<Link href={{ pathname: `/projects/[id]` }} as={`/projects/${project.id}`} shallow>
 													<CardActionArea>
-														<CardHeader title={project.name} subheader={new Date(project.created_at).toLocaleString()} />
+														<CardHeader title={project.name} subheader={new Date(project.created_at!).toLocaleString()} />
 
 														<CardContent>
 															<Typography variant="body2" style={{ whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>

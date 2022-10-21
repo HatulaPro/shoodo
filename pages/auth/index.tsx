@@ -23,9 +23,9 @@ const AuthPage: NextPage = () => {
 	const { control, handleSubmit, watch } = useForm<LoginForm>();
 
 	const { isLoading, isSuccess, isError, mutate, reset } = useMutation((data: LoginForm) => {
-		return signInWithEmail(data.email).then(({ user, error }) => {
+		return signInWithEmail(data.email).then(({ data, error }) => {
 			if (error) throw new Error(error.message);
-			return user;
+			return data.user;
 		});
 	});
 	useEffect(() => {

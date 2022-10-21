@@ -17,25 +17,26 @@ import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
 import { AnimatePresence, motion } from 'framer-motion';
 import Link from 'next/link';
-import { FC, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
 import { sortByImportance } from '../../hooks/useQueryProject';
 import { useUser } from '../../hooks/useUser';
 import { cn } from '../../utils/general';
-import type { Project } from '../../utils/supabase/projects';
-import { getProjectById } from '../../utils/supabase/projects';
+import { PublicUser } from '../../utils/supabase/auth';
+import { FullProject, getProjectById, ProjectWithHistory } from '../../utils/supabase/projects';
 import styles from './ProjectsView.module.css';
 
-type ProjectsViewProps = {
-	projects: Project[];
+type ProjectsViewProps<T extends ProjectWithHistory & { user?: PublicUser }> = {
+	projects: T[];
 	newProject: number;
-	updateProjects: (projects: Project[]) => void;
+	updateProjects: (projects: T[]) => void;
 	deleteProject: (projectId: number) => Promise<boolean>;
 };
 
-const ProjectsView: FC<ProjectsViewProps> = ({ projects, newProject, updateProjects, deleteProject }) => {
+const ProjectsView = <T extends ProjectWithHistory & { user?: PublicUser }>(props: ProjectsViewProps<T>) => {
+	const { projects, newProject, updateProjects, deleteProject } = props;
 	const projectsListRef = useRef<HTMLDivElement>(null);
-	const [openMenuIndex, setOpenMenuIndex] = useState<number>(-1);
+	const [menuProject, setMenuProject] = useState<FullProject | null>(null);
 	const [anchor, setAnchor] = useState<HTMLButtonElement | null>(null);
 	const [showDeleteDialog, setShowDeleteDialog] = useState<boolean>(false);
 	const queryClient = useQueryClient();
@@ -50,14 +51,13 @@ const ProjectsView: FC<ProjectsViewProps> = ({ projects, newProject, updateProje
 	}, [projectsListRef, newProject]);
 
 	function closeMenu() {
-		setOpenMenuIndex(-1);
 		setShowDeleteDialog(false);
+		setMenuProject(null);
 	}
 
 	function openMenu(index: number) {
 		return (e: React.MouseEvent<HTMLButtonElement>) => {
 			setAnchor(e.currentTarget);
-			setOpenMenuIndex(index);
 
 			getProjectById(projects[index].id).then((proj) => {
 				proj.columns = sortByImportance(proj.columns!);
@@ -67,9 +67,7 @@ const ProjectsView: FC<ProjectsViewProps> = ({ projects, newProject, updateProje
 
 				queryClient.setQueryData(['project', projects[index].id], proj);
 
-				const newProjectArray = [...projects];
-				newProjectArray[index] = proj;
-				updateProjects(newProjectArray);
+				setMenuProject(proj);
 			});
 		};
 	}
@@ -79,11 +77,11 @@ const ProjectsView: FC<ProjectsViewProps> = ({ projects, newProject, updateProje
 	}
 
 	function onDeleteProject() {
-		deleteProjectMutation.mutateAsync(openMenuIndex).then((result) => {
+		if (!menuProject) return;
+		deleteProjectMutation.mutateAsync(menuProject.id).then((result) => {
 			if (result) {
-				updateProjects(projects.filter((proj) => proj.id !== projects[openMenuIndex].id));
+				updateProjects(projects.filter((proj) => proj.id !== menuProject.id));
 				setShowDeleteDialog(false);
-				setOpenMenuIndex(-1);
 			} else {
 				console.log('can not delete project for some reason');
 			}
@@ -92,11 +90,11 @@ const ProjectsView: FC<ProjectsViewProps> = ({ projects, newProject, updateProje
 
 	return (
 		<Grid container spacing={4} ref={projectsListRef} sx={{ mb: 4 }}>
-			{openMenuIndex !== -1 && (
+			{menuProject && (
 				<Dialog open={showDeleteDialog} onClose={closeMenu}>
 					<DialogTitle>Are you sure?</DialogTitle>
 					<DialogContent>
-						Click &apos;DELETE&apos; to delete <b>{projects[openMenuIndex]?.name}</b>
+						Click &apos;DELETE&apos; to delete <b>{menuProject.name}</b>
 						<br />
 						This action can not be undone!
 						{deleteProjectMutation.isLoading && <LinearProgress color="secondary" />}
@@ -115,11 +113,11 @@ const ProjectsView: FC<ProjectsViewProps> = ({ projects, newProject, updateProje
 				{projects.map((project, index) => (
 					<Grid item key={project.id} xs={12} sm={6} md={4}>
 						<motion.div initial={{ opacity: 0, y: 100 }} animate={{ opacity: 1, y: 0 }}>
-							<Card variant="outlined" style={{ overflow: 'visible' }} className={cn(index === newProject && styles.projectViewNew, openMenuIndex === index && deleteProjectMutation.isLoading && styles.projectViewDeleted)}>
+							<Card variant="outlined" style={{ overflow: 'visible' }} className={cn(index === newProject && styles.projectViewNew, project.id === menuProject?.id && deleteProjectMutation.isLoading && styles.projectViewDeleted)}>
 								<Badge badgeContent={project.history?.length === 0 ? 'new' : undefined} color="secondary">
 									<CardHeader
 										title={project.name}
-										subheader={new Date(project.created_at).toLocaleString()}
+										subheader={new Date(project.created_at!).toLocaleString()}
 										action={
 											<IconButton onClick={openMenu(index)}>
 												<MoreVertIcon />
@@ -127,12 +125,6 @@ const ProjectsView: FC<ProjectsViewProps> = ({ projects, newProject, updateProje
 										}
 									/>
 								</Badge>
-								<Menu open={index === openMenuIndex} onClose={closeMenu} anchorEl={anchor}>
-									<MenuItem onClick={openDeleteDialog}>Delete</MenuItem>
-									<Link href={{ pathname: `/projects/[id]`, query: { project: JSON.stringify(project) } }} as={`/projects/${project.id}`} shallow>
-										<MenuItem onClick={closeMenu}>View</MenuItem>
-									</Link>
-								</Menu>
 								<CardContent>
 									<Typography variant="body2" className={styles.projectViewCutText}>
 										{project.description}
@@ -149,6 +141,13 @@ const ProjectsView: FC<ProjectsViewProps> = ({ projects, newProject, updateProje
 						</motion.div>
 					</Grid>
 				))}
+
+				<Menu open={menuProject !== null} onClose={closeMenu} anchorEl={anchor}>
+					<MenuItem onClick={openDeleteDialog}>Delete</MenuItem>
+					<Link href={{ pathname: `/projects/[id]`, query: { project: JSON.stringify(menuProject) } }} as={`/projects/${menuProject?.id}`} shallow>
+						<MenuItem onClick={closeMenu}>View</MenuItem>
+					</Link>
+				</Menu>
 			</AnimatePresence>
 		</Grid>
 	);

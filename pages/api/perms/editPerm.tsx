@@ -1,7 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getUserFromJWT } from '../../../utils/supabase/auth';
 import { getServiceSupabase } from '../../../utils/supabase/client';
-import type { Perm } from '../../../utils/supabase/perms';
 
 type ValidInput = {
 	email: string;
@@ -22,14 +21,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 	const supabase = getServiceSupabase();
 
 	try {
-		const token = req.cookies['sb-access-token'];
+		const token = req.headers.authorization;
 		const user = getUserFromJWT(token);
 
 		const { email, canEdit, projectId } = isValid(req.body);
 
 		if (email === user.email) return res.json({ error: 'Self invite is not allowed' });
 
-		const { data, error } = await supabase.rpc<Perm>('edit_perm', { email, pid: projectId, can_edit: canEdit === 'viewAndEdit', auth_id: user.id }).single();
+		const { data, error } = await supabase.rpc('edit_perm', { email, pid: projectId, can_edit: canEdit === 'viewAndEdit', auth_id: user.id }).single();
 		if (error) {
 			return res.json({ error });
 		}
