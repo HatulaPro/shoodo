@@ -45,7 +45,7 @@ const ColumnsTools: FC<ColumnsToolsProps> = ({ mutate, project, manualUpdate, ed
 					}}
 					aria-label="Open Chat"
 				>
-					<Badge badgeContent={messageHandler.unread} color="secondary">
+					<Badge badgeContent={chatOpen ? 0 : messageHandler.unread} color="secondary">
 						<ChatIcon color="success" fontSize="large" />
 					</Badge>
 				</IconButton>
