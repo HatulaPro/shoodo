@@ -22,9 +22,7 @@ const ProjectByIdPage: NextPage = () => {
 
 	const hasEditPerms = useMemo(() => project?.user_id === user?.id || Boolean(project?.perms?.find((p) => p.guest_id === user?.id && p.can_edit)), [user, project?.perms, project?.user_id]);
 
-	const sendMessage = useRealtimeProject(project, manualUpdate, (payload) => {
-		console.log(payload);
-	});
+	const messageHandler = useRealtimeProject(project, manualUpdate);
 
 	return (
 		<ProjectKeyboardNavigationProvider project={project}>
@@ -80,7 +78,7 @@ const ProjectByIdPage: NextPage = () => {
 					</>
 				)}
 				<Box display="flex" sx={{ flexDirection: { md: 'row', xs: 'column' } }}>
-					<ColumnsTools project={project} mutate={columnsMutation.mutate} manualUpdate={manualUpdate} editPerms={hasEditPerms} />
+					<ColumnsTools project={project} mutate={columnsMutation.mutate} manualUpdate={manualUpdate} editPerms={hasEditPerms} messageHandler={messageHandler} />
 					{project?.columns && (
 						<ColumnsView
 							columns={project?.columns}

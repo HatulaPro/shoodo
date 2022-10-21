@@ -1,12 +1,27 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { supabase } from '../utils/supabase/client';
 import { getPermById, Perm } from '../utils/supabase/perms';
 import { Column, FullProject, Project, Task } from '../utils/supabase/projects';
 import { sortByImportance } from './useQueryProject';
 import { useUser } from './useUser';
 
-export default function useRealtimeProject(project: FullProject | undefined, onUpdate: (proj: FullProject) => void, onMessage: (payload: { [key: string]: any; type: 'broadcast'; event: string }) => void) {
+export type Message = {
+	user: string;
+	content: string;
+};
+
+export type MessageHandler = {
+	sendMessage: (message: string) => void;
+	clearMessages: () => void;
+	messages: Message[];
+	unread: number;
+};
+
+export default function useRealtimeProject(project: FullProject | undefined, onUpdate: (proj: FullProject) => void): MessageHandler {
 	const { user } = useUser();
+	const [messages, setMessages] = useState<Message[]>([]);
+	const [unread, setUnread] = useState<number>(0);
+
 	useEffect(() => {
 		if (!project) return;
 		if (!user) return;
@@ -131,19 +146,28 @@ export default function useRealtimeProject(project: FullProject | undefined, onU
 					}
 				}
 			})
-			.on('broadcast', { event: 'message' }, onMessage)
+			.on('broadcast', { event: 'message' }, (payload) => {
+				setMessages((prev) => [...prev, { user: payload.user, content: payload.content }]);
+				setUnread((prev) => prev + 1);
+			})
 			.subscribe();
 		return () => {
 			realtimeProjectSubscription.unsubscribe();
 		};
 	}, [supabase, project, user]);
 
-	return (message: string) => {
-		if (!project) return;
-		if (!user) return;
-		const channel = supabase.getChannels().find((val) => val.topic === `realtime:project-${project.id}`);
-		if (channel === undefined) return;
+	return {
+		sendMessage: (message: string) => {
+			if (!project) return;
+			if (!user) return;
+			const channel = supabase.getChannels().find((val) => val.topic === `realtime:project-${project.id}`);
+			if (channel === undefined) return;
 
-		channel.send({ type: 'broadcast', event: 'message', message, user: user.email });
+			channel.send({ type: 'broadcast', event: 'message', content: message, user: user.email! });
+			setMessages([...messages, { content: message, user: user.email! }]);
+		},
+		clearMessages: () => setUnread(0),
+		messages,
+		unread,
 	};
 }
