@@ -21,7 +21,10 @@ const ProjectByIdPage: NextPage = () => {
 	useQuery(['history', project?.id, user?.id], () => setHistory(project!.id, user!.id), { refetchInterval: 1000 * 60 * 3, refetchOnWindowFocus: false, enabled: Boolean(project && user) });
 
 	const hasEditPerms = useMemo(() => project?.user_id === user?.id || Boolean(project?.perms?.find((p) => p.guest_id === user?.id && p.can_edit)), [user, project?.perms, project?.user_id]);
-	useRealtimeProject(project, manualUpdate);
+
+	const sendMessage = useRealtimeProject(project, manualUpdate, (payload) => {
+		console.log(payload);
+	});
 
 	return (
 		<ProjectKeyboardNavigationProvider project={project}>

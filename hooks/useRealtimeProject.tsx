@@ -3,12 +3,15 @@ import { supabase } from '../utils/supabase/client';
 import { getPermById, Perm } from '../utils/supabase/perms';
 import { Column, FullProject, Project, Task } from '../utils/supabase/projects';
 import { sortByImportance } from './useQueryProject';
+import { useUser } from './useUser';
 
-export default function useRealtimeProject(project: FullProject | undefined, onUpdate: (proj: FullProject) => void) {
+export default function useRealtimeProject(project: FullProject | undefined, onUpdate: (proj: FullProject) => void, onMessage: (payload: { [key: string]: any; type: 'broadcast'; event: string }) => void) {
+	const { user } = useUser();
 	useEffect(() => {
 		if (!project) return;
-		const realtimeProjectSubscription = supabase
-			.channel('public')
+		if (!user) return;
+		const channel = supabase.channel(`project-${project.id}`);
+		const realtimeProjectSubscription = channel
 			.on<Project>('postgres_changes', { event: '*', schema: 'public', table: 'projects', filter: `id=eq.${project.id}` }, (payload) => {
 				if (payload.eventType === 'UPDATE') {
 					onUpdate({ ...project, ...payload.new });
@@ -128,11 +131,19 @@ export default function useRealtimeProject(project: FullProject | undefined, onU
 					}
 				}
 			})
+			.on('broadcast', { event: 'message' }, onMessage)
 			.subscribe();
 		return () => {
 			realtimeProjectSubscription.unsubscribe();
 		};
-	}, [supabase, project]);
+	}, [supabase, project, user]);
 
-	return [];
+	return (message: string) => {
+		if (!project) return;
+		if (!user) return;
+		const channel = supabase.getChannels().find((val) => val.topic === `realtime:project-${project.id}`);
+		if (channel === undefined) return;
+
+		channel.send({ type: 'broadcast', event: 'message', message, user: user.email });
+	};
 }
