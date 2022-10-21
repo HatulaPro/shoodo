@@ -13,7 +13,7 @@ export function useUserProjects<B extends Project>(user: User | null, func: (use
 	const queryClient = useQueryClient();
 
 	const { isLoading, data, refetch } = useQuery(
-		['projects', user?.id, func],
+		['projects', user?.id, func.name],
 		() => {
 			// No new projects, so we can use the prefetched data;
 			return func(user!.id);
@@ -27,7 +27,7 @@ export function useUserProjects<B extends Project>(user: User | null, func: (use
 	);
 
 	function manualUpdate(newProjects: B[]) {
-		queryClient.setQueryData(['projects', user?.id, func], () => newProjects);
+		queryClient.setQueryData(['projects', user?.id, func.name], () => newProjects);
 	}
 
 	return { isLoading, data, refetch, manualUpdate };
