@@ -15,17 +15,27 @@ export type MessageHandler = {
 	clearMessages: () => void;
 	messages: Message[];
 	unread: number;
+	onlineUsers: Presence[];
 };
+
+type Presence = { presence_ref: string; user: string };
 
 export default function useRealtimeProject(project: FullProject | undefined, onUpdate: (proj: FullProject) => void): MessageHandler {
 	const { user } = useUser();
 	const [messages, setMessages] = useState<Message[]>([]);
 	const [unread, setUnread] = useState<number>(0);
+	const [onlineUsers, setOnlineUsers] = useState<Presence[]>([]);
 
 	useEffect(() => {
 		if (!project) return;
 		if (!user) return;
-		const channel = supabase.channel(`project-${project.id}`);
+		const channel = supabase.channel(`project-${project.id}`, {
+			config: {
+				presence: {
+					key: user.email!,
+				},
+			},
+		});
 		const realtimeProjectSubscription = channel
 			.on<Project>('postgres_changes', { event: '*', schema: 'public', table: 'projects', filter: `id=eq.${project.id}` }, (payload) => {
 				if (payload.eventType === 'UPDATE') {
@@ -150,7 +160,18 @@ export default function useRealtimeProject(project: FullProject | undefined, onU
 				setMessages((prev) => [...prev, { user: payload.user, content: payload.content }]);
 				setUnread((prev) => prev + 1);
 			})
-			.subscribe();
+			.on('presence', { event: 'join' }, (payload) => setOnlineUsers((prev) => [...(payload.newPresences as Presence[]), ...prev]))
+			.on('presence', { event: 'leave' }, (payload) =>
+				setOnlineUsers((prev) => {
+					const leftSet = new Set(payload.leftPresences.map((p) => p.presence_ref));
+					return prev.filter((p) => !leftSet.has(p.presence_ref));
+				})
+			)
+			.subscribe(async (status) => {
+				if (status === 'SUBSCRIBED') {
+					await channel.track({ user: user.email! });
+				}
+			});
 		return () => {
 			realtimeProjectSubscription.unsubscribe();
 		};
@@ -169,5 +190,6 @@ export default function useRealtimeProject(project: FullProject | undefined, onU
 		clearMessages: () => setUnread(0),
 		messages,
 		unread,
+		onlineUsers,
 	};
 }

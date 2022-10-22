@@ -16,14 +16,16 @@ import LinearProgress from '@mui/material/LinearProgress';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import TextField from '@mui/material/TextField';
-import Typography from '@mui/material/Typography';
+import Tooltip from '@mui/material/Tooltip';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { AnimatePresence, motion } from 'framer-motion';
 import type { FC } from 'react';
-import { useMemo } from 'react';
+import { useContext, useMemo } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useMutation } from 'react-query';
 import { useUser } from '../../../hooks/useUser';
+import { MessageHandlerContext } from '../../../pages/projects/[id]';
+import type { PublicUser } from '../../../utils/supabase/auth';
 import type { PermWithUser } from '../../../utils/supabase/perms';
 import type { FullProject } from '../../../utils/supabase/projects';
 
@@ -39,17 +41,29 @@ interface AddUserForm {
 	canEdit: 'viewAndEdit' | 'viewOnly';
 }
 
+type UserEntry = {
+	id: number;
+	permStatus: 'owner' | 'viewAndEdit' | 'viewOnly';
+	permStatusAsStr: 'Owner' | 'View & Edit' | 'View Only';
+	isOnline: boolean;
+	user: PublicUser;
+};
+
 const ProjectPermsDialog: FC<ProjectPermsDialogProps> = ({ project, open, handleClose, manualUpdate }) => {
 	const { user, access_token } = useUser();
 	const isOwner = Boolean(user) && user?.id === project?.user_id;
 	const { control, handleSubmit, reset, watch, setValue } = useForm<AddUserForm>();
 	const theme = useTheme();
 
+	const messageHandler = useContext(MessageHandlerContext);
 	const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
 	const editPermsMutation = useMutation(
 		async (data: AddUserForm) => {
 			if (!isOwner) return;
+			if (data.email === project.user.email) {
+				throw new Error('Self invite is not allowed');
+			}
 			const res = await fetch('/api/perms/editPerm', {
 				method: 'POST',
 				headers: new Headers({ 'Content-Type': 'application/json', Authorization: `Bearer ${access_token}` }),
@@ -91,26 +105,38 @@ const ProjectPermsDialog: FC<ProjectPermsDialogProps> = ({ project, open, handle
 
 	const queryEmail = watch('email');
 
-	const currentUsersList = useMemo<PermWithUser[]>(() => {
-		return project.perms?.filter((perm) => (queryEmail ? perm!.user!.email!.toLowerCase().includes(queryEmail.toLowerCase()) : true)) || [];
-	}, [queryEmail, project?.perms]);
+	const currentUsersList = useMemo<UserEntry[]>(() => {
+		const onlineUsersSet = new Set(messageHandler?.onlineUsers.map((x) => x.user));
+		const usersWithPerms = project.perms
+			.filter((perm) => (queryEmail ? perm.user.email!.toLowerCase().includes(queryEmail.toLowerCase()) : true))
+			.map((current) => {
+				return {
+					id: current.id,
+					permStatus: current.can_edit ? 'viewAndEdit' : 'viewOnly',
+					permStatusAsStr: current.can_edit ? 'View & Edit' : 'View Only',
+					user: current.user,
+					isOnline: onlineUsersSet.has(current.user.email!),
+				} as UserEntry;
+			})
+			.sort((x, y) => {
+				return x.isOnline === y.isOnline ? 0 : x.isOnline ? -1 : 1;
+			});
+		if (!queryEmail || project.user.email!.toLowerCase().includes(queryEmail.toLowerCase())) {
+			return [{ id: -1, permStatus: 'owner', isOnline: onlineUsersSet.has(project.user.email!), permStatusAsStr: 'Owner', user: project.user }, ...usersWithPerms];
+		}
+		return usersWithPerms;
+	}, [queryEmail, project?.perms, messageHandler?.onlineUsers]);
 
 	return (
 		<Dialog open={open} onClose={handleClose} fullWidth={!isSmallScreen} fullScreen={isSmallScreen}>
-			<DialogTitle>
-				{isOwner && 'Edit '}Permissions{project.perms && ` (${project.perms.length})`}
-			</DialogTitle>
+			<DialogTitle>Online Users{project.perms && ` (${messageHandler && messageHandler.onlineUsers.length + '/'}${project.perms.length + 1})`}</DialogTitle>
 			{editPermsMutation.isLoading && <LinearProgress color="secondary" />}
 			<DialogContent style={{ overflow: 'visible', padding: 4 }}>
-				<Typography variant="caption" style={{ padding: '0.5rem' }}>
-					owned and managed by <b>{project?.user?.email}</b> {isOwner && '(you)'}
-				</Typography>
-
 				<div className="scrollbar" style={{ maxHeight: '30vh', overflowY: 'scroll', overflowX: 'hidden' }}>
 					<AnimatePresence>
-						{currentUsersList.map((perm) => (
+						{currentUsersList.map((userEntry) => (
 							<motion.div
-								key={perm.id}
+								key={userEntry.id}
 								initial="initial"
 								animate="animate"
 								exit="initial"
@@ -127,19 +153,33 @@ const ProjectPermsDialog: FC<ProjectPermsDialogProps> = ({ project, open, handle
 							>
 								<Box display="flex">
 									{isOwner && (
-										<IconButton onClick={() => removePerm(perm.id)}>
-											<CloseIcon color="error" />
+										<IconButton color="error" disabled={userEntry.id === -1} onClick={() => removePerm(userEntry.id)}>
+											<CloseIcon />
 										</IconButton>
 									)}
 									<ButtonBase
 										onClick={() => {
-											setValue('email', perm.user.email!);
-											setValue('canEdit', perm.can_edit ? 'viewAndEdit' : 'viewOnly');
+											if (userEntry.permStatus !== 'owner') {
+												if (queryEmail === userEntry.user.email!) {
+													setValue('email', '');
+												} else {
+													setValue('email', userEntry.user.email!);
+													setValue('canEdit', userEntry.permStatus);
+												}
+											}
 										}}
-										style={{ display: 'flex', justifyContent: 'space-around', paddingBlock: '0.8rem', fontSize: '1rem', width: '100%' }}
+										style={{ display: 'flex', justifyContent: 'space-around', paddingBlock: '0.8rem', fontSize: '1rem', width: '100%', alignItems: 'center' }}
 									>
-										<div>{perm.user.email}</div>
-										<div>{perm.can_edit ? 'View & Edit' : 'View Only'}</div>
+										<div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+											{userEntry.isOnline && (
+												<Tooltip title="online">
+													<span style={{ background: 'lightgreen', border: '1px solid green', width: '15px', aspectRatio: 1, borderRadius: '50%', display: 'inline-block' }}></span>
+												</Tooltip>
+											)}
+
+											<span>{userEntry.user.email}</span>
+										</div>
+										<div>{userEntry.permStatusAsStr}</div>
 									</ButtonBase>
 								</Box>
 							</motion.div>
@@ -147,6 +187,7 @@ const ProjectPermsDialog: FC<ProjectPermsDialogProps> = ({ project, open, handle
 					</AnimatePresence>
 				</div>
 				<Divider style={{ marginBlock: '0.5rem' }} />
+				{isOwner && <DialogTitle style={{ paddingBottom: '0' }}>Edit Permissions</DialogTitle>}
 				<Box display="flex" alignItems="center" gap={1} sx={{ m: 2 }}>
 					{isOwner && (
 						<Button size="small" variant="contained" color="secondary" style={{ marginBottom: '1.5rem' }} disabled={editPermsMutation.isLoading} onClick={handleSubmit(onSubmit)}>
