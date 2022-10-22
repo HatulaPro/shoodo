@@ -29,7 +29,7 @@ const ColumnsTools: FC<ColumnsToolsProps> = ({ mutate, project, manualUpdate, ed
 
 	return (
 		<>
-			<Box display="flex" sx={{ flexDirection: { md: 'column', xs: 'row' } }} mr={2}>
+			<Box display="flex" flexDirection="row" mr={2}>
 				{editPerms && (
 					<IconButton onClick={() => mutate({ type: 'CREATE' })} {...register(-1, 0)} aria-label="Add Column">
 						<AddIcon color="primary" fontSize="large" />

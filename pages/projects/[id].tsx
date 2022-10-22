@@ -80,7 +80,7 @@ const ProjectByIdPage: NextPage = () => {
 							</Typography>
 						</>
 					)}
-					<Box display="flex" sx={{ flexDirection: { md: 'row', xs: 'column' } }}>
+					<Box display="flex" flexDirection="column">
 						<ColumnsTools project={project} mutate={columnsMutation.mutate} manualUpdate={manualUpdate} editPerms={hasEditPerms} />
 						{project?.columns && (
 							<ColumnsView
