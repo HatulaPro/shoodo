@@ -9,7 +9,7 @@ type UseUserOptions = { authOnly?: boolean };
 let prevEvent: AuthChangeEvent | null = null;
 export function useUser(options?: UseUserOptions): { user: User | null; access_token: string | null; isLoading: boolean } {
 	const router = useRouter();
-	const { data: session, refetch, isLoading } = useQuery('user', getSession);
+	const { data: session, refetch, isLoading } = useQuery('user', getSession, { staleTime: 60 * 1000 });
 
 	useEffect(() => {
 		if (!session && !isLoading && options?.authOnly) {

@@ -5,8 +5,7 @@ import DragHandleIcon from '@mui/icons-material/DragHandle';
 import PaletteIcon from '@mui/icons-material/Palette';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
-import type { PanInfo } from 'framer-motion';
-import { Reorder, useDragControls } from 'framer-motion';
+import { AnimatePresence, motion, PanInfo, Reorder, useDragControls } from 'framer-motion';
 import { FC, useContext, useRef, useState } from 'react';
 import type { UseMutateFunction } from 'react-query';
 import { ProjectKeyboardNavigationContext } from '../../contexts/ProjectKeyboardNavigationContext';
@@ -34,6 +33,7 @@ const MovableColumn: FC<MovableColumnProps> = ({ column, mutate, columns, index,
 	const controls = useDragControls();
 	const register = useContext(ProjectKeyboardNavigationContext);
 	const columnRef = useRef<HTMLElement | null>(null);
+	if (column.id === -1) editPerms = false;
 
 	function onColumnRename(text: string) {
 		if (text !== column.name) {
@@ -155,11 +155,15 @@ const MovableColumn: FC<MovableColumnProps> = ({ column, mutate, columns, index,
 				<div>
 					<div ref={parentRef}>
 						<Reorder.Group axis="y" as="div" values={tasks} onReorder={onTasksReorder}>
-							{tasks.map((task) => (
-								<Reorder.Item drag={editPerms} onDragEnd={onDragEnd(task.id)} key={task.id} value={task} as="div" dragTransition={{ bounceDamping: 20, bounceStiffness: 200 }}>
-									<MovableTask task={task} column_id={column.id} mutate={mutate} editPerms={editPerms} />
-								</Reorder.Item>
-							))}
+							<AnimatePresence>
+								{tasks.map((task) => (
+									<motion.div initial={{ opacity: 0, scale: 0 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0 }} key={task.id}>
+										<Reorder.Item drag={editPerms} onDragEnd={onDragEnd(task.id)} value={task} as="div" dragTransition={{ bounceDamping: 20, bounceStiffness: 200 }}>
+											<MovableTask task={task} column_id={column.id} mutate={mutate} editPerms={editPerms} />
+										</Reorder.Item>
+									</motion.div>
+								))}
+							</AnimatePresence>
 						</Reorder.Group>
 					</div>
 

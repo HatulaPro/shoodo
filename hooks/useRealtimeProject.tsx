@@ -97,6 +97,7 @@ export default function useRealtimeProject(project: FullProject | undefined, onU
 			})
 			.on<Task>('postgres_changes', { event: '*', schema: 'public', table: 'tasks', filter: `project_id=eq.${project.id}` }, (payload) => {
 				if (payload.eventType === 'UPDATE') {
+					console.log('update payload', payload);
 					const newColId = payload.new.column_id;
 					const newCol = project.columns.find((c) => c.id === newColId);
 
@@ -117,11 +118,10 @@ export default function useRealtimeProject(project: FullProject | undefined, onU
 					}
 					// Finding the old column of current task:
 					else {
-						for (const col of project.columns!) {
+						for (const col of project.columns) {
 							// Deleting from old column_id
 							const newTasks = col.tasks.filter((oldTask) => {
-								const res = oldTask.id !== payload.new.id;
-								return res;
+								return oldTask.id !== payload.new.id;
 							});
 							col.tasks = newTasks;
 
