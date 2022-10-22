@@ -66,7 +66,7 @@ const ColumnsView: FC<ColumnsViewProps> = ({ setColumns, columns, mutate, editPe
 			</div>
 			<Reorder.Group ref={columnsRef} axis="x" values={columns} onReorder={onColsReorder} className={styles.columnsView} style={{ overflow: 'hidden' }} as="div" layoutScroll>
 				{columns?.map((column, index) => (
-					<MovableColumn column={column} columns={columns} index={index} mutate={mutate} key={column.id} editPerms={editPerms} />
+					<MovableColumn setColumns={setColumns} column={column} columns={columns} index={index} mutate={mutate} key={column.id} editPerms={editPerms} />
 				))}
 			</Reorder.Group>
 		</div>

@@ -23,13 +23,14 @@ type MovableColumnProps = {
 	index: number;
 	mutate: UseMutateFunction<void, unknown, ColumnMutateArgs, unknown>;
 	editPerms: boolean;
+	setColumns: (cols: ColumnWithTasks[]) => void;
 };
 
-const MovableColumn: FC<MovableColumnProps> = ({ column, mutate, columns, index, editPerms }) => {
+const MovableColumn: FC<MovableColumnProps> = ({ column, mutate, columns, index, editPerms, setColumns }) => {
 	const parentRef = useRef(null);
 	const [openTools, setOpenTools] = useState<boolean>(false);
 	const [openColorPicker, setOpenColorPicker] = useState<boolean>(false);
-	const tasks = column.tasks!;
+	const tasks = column.tasks;
 	const controls = useDragControls();
 	const register = useContext(ProjectKeyboardNavigationContext);
 	const columnRef = useRef<HTMLElement | null>(null);
@@ -59,28 +60,13 @@ const MovableColumn: FC<MovableColumnProps> = ({ column, mutate, columns, index,
 	}
 
 	function onTasksReorder(newTasks: Task[]) {
-		if (newTasks.length === 0) return (column.tasks = newTasks);
-
 		if (new Set(newTasks.map((t) => t.importance)).size < newTasks.length) {
 			mutate({ type: 'UPDATE_TASK_INDEXES', column });
 			return;
 		}
 
-		let prevImportance = newTasks[0].importance;
-		for (let i = 1; i < newTasks.length; i++) {
-			if (newTasks[i].importance < prevImportance) {
-				// this is where swap
-				if (i < newTasks.length - 1) {
-					newTasks[i].importance = (prevImportance + newTasks[i + 1].importance) / 2;
-				} else {
-					newTasks[i].importance = prevImportance + Math.pow(2, 32);
-				}
-				mutate({ task_id: newTasks[i].id, column_id: column.id, update: { importance: newTasks[i].importance }, type: 'UPDATE_TASK' });
-			}
-			prevImportance = newTasks[i].importance;
-		}
-
-		if (newTasks.length === 0) return (column.tasks = newTasks);
+		column.tasks = newTasks;
+		setColumns(columns);
 	}
 
 	function onDragEnd(task_id: number) {
@@ -91,9 +77,25 @@ const MovableColumn: FC<MovableColumnProps> = ({ column, mutate, columns, index,
 			const colGap = (scrollerWidth - colCount * colWidth) / (colWidth - 1); // 32
 			const offsetX = info.offset.x;
 			const nextIndex = index + Math.round(offsetX / (colWidth + colGap));
-			if (nextIndex === index) return;
-
-			mutate({ type: 'MOVE_TASK', currentIndex: index, nextIndex, task_id });
+			if (nextIndex === index) {
+				if (tasks.length > 1) {
+					for (let i = 0; i < tasks.length; i++) {
+						if (task_id === tasks[i].id) {
+							// this is where swap
+							if (i === 0) {
+								mutate({ task_id: tasks[i].id, column_id: column.id, update: { importance: tasks[1].importance - Math.pow(2, 32) }, type: 'UPDATE_TASK' });
+							} else if (i === tasks.length - 1) {
+								mutate({ task_id: tasks[i].id, column_id: column.id, update: { importance: tasks[i - 1].importance + Math.pow(2, 32) }, type: 'UPDATE_TASK' });
+							} else {
+								mutate({ task_id: tasks[i].id, column_id: column.id, update: { importance: (tasks[i - 1].importance + tasks[i + 1].importance) / 2 }, type: 'UPDATE_TASK' });
+							}
+							break;
+						}
+					}
+				}
+			} else {
+				mutate({ type: 'MOVE_TASK', currentIndex: index, nextIndex, task_id });
+			}
 		};
 	}
 
