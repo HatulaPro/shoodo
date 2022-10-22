@@ -50,18 +50,21 @@ const ColumnsTools: FC<ColumnsToolsProps> = ({ mutate, project, manualUpdate, ed
 					</Badge>
 				</IconButton>
 			</Box>
-			{projectPermsOpen && project && <ProjectPermsDialog open={projectPermsOpen} manualUpdate={manualUpdate} handleClose={() => setProjectPermsOpen(false)} project={project} />}
 			{project && (
-				<ChatDialog
-					open={chatOpen}
-					handleClose={() => {
-						setChatOpen(false);
-						messageHandler.clearMessages();
-					}}
-					messages={messageHandler.messages}
-					sendMessage={messageHandler.sendMessage}
-					project_name={project.name}
-				/>
+				<>
+					<ProjectPermsDialog open={projectPermsOpen} manualUpdate={manualUpdate} handleClose={() => setProjectPermsOpen(false)} project={project} />
+
+					<ChatDialog
+						open={chatOpen}
+						handleClose={() => {
+							setChatOpen(false);
+							messageHandler.clearMessages();
+						}}
+						messages={messageHandler.messages}
+						sendMessage={messageHandler.sendMessage}
+						project_name={project.name}
+					/>
+				</>
 			)}
 		</>
 	);
