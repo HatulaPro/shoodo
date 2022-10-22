@@ -37,7 +37,9 @@ const ProjectsView = <T extends ProjectWithHistory & { user?: PublicUser }>(prop
 	const { projects, newProject, updateProjects, deleteProject } = props;
 	const projectsListRef = useRef<HTMLDivElement>(null);
 	const [menuProject, setMenuProject] = useState<FullProject | null>(null);
+	const [menuProjectPlaceHolder, setMenuProjectPlaceHolder] = useState<T | null>(null);
 	const [anchor, setAnchor] = useState<HTMLButtonElement | null>(null);
+
 	const [showDeleteDialog, setShowDeleteDialog] = useState<boolean>(false);
 	const queryClient = useQueryClient();
 	const { user } = useUser();
@@ -53,12 +55,14 @@ const ProjectsView = <T extends ProjectWithHistory & { user?: PublicUser }>(prop
 	function closeMenu() {
 		setShowDeleteDialog(false);
 		setMenuProject(null);
+		setMenuProjectPlaceHolder(null);
 	}
 
 	function openMenu(index: number) {
 		return (e: React.MouseEvent<HTMLButtonElement>) => {
 			setAnchor(e.currentTarget);
 
+			setMenuProjectPlaceHolder(projects[index]);
 			getProjectById(projects[index].id).then((proj) => {
 				proj.columns = sortByImportance(proj.columns!);
 				for (const col of proj.columns) {
@@ -142,9 +146,9 @@ const ProjectsView = <T extends ProjectWithHistory & { user?: PublicUser }>(prop
 					</Grid>
 				))}
 
-				<Menu open={menuProject !== null} onClose={closeMenu} anchorEl={anchor}>
+				<Menu open={menuProjectPlaceHolder !== null} onClose={closeMenu} anchorEl={anchor}>
 					<MenuItem onClick={openDeleteDialog}>Delete</MenuItem>
-					<Link href={{ pathname: `/projects/[id]`, query: { project: JSON.stringify(menuProject) } }} as={`/projects/${menuProject?.id}`} shallow>
+					<Link href={{ pathname: `/projects/[id]`, query: menuProject ? { project: JSON.stringify(menuProject) } : { id: menuProjectPlaceHolder?.id } }} as={`/projects/${menuProject?.id || menuProjectPlaceHolder?.id}`} shallow>
 						<MenuItem onClick={closeMenu}>View</MenuItem>
 					</Link>
 				</Menu>
