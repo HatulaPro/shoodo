@@ -9,7 +9,7 @@ import InputAdornment from '@mui/material/InputAdornment';
 import { useTheme } from '@mui/material/styles';
 import TextField from '@mui/material/TextField';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import { FC, useContext, useLayoutEffect, useRef, useState } from 'react';
+import { FC, useContext, useEffect, useRef, useState } from 'react';
 import { MessageHandlerContext } from '../../../pages/projects/[id]';
 import LogoSvg from '../../LogoSvg/LogoSvg';
 
@@ -26,7 +26,7 @@ const ChatDialog: FC<ChatDialogProps> = ({ open, handleClose, project_name }) =>
 	const messageHandler = useContext(MessageHandlerContext);
 	const messagesContainerRef = useRef<HTMLDivElement>(null);
 
-	useLayoutEffect(() => {
+	useEffect(() => {
 		if (messagesContainerRef.current === null) return;
 		const children = messagesContainerRef.current.children;
 		if (children.length === 0) return;

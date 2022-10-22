@@ -125,7 +125,7 @@ const ProjectPermsDialog: FC<ProjectPermsDialogProps> = ({ project, open, handle
 			return [{ id: -1, permStatus: 'owner', isOnline: onlineUsersSet.has(project.user.email!), permStatusAsStr: 'Owner', user: project.user }, ...usersWithPerms];
 		}
 		return usersWithPerms;
-	}, [queryEmail, project?.perms, messageHandler?.onlineUsers]);
+	}, [queryEmail, project?.perms, project?.user, messageHandler?.onlineUsers]);
 
 	return (
 		<Dialog open={open} onClose={handleClose} fullWidth={!isSmallScreen} fullScreen={isSmallScreen}>
