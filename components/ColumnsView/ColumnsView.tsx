@@ -61,8 +61,8 @@ const ColumnsView: FC<ColumnsViewProps> = ({ setColumns, columns, mutate, editPe
 
 	return (
 		<div>
-			<div className="scrollbar" ref={scrollerRef} style={{ overflowX: 'scroll', transition: 'opacity 0.2s' }}>
-				<div style={{ paddingTop: '1px' }}></div>
+			<div className="scrollbar" ref={scrollerRef} style={{ overflowX: 'scroll', transition: 'all 0.2s' }}>
+				<div style={{ paddingTop: '1px', transition: 'all 0.2s' }}></div>
 			</div>
 			<Reorder.Group ref={columnsRef} axis="x" values={columns} onReorder={onColsReorder} className={styles.columnsView} style={{ overflow: 'hidden' }} as="div" layoutScroll>
 				{columns?.map((column, index) => (
