@@ -9,7 +9,7 @@ import { useContext, useState } from 'react';
 import type { UseMutateFunction } from 'react-query';
 import { ProjectKeyboardNavigationContext } from '../../contexts/ProjectKeyboardNavigationContext';
 import type { ColumnMutateArgs } from '../../hooks/useQueryProject';
-import type { MessageHandler } from '../../hooks/useRealtimeProject';
+import { MessageHandlerContext } from '../../pages/projects/[id]';
 import type { FullProject } from '../../utils/supabase/projects';
 import ChatDialog from '../Dialogs/ChatDialog/ChatDialog';
 import ProjectPermsDialog from '../Dialogs/ProjectPermsDialog/ProjectPermsDialog';
@@ -19,13 +19,13 @@ type ColumnsToolsProps = {
 	manualUpdate: (newProject: FullProject) => void;
 	project?: FullProject;
 	editPerms: boolean;
-	messageHandler: MessageHandler;
 };
 
-const ColumnsTools: FC<ColumnsToolsProps> = ({ mutate, project, manualUpdate, editPerms, messageHandler }) => {
+const ColumnsTools: FC<ColumnsToolsProps> = ({ mutate, project, manualUpdate, editPerms }) => {
 	const register = useContext(ProjectKeyboardNavigationContext);
 	const [projectPermsOpen, setProjectPermsOpen] = useState<boolean>(false);
 	const [chatOpen, setChatOpen] = useState<boolean>(false);
+	const messageHandler = useContext(MessageHandlerContext);
 
 	return (
 		<>
@@ -38,32 +38,34 @@ const ColumnsTools: FC<ColumnsToolsProps> = ({ mutate, project, manualUpdate, ed
 				<IconButton onClick={() => setProjectPermsOpen(true)} {...register(-1, 1)} aria-label="View Permissions">
 					<GroupIcon color="warning" fontSize="large" />
 				</IconButton>
-				<IconButton
-					onClick={() => {
-						setChatOpen(true);
-						messageHandler.clearMessages();
-					}}
-					aria-label="Open Chat"
-				>
-					<Badge badgeContent={chatOpen ? 0 : messageHandler.unread} color="secondary">
-						<ChatIcon color="success" fontSize="large" />
-					</Badge>
-				</IconButton>
+				{messageHandler && (
+					<IconButton
+						onClick={() => {
+							setChatOpen(true);
+							messageHandler!.clearMessages();
+						}}
+						aria-label="Open Chat"
+					>
+						<Badge badgeContent={chatOpen ? 0 : messageHandler.unread} color="secondary">
+							<ChatIcon color="success" fontSize="large" />
+						</Badge>
+					</IconButton>
+				)}
 			</Box>
 			{project && (
 				<>
 					<ProjectPermsDialog open={projectPermsOpen} manualUpdate={manualUpdate} handleClose={() => setProjectPermsOpen(false)} project={project} />
 
-					<ChatDialog
-						open={chatOpen}
-						handleClose={() => {
-							setChatOpen(false);
-							messageHandler.clearMessages();
-						}}
-						messages={messageHandler.messages}
-						sendMessage={messageHandler.sendMessage}
-						project_name={project.name}
-					/>
+					{messageHandler && (
+						<ChatDialog
+							open={chatOpen}
+							handleClose={() => {
+								setChatOpen(false);
+								messageHandler.clearMessages();
+							}}
+							project_name={project.name}
+						/>
+					)}
 				</>
 			)}
 		</>

@@ -9,22 +9,21 @@ import InputAdornment from '@mui/material/InputAdornment';
 import { useTheme } from '@mui/material/styles';
 import TextField from '@mui/material/TextField';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import { FC, useLayoutEffect, useRef, useState } from 'react';
-import type { Message } from '../../../hooks/useRealtimeProject';
+import { FC, useContext, useLayoutEffect, useRef, useState } from 'react';
+import { MessageHandlerContext } from '../../../pages/projects/[id]';
 import LogoSvg from '../../LogoSvg/LogoSvg';
 
 type ChatDialogProps = {
 	open: boolean;
 	handleClose: () => void;
-	messages: Message[];
-	sendMessage: (message: string) => void;
 	project_name: string;
 };
 
-const ChatDialog: FC<ChatDialogProps> = ({ messages, open, handleClose, sendMessage, project_name }) => {
+const ChatDialog: FC<ChatDialogProps> = ({ open, handleClose, project_name }) => {
 	const theme = useTheme();
 	const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
 	const [value, setValue] = useState<string>('');
+	const messageHandler = useContext(MessageHandlerContext);
 	const messagesContainerRef = useRef<HTMLDivElement>(null);
 
 	useLayoutEffect(() => {
@@ -33,12 +32,12 @@ const ChatDialog: FC<ChatDialogProps> = ({ messages, open, handleClose, sendMess
 		if (children.length === 0) return;
 
 		children[children.length - 1].scrollIntoView({ behavior: 'smooth' });
-	}, [messages, messagesContainerRef]);
+	}, [messageHandler?.messages, messagesContainerRef]);
 
 	const onSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
 		e.preventDefault();
 		if (value.length > 0) {
-			sendMessage(value);
+			messageHandler?.sendMessage(value);
 			setValue('');
 		}
 	};
@@ -55,7 +54,7 @@ const ChatDialog: FC<ChatDialogProps> = ({ messages, open, handleClose, sendMess
 				</IconButton>
 			</DialogTitle>
 			<DialogContent ref={messagesContainerRef} className="scrollbar" style={{ maxHeight: '40vh', overflowY: 'scroll' }}>
-				{messages.map((msg, index) => (
+				{messageHandler?.messages.map((msg, index) => (
 					<div key={index}>
 						<b>{msg.user}</b> {msg.content}
 					</div>
