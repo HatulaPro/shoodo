@@ -21,17 +21,13 @@ function MyApp({ Component, pageProps, router }: AppProps) {
 				<Header />
 				<motion.div
 					key={router.route}
-					initial="initial"
-					animate="animate"
-					variants={{
-						initial: {
-							x: '10vw',
-							opacity: 0.5,
-						},
-						animate: {
-							x: 0,
-							opacity: 1,
-						},
+					initial={{
+						opacity: 0,
+						x: 200,
+					}}
+					animate={{
+						opacity: 1,
+						x: 0,
 					}}
 				>
 					<Component {...pageProps} />

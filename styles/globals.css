@@ -4,6 +4,7 @@ html,
 body {
 	padding: 0;
 	margin: 0;
+	padding-top: 20px;
 	font-family: Roboto;
 	background: #f4f0f0;
 }

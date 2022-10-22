@@ -67,7 +67,7 @@ const Header: FC = () => {
 	}, [isSmallScreen, router, isOpen, setOpen]);
 
 	return (
-		<AppBar position="sticky" className={cn(styles.header, (!isVisible || isLoading) && styles.headerInvisible)}>
+		<AppBar position="fixed" className={cn(styles.header, (!isVisible || isLoading) && styles.headerInvisible)}>
 			<Toolbar sx={{ p: 1 }}>
 				<Link href="/">
 					<ButtonBase className={styles.headerIconBase}>
