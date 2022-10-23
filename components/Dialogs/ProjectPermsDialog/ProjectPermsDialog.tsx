@@ -64,7 +64,7 @@ const ProjectPermsDialog: FC<ProjectPermsDialogProps> = ({ project, open, handle
 			if (data.email === project.user.email) {
 				throw new Error('Self invite is not allowed');
 			}
-			const res = await fetch('/api/perms/editPerm', {
+			const res = await fetch('/api/editPerm', {
 				method: 'POST',
 				headers: new Headers({ 'Content-Type': 'application/json', Authorization: `Bearer ${access_token}` }),
 				credentials: 'same-origin',
@@ -89,7 +89,7 @@ const ProjectPermsDialog: FC<ProjectPermsDialogProps> = ({ project, open, handle
 	async function removePerm(permId: number) {
 		if (!isOwner) return;
 
-		fetch('/api/perms/removePerm', {
+		fetch('/api/removePerm', {
 			method: 'POST',
 			headers: new Headers({ 'Content-Type': 'application/json', Authorization: `Bearer ${access_token}` }),
 			credentials: 'same-origin',

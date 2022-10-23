@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { getUserFromJWT } from '../../../utils/supabase/auth';
-import { getServiceSupabase } from '../../../utils/supabase/client';
-import { Perm } from '../../../utils/supabase/perms';
+import { getUserFromJWT } from '../../utils/supabase/auth';
+import { getServiceSupabase } from '../../utils/supabase/client';
+import { Perm } from '../../utils/supabase/perms';
 
 type ValidInput = {
 	permId: number;

@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { getUserFromJWT } from '../../../utils/supabase/auth';
-import { getServiceSupabase } from '../../../utils/supabase/client';
+import { getUserFromJWT } from '../../utils/supabase/auth';
+import { getServiceSupabase } from '../../utils/supabase/client';
 
 type ValidInput = {
 	email: string;
