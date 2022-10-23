@@ -31,7 +31,11 @@ const ChatDialog: FC<ChatDialogProps> = ({ open, handleClose, project_name }) =>
 		const children = messagesContainerRef.current.children;
 		if (children.length === 0) return;
 
-		children[children.length - 1].scrollIntoView({ behavior: 'smooth' });
+		const fromBottom = messagesContainerRef.current.scrollHeight - messagesContainerRef.current.clientHeight - messagesContainerRef.current.scrollTop;
+		const msgHeight = children[children.length - 1].clientHeight;
+		if (Math.abs(fromBottom - msgHeight) < 10) {
+			children[children.length - 1].scrollIntoView({ behavior: 'smooth' });
+		}
 	}, [messageHandler?.messages, messagesContainerRef]);
 
 	const onSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
@@ -55,7 +59,7 @@ const ChatDialog: FC<ChatDialogProps> = ({ open, handleClose, project_name }) =>
 			</DialogTitle>
 			<DialogContent ref={messagesContainerRef} className="scrollbar" style={{ maxHeight: '40vh', overflowY: 'scroll' }}>
 				{messageHandler?.messages.map((msg, index) => (
-					<div key={index}>
+					<div key={index} style={{ wordWrap: 'break-word' }}>
 						<b>{msg.user}</b> {msg.content}
 					</div>
 				))}
