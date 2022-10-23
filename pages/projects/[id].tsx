@@ -2,6 +2,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import type { NextPage } from 'next';
 import Head from 'next/head';
+import { useRouter } from 'next/router';
 import { createContext, useMemo } from 'react';
 import { useQuery } from 'react-query';
 import ColumnsTools from '../../components/ColumnsTools/ColumnsTools';
@@ -16,13 +17,29 @@ import { updateProjectById } from '../../utils/supabase/projects';
 export const MessageHandlerContext = createContext<MessageHandler | null>(null);
 
 const ProjectByIdPage: NextPage = () => {
-	const { user } = useUser({ authOnly: true });
-	const { data: project, manualUpdate, columnsMutation } = useQueryProject(user);
+	const { user, isLoading: isLoadingUser } = useUser({ authOnly: true });
+	const router = useRouter();
+	const { data: project, manualUpdate, columnsMutation, isLoading: isLoadingProject } = useQueryProject(user);
 	useQuery(['history', project?.id, user?.id], () => setHistory(project!.id, user!.id), { refetchInterval: 1000 * 60 * 3, refetchOnWindowFocus: false, enabled: Boolean(project && user) });
 
-	const hasEditPerms = useMemo(() => project?.user_id === user?.id || Boolean(project?.perms?.find((p) => p.guest_id === user?.id && p.can_edit)), [user, project?.perms, project?.user_id]);
+	const [hasEditPerms, hasViewingPerms] = useMemo(() => {
+		if (isLoadingUser || isLoadingProject) return [false, true];
+		if (!project || !user) return [false, true];
+
+		const isOwner = project.user_id === user.id;
+		if (isOwner) return [true, true];
+
+		const userPerm = project.perms?.find((p) => p.guest_id === user?.id);
+		if (!userPerm) return [false, false];
+
+		return [userPerm.can_edit, userPerm !== undefined];
+	}, [user, project?.perms, project?.user_id, isLoadingProject, isLoadingUser]);
 
 	const messageHandler = useRealtimeProject(project, manualUpdate);
+	console.log({ hasEditPerms, hasViewingPerms, project, user });
+	if (!hasViewingPerms && !isLoadingUser && !isLoadingProject) {
+		router.push('/');
+	}
 
 	return (
 		<MessageHandlerContext.Provider value={messageHandler}>

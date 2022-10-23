@@ -68,25 +68,27 @@ const Home: NextPage = () => {
 						</Typography>
 						<Grid item container>
 							{recentProjects.length > 0 ? (
-								recentProjects.map((project) => (
-									<Grid item container key={project.id} xs={12} sm={6} md={4}>
-										<motion.div initial={{ opacity: 0, y: 100 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} style={{ width: '100%' }}>
-											<Card variant="outlined" style={{ margin: '4px' }}>
-												<Link href={{ pathname: `/projects/[id]` }} as={`/projects/${project.id}`} shallow>
-													<CardActionArea>
-														<CardHeader title={project.name} subheader={new Date(project.created_at!).toLocaleString()} />
+								recentProjects.map((project) =>
+									project === null ? null : (
+										<Grid item container key={project.id} xs={12} sm={6} md={4}>
+											<motion.div initial={{ opacity: 0, y: 100 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} style={{ width: '100%' }}>
+												<Card variant="outlined" style={{ margin: '4px' }}>
+													<Link href={{ pathname: `/projects/[id]` }} as={`/projects/${project.id}`} shallow>
+														<CardActionArea>
+															<CardHeader title={project.name} subheader={new Date(project.created_at!).toLocaleString()} />
 
-														<CardContent>
-															<Typography variant="body2" style={{ whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>
-																{project.description}
-															</Typography>
-														</CardContent>
-													</CardActionArea>
-												</Link>
-											</Card>
-										</motion.div>
-									</Grid>
-								))
+															<CardContent>
+																<Typography variant="body2" style={{ whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>
+																	{project.description}
+																</Typography>
+															</CardContent>
+														</CardActionArea>
+													</Link>
+												</Card>
+											</motion.div>
+										</Grid>
+									)
+								)
 							) : (
 								<Link href="/projects">
 									<Button color="primary" variant="contained" sx={{ mt: 8 }}>

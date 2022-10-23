@@ -35,7 +35,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 			return res.json({ error: 'Perm not found' });
 		}
 
-		const deleted = await supabase.from('perms').delete().eq('id', permId).select().single();
+		const [deleted] = await Promise.all([supabase.from('perms').delete().eq('id', permId).select().single(), supabase.from('history').delete().eq('project_id', permData.project_id).eq('user_id', permData.guest_id)]);
 
 		return res.json({ success: true, data: deleted.data });
 	} catch (e: any) {

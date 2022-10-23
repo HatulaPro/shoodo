@@ -91,7 +91,7 @@ const ProjectPermsDialog: FC<ProjectPermsDialogProps> = ({ project, open, handle
 
 		fetch('/api/perms/removePerm', {
 			method: 'POST',
-			headers: new Headers({ 'Content-Type': 'application/json' }),
+			headers: new Headers({ 'Content-Type': 'application/json', Authorization: `Bearer ${access_token}` }),
 			credentials: 'same-origin',
 			body: JSON.stringify({ permId }),
 		});
