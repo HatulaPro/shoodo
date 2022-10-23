@@ -7,7 +7,6 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
-import Divider from '@mui/material/Divider';
 import FormControl from '@mui/material/FormControl';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormHelperText from '@mui/material/FormHelperText';
@@ -128,7 +127,7 @@ const ProjectPermsDialog: FC<ProjectPermsDialogProps> = ({ project, open, handle
 	}, [queryEmail, project?.perms, project?.user, messageHandler?.onlineUsers]);
 
 	return (
-		<Dialog open={open} onClose={handleClose} fullWidth={!isSmallScreen} fullScreen={isSmallScreen}>
+		<Dialog open={open} onClose={handleClose} fullWidth={!isSmallScreen} fullScreen={isSmallScreen} disableScrollLock={false} sx={{ '&::-webkit-scrollbar': { display: 'none' } }}>
 			<DialogTitle>Online Users{project.perms && ` (${messageHandler && messageHandler.onlineUsers.length + '/'}${project.perms.length + 1})`}</DialogTitle>
 			{editPermsMutation.isLoading && <LinearProgress color="secondary" />}
 			<DialogContent style={{ overflow: 'visible', padding: 4 }}>
@@ -151,7 +150,7 @@ const ProjectPermsDialog: FC<ProjectPermsDialogProps> = ({ project, open, handle
 									},
 								}}
 							>
-								<Box display="flex">
+								<Box display="flex" gap={2} pr={1}>
 									{isOwner && (
 										<IconButton color="error" disabled={userEntry.id === -1} onClick={() => removePerm(userEntry.id)}>
 											<CloseIcon />
@@ -168,7 +167,7 @@ const ProjectPermsDialog: FC<ProjectPermsDialogProps> = ({ project, open, handle
 												}
 											}
 										}}
-										style={{ display: 'flex', justifyContent: 'space-around', paddingBlock: '0.8rem', fontSize: '1rem', width: '100%', alignItems: 'center' }}
+										style={{ display: 'flex', justifyContent: 'space-between', paddingBlock: '0.8rem', fontSize: '1rem', width: '100%', alignItems: 'center' }}
 									>
 										<div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
 											{userEntry.isOnline && (
@@ -179,16 +178,17 @@ const ProjectPermsDialog: FC<ProjectPermsDialogProps> = ({ project, open, handle
 
 											<span>{userEntry.user.email}</span>
 										</div>
-										<div>{userEntry.permStatusAsStr}</div>
+										<div style={{ flexBasis: '30%' }}>{userEntry.permStatusAsStr}</div>
 									</ButtonBase>
 								</Box>
 							</motion.div>
 						))}
 					</AnimatePresence>
 				</div>
-				<Divider style={{ marginBlock: '0.5rem' }} />
+			</DialogContent>
+			<DialogContent style={{ overflow: 'visible', padding: 1, display: 'flex', flexDirection: 'column', justifyContent: 'end' }}>
 				{isOwner && <DialogTitle style={{ paddingBottom: '0' }}>Edit Permissions</DialogTitle>}
-				<Box display="flex" alignItems="center" gap={1} sx={{ m: 2 }}>
+				<Box display="flex" alignItems="center" gap={1} sx={{ mt: 2, mx: 2 }}>
 					{isOwner && (
 						<Button size="small" variant="contained" color="secondary" style={{ marginBottom: '1.5rem' }} disabled={editPermsMutation.isLoading} onClick={handleSubmit(onSubmit)}>
 							save

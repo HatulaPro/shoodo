@@ -57,7 +57,7 @@ const ChatDialog: FC<ChatDialogProps> = ({ open, handleClose, project_name }) =>
 					<CloseIcon />
 				</IconButton>
 			</DialogTitle>
-			<DialogContent ref={messagesContainerRef} className="scrollbar" style={{ maxHeight: '40vh', overflowY: 'scroll' }}>
+			<DialogContent ref={messagesContainerRef} className="scrollbar" sx={{ xs: { maxHeight: '100vh' }, md: { maxHeight: '40vh' } }} style={{ overflowY: 'scroll', marginTop: 'auto' }}>
 				{messageHandler?.messages.map((msg, index) => (
 					<div key={index} style={{ wordWrap: 'break-word' }}>
 						<b>{msg.user}</b> {msg.content}
