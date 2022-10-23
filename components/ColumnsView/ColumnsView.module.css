@@ -3,9 +3,8 @@
 	gap: 2rem;
 	padding-bottom: 8px;
 	min-height: 70vh;
-	width: 100%;
-	overflow-y: hidden;
-	overflow-x: scroll;
+	transform: rotate(180deg);
+	width: min-content;
 }
 
 @media screen and (max-width: 600px) {

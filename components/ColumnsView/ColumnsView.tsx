@@ -37,34 +37,17 @@ const ColumnsView: FC<ColumnsViewProps> = ({ setColumns, columns, mutate, editPe
 
 	useEffect(() => {
 		if (!scrollerRef.current || !columnsRef.current) return;
-		scrollerRef.current.style.opacity = columnsRef.current.clientWidth < columnsRef.current.scrollWidth ? '1' : '0';
-		scrollerRef.current.style.width = columnsRef.current.clientWidth + 'px';
-		const scrollerChild = scrollerRef.current.children[0] as HTMLDivElement;
-		scrollerChild.style.width = columnsRef.current.scrollWidth + 'px';
-
-		const listenToScroller = () => {
-			columnsRef.current!.scrollTo({ left: scrollerRef.current!.scrollLeft, behavior: 'smooth' });
-		};
-
-		const listenToNative = () => {
-			scrollerRef.current!.scrollTo({ left: columnsRef.current!.scrollLeft, behavior: 'smooth' });
-		};
-
-		columnsRef.current.addEventListener('scroll', listenToNative);
-		scrollerRef.current.addEventListener('scroll', listenToScroller);
-
-		return () => {
-			columnsRef.current?.removeEventListener('scroll', listenToNative);
-			scrollerRef.current?.removeEventListener('scroll', listenToScroller);
-		};
-	}, [scrollerRef, columnsRef, columns, window.innerWidth]);
+		console.log(scrollerRef.current.clientWidth, columnsRef.current.scrollWidth);
+		if (scrollerRef.current.clientWidth < columnsRef.current.scrollWidth) {
+			scrollerRef.current.style.overflowX = 'scroll';
+		} else {
+			scrollerRef.current.style.overflowX = 'hidden';
+		}
+	}, [scrollerRef, columnsRef, columns]);
 
 	return (
-		<div>
-			<div className="scrollbar" ref={scrollerRef} style={{ overflowX: 'scroll', transition: 'all 0.2s' }}>
-				<div style={{ paddingTop: '1px', transition: 'all 0.2s' }}></div>
-			</div>
-			<Reorder.Group ref={columnsRef} axis="x" values={columns} onReorder={onColsReorder} className={styles.columnsView} style={{ overflow: 'hidden' }} as="div" layoutScroll>
+		<div ref={scrollerRef} className="scrollbar" style={{ transform: 'rotate(180deg)', overflowX: 'scroll', display: 'flex', flexDirection: 'row-reverse' }}>
+			<Reorder.Group ref={columnsRef} axis="x" values={columns} onReorder={onColsReorder} className={styles.columnsView} as="div">
 				{columns?.map((column, index) => (
 					<MovableColumn setColumns={setColumns} column={column} columns={columns} index={index} mutate={mutate} key={column.id} editPerms={editPerms} />
 				))}
