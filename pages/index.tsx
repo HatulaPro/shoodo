@@ -97,7 +97,7 @@ const Home: NextPage = () => {
 						</Grid>
 					</Grid>
 				)}
-				<motion.div initial={{ x: -300, opacity: 0, scaleX: 0 }} whileInView={{ x: 0, opacity: 1, scaleX: 1 }} transition={{ duration: 0.6 }} viewport={{ once: true }}>
+				<motion.div initial={{ x: -300, opacity: 0, scaleX: 0 }} whileInView={{ x: 0, opacity: 1, scaleX: 1 }} transition={{ duration: 0.6, delay: 0.25 }} viewport={{ once: true }}>
 					<Grid container className={styles.section}>
 						<Grid item sm={5} xs={12} display="flex" flexDirection="column" justifyContent="center">
 							<Container style={{ position: 'relative', minHeight: '300px' }}>
@@ -116,7 +116,7 @@ const Home: NextPage = () => {
 						</Grid>
 					</Grid>
 				</motion.div>
-				<motion.div initial={{ x: 300, opacity: 0, scaleX: 0 }} whileInView={{ x: 0, opacity: 1, scaleX: 1 }} transition={{ duration: 0.6 }} viewport={{ once: true }}>
+				<motion.div initial={{ x: 300, opacity: 0, scaleX: 0 }} whileInView={{ x: 0, opacity: 1, scaleX: 1 }} transition={{ duration: 0.6, delay: 0.25 }} viewport={{ once: true }}>
 					<Grid container className={styles.section} sx={{ flexDirection: { xs: 'column-reverse', sm: 'row' } }}>
 						<Grid item sm={1} xs={12} />
 						<Grid item sm={6} xs={12} display="flex" flexDirection="column" justifyContent="center">
@@ -134,7 +134,7 @@ const Home: NextPage = () => {
 						</Grid>
 					</Grid>
 				</motion.div>
-				<motion.div initial={{ x: -300, opacity: 0, scaleX: 0 }} whileInView={{ x: 0, opacity: 1, scaleX: 1 }} transition={{ duration: 0.6 }} viewport={{ once: true }}>
+				<motion.div initial={{ x: -300, opacity: 0, scaleX: 0 }} whileInView={{ x: 0, opacity: 1, scaleX: 1 }} transition={{ duration: 0.6, delay: 0.25 }} viewport={{ once: true }}>
 					<Grid container className={styles.section}>
 						<Grid item sm={5} xs={12} display="flex" flexDirection="column" justifyContent="center">
 							<Container style={{ position: 'relative', minHeight: '300px' }}>
