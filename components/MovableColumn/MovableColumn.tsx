@@ -6,9 +6,8 @@ import PaletteIcon from '@mui/icons-material/Palette';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import { AnimatePresence, motion, PanInfo, Reorder, useDragControls } from 'framer-motion';
-import { FC, useContext, useRef, useState } from 'react';
+import { FC, useRef, useState } from 'react';
 import type { UseMutateFunction } from 'react-query';
-import { ProjectKeyboardNavigationContext } from '../../contexts/ProjectKeyboardNavigationContext';
 import type { ColumnMutateArgs } from '../../hooks/useQueryProject';
 import { cn } from '../../utils/general';
 import type { ColumnWithTasks, Task } from '../../utils/supabase/projects';
@@ -32,7 +31,6 @@ const MovableColumn: FC<MovableColumnProps> = ({ column, mutate, columns, index,
 	const [openColorPicker, setOpenColorPicker] = useState<boolean>(false);
 	const tasks = column.tasks;
 	const controls = useDragControls();
-	const register = useContext(ProjectKeyboardNavigationContext);
 	const columnRef = useRef<HTMLElement | null>(null);
 	if (column.id === -1) editPerms = false;
 
@@ -151,7 +149,7 @@ const MovableColumn: FC<MovableColumnProps> = ({ column, mutate, columns, index,
 					</>
 				)}
 
-				<div className={cn(styles.movableColumnTitle)} style={{ borderBottom: `4px solid ${column.style}` }} {...register(column.id, -1)}>
+				<div className={cn(styles.movableColumnTitle)} style={{ borderBottom: `4px solid ${column.style}` }}>
 					<EditableTypography onUpdate={onColumnRename} text={column.name} size="large" disabled={!editPerms} />
 				</div>
 				<div>

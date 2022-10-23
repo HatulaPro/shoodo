@@ -2,9 +2,8 @@ import CloseIcon from '@mui/icons-material/Close';
 import Box from '@mui/material/Box';
 import Checkbox from '@mui/material/Checkbox';
 import IconButton from '@mui/material/IconButton';
-import { FC, useContext, useMemo } from 'react';
+import { FC, useMemo } from 'react';
 import type { UseMutateFunction } from 'react-query';
-import { ProjectKeyboardNavigationContext } from '../../contexts/ProjectKeyboardNavigationContext';
 import type { ColumnMutateArgs } from '../../hooks/useQueryProject';
 import type { Task } from '../../utils/supabase/projects';
 import EditableTypography from '../EditableTypography/EditableTypography';
@@ -18,11 +17,9 @@ type MovableTaskProps = {
 };
 
 const MovableTask: FC<MovableTaskProps> = ({ task, column_id, mutate, editPerms }) => {
-	const register = useContext(ProjectKeyboardNavigationContext);
-
 	return useMemo(
 		() => (
-			<div className={styles.movableTask} {...register(column_id, task?.id || null)}>
+			<div className={styles.movableTask}>
 				<Box display="flex" alignItems="center">
 					{task ? (
 						<>

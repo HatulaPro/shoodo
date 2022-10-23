@@ -7,7 +7,6 @@ import IconButton from '@mui/material/IconButton';
 import type { FC } from 'react';
 import { useContext, useState } from 'react';
 import type { UseMutateFunction } from 'react-query';
-import { ProjectKeyboardNavigationContext } from '../../contexts/ProjectKeyboardNavigationContext';
 import type { ColumnMutateArgs } from '../../hooks/useQueryProject';
 import { MessageHandlerContext } from '../../pages/projects/[id]';
 import type { FullProject } from '../../utils/supabase/projects';
@@ -22,7 +21,6 @@ type ColumnsToolsProps = {
 };
 
 const ColumnsTools: FC<ColumnsToolsProps> = ({ mutate, project, manualUpdate, editPerms }) => {
-	const register = useContext(ProjectKeyboardNavigationContext);
 	const [projectPermsOpen, setProjectPermsOpen] = useState<boolean>(false);
 	const [chatOpen, setChatOpen] = useState<boolean>(false);
 	const messageHandler = useContext(MessageHandlerContext);
@@ -31,11 +29,11 @@ const ColumnsTools: FC<ColumnsToolsProps> = ({ mutate, project, manualUpdate, ed
 		<>
 			<Box display="flex" flexDirection="row" mr={2}>
 				{editPerms && (
-					<IconButton onClick={() => mutate({ type: 'CREATE' })} {...register(-1, 0)} aria-label="Add Column">
+					<IconButton onClick={() => mutate({ type: 'CREATE' })} aria-label="Add Column">
 						<AddIcon color="primary" fontSize="large" />
 					</IconButton>
 				)}
-				<IconButton onClick={() => setProjectPermsOpen(true)} {...register(-1, 1)} aria-label="View Permissions">
+				<IconButton onClick={() => setProjectPermsOpen(true)} aria-label="View Permissions">
 					<GroupIcon color="warning" fontSize="large" />
 				</IconButton>
 				{messageHandler && (
