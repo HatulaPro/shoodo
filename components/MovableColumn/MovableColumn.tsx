@@ -26,7 +26,6 @@ type MovableColumnProps = {
 };
 
 const MovableColumn: FC<MovableColumnProps> = ({ column, mutate, columns, index, editPerms, setColumns }) => {
-	const parentRef = useRef(null);
 	const [openTools, setOpenTools] = useState<boolean>(false);
 	const [openColorPicker, setOpenColorPicker] = useState<boolean>(false);
 	const tasks = useMemo(() => column.tasks, [column.tasks]);
@@ -148,7 +147,7 @@ const MovableColumn: FC<MovableColumnProps> = ({ column, mutate, columns, index,
 					<EditableTypography onUpdate={onColumnRename} text={column.name} size="large" disabled={!editPerms} />
 				</div>
 				<div>
-					<div ref={parentRef}>
+					<div>
 						<Reorder.Group axis="y" as="div" values={tasks} onReorder={onTasksReorder}>
 							{tasks.map((task, index) => (
 								<Reorder.Item drag={editPerms} onDragEnd={onDragEnd(task.id, index)} value={task} as="div" initial={{ opacity: 0, scale: 0 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0 }} key={task.id}>
