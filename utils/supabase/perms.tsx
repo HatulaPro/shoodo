@@ -28,7 +28,7 @@ export async function getPermById(perm_id: number): Promise<PermWithUser> {
 }
 
 export async function deleteOwnPerm(user_id: string, project_id: number): Promise<boolean> {
-	const { data, error } = await supabase.from('perms').delete().eq('guest_id', user_id).eq('project_id', project_id).single();
+	const { data, error } = await supabase.from('perms').delete().eq('guest_id', user_id).eq('project_id', project_id).select().single();
 
 	if (error) {
 		console.log(error);

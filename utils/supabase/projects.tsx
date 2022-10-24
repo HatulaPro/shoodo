@@ -105,7 +105,7 @@ export async function deleteProject(project_id: number): Promise<boolean> {
 		throw new Error(error.message);
 	}
 
-	return data.length > 0;
+	return true;
 }
 
 export async function getProjectById(project_id: number): Promise<FullProject> {

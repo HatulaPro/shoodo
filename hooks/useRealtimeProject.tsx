@@ -37,12 +37,8 @@ export default function useRealtimeProject(project: FullProject | undefined, onU
 			},
 		});
 		const realtimeProjectSubscription = channel
-			.on<Project>('postgres_changes', { event: '*', schema: 'public', table: 'projects', filter: `id=eq.${project.id}` }, (payload) => {
-				if (payload.eventType === 'UPDATE') {
-					onUpdate({ ...project, ...payload.new });
-				} else {
-					throw new Error('Unhandled realtime event');
-				}
+			.on<Project>('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'projects', filter: `id=eq.${project.id}` }, (payload) => {
+				onUpdate({ ...project, ...payload.new });
 			})
 			.on<Perm>('postgres_changes', { event: '*', schema: 'public', table: 'perms', filter: `project_id=eq.${project.id}` }, (payload) => {
 				if (payload.eventType === 'UPDATE') {

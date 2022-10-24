@@ -44,7 +44,7 @@ const ProjectsView = <T extends ProjectWithHistory & { user?: PublicUser }>(prop
 	const queryClient = useQueryClient();
 	const { user } = useUser();
 
-	const deleteProjectMutation = useMutation((index: number) => deleteProject(projects[index].id));
+	const deleteProjectMutation = useMutation(deleteProject);
 
 	useEffect(() => {
 		if (projectsListRef.current && newProject !== -1) {
