@@ -19,7 +19,7 @@ import { deleteProject, getUserInvites, getUserProjects, ProjectWithHistory } fr
 const ProjectsPage: NextPage = () => {
 	const { user } = useUser({ authOnly: true });
 	const [newProjectIndex, setNewProjectIndex] = useState<number>(-1);
-	const { location, setLocation } = useShallowRoutes<'/new'>(`/projects`);
+	const { location, setLocation } = useShallowRoutes<'/new'>(`/projects`, false);
 
 	const { isLoading: isLoadingProjects, data: userProjects, refetch: refetchProjects, manualUpdate: manualUpdateProjects } = useUserProjects(user, getUserProjects);
 	const { isLoading: isLoadingInvites, data: userInvites, refetch: refetchInvites, manualUpdate: manualUpdateInvites } = useUserProjects(user, getUserInvites);

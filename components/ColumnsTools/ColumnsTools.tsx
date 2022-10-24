@@ -23,7 +23,7 @@ type ColumnsToolsProps = {
 
 const ColumnsTools: FC<ColumnsToolsProps> = ({ mutate, project, manualUpdate, editPerms }) => {
 	const messageHandler = useRealtimeProject(project, manualUpdate);
-	const { location, setLocation } = useShallowRoutes<'/chat' | '/social'>(`/projects/${project?.id || '12'}`);
+	const { location, setLocation } = useShallowRoutes<'/chat' | '/social'>(`/projects/${project?.id || 'not found'}`, false);
 
 	return (
 		<MessageHandlerContext.Provider value={messageHandler}>
