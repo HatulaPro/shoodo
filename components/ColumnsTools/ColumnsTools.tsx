@@ -5,10 +5,10 @@ import Badge from '@mui/material/Badge';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import type { FC } from 'react';
-import { useState } from 'react';
 import type { UseMutateFunction } from 'react-query';
 import type { ColumnMutateArgs } from '../../hooks/useQueryProject';
 import useRealtimeProject from '../../hooks/useRealtimeProject';
+import { useShallowRoutes } from '../../hooks/useShallowRoutes';
 import { MessageHandlerContext } from '../../pages/projects/[id]';
 import type { FullProject } from '../../utils/supabase/projects';
 import ChatDialog from '../Dialogs/ChatDialog/ChatDialog';
@@ -22,9 +22,8 @@ type ColumnsToolsProps = {
 };
 
 const ColumnsTools: FC<ColumnsToolsProps> = ({ mutate, project, manualUpdate, editPerms }) => {
-	const [projectPermsOpen, setProjectPermsOpen] = useState<boolean>(false);
-	const [chatOpen, setChatOpen] = useState<boolean>(false);
 	const messageHandler = useRealtimeProject(project, manualUpdate);
+	const { location, setLocation } = useShallowRoutes<'/chat' | '/social'>(`/projects/${project?.id || '12'}`);
 
 	return (
 		<MessageHandlerContext.Provider value={messageHandler}>
@@ -34,18 +33,18 @@ const ColumnsTools: FC<ColumnsToolsProps> = ({ mutate, project, manualUpdate, ed
 						<AddIcon color="primary" fontSize="large" />
 					</IconButton>
 				)}
-				<IconButton onClick={() => setProjectPermsOpen(true)} aria-label="View Permissions">
+				<IconButton onClick={() => setLocation('/social')} aria-label="View Permissions">
 					<GroupIcon color="warning" fontSize="large" />
 				</IconButton>
 				{messageHandler && (
 					<IconButton
 						onClick={() => {
-							setChatOpen(true);
+							setLocation('/chat');
 							messageHandler!.clearMessages();
 						}}
 						aria-label="Open Chat"
 					>
-						<Badge badgeContent={chatOpen ? 0 : messageHandler.unread} color="secondary">
+						<Badge badgeContent={location === '/chat' ? 0 : messageHandler.unread} color="secondary">
 							<ChatIcon color="success" fontSize="large" />
 						</Badge>
 					</IconButton>
@@ -53,13 +52,13 @@ const ColumnsTools: FC<ColumnsToolsProps> = ({ mutate, project, manualUpdate, ed
 			</Box>
 			{project && (
 				<>
-					<ProjectPermsDialog open={projectPermsOpen} manualUpdate={manualUpdate} handleClose={() => setProjectPermsOpen(false)} project={project} />
+					<ProjectPermsDialog open={location === '/social'} manualUpdate={manualUpdate} handleClose={() => setLocation(null)} project={project} />
 
 					{messageHandler && (
 						<ChatDialog
-							open={chatOpen}
+							open={location === '/chat'}
 							handleClose={() => {
-								setChatOpen(false);
+								setLocation(null);
 								messageHandler.clearMessages();
 							}}
 							project_name={project.name}

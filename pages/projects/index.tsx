@@ -19,7 +19,7 @@ import { deleteProject, getUserInvites, getUserProjects, ProjectWithHistory } fr
 const ProjectsPage: NextPage = () => {
 	const { user } = useUser({ authOnly: true });
 	const [newProjectIndex, setNewProjectIndex] = useState<number>(-1);
-	const { location, setLocation } = useShallowRoutes<'/projects/new' | '/projects'>('/projects');
+	const { location, setLocation } = useShallowRoutes<'/new'>(`/projects`);
 
 	const { isLoading: isLoadingProjects, data: userProjects, refetch: refetchProjects, manualUpdate: manualUpdateProjects } = useUserProjects(user, getUserProjects);
 	const { isLoading: isLoadingInvites, data: userInvites, refetch: refetchInvites, manualUpdate: manualUpdateInvites } = useUserProjects(user, getUserInvites);
@@ -30,11 +30,11 @@ const ProjectsPage: NextPage = () => {
 	}
 
 	function createNewProject() {
-		setLocation('/projects/new');
+		setLocation('/new');
 	}
 
 	function closeNewProjectDialog(project?: ProjectWithHistory) {
-		setLocation('/projects');
+		setLocation(null);
 
 		if (project) {
 			setNewProjectIndex(userProjects!.length);
@@ -80,7 +80,7 @@ const ProjectsPage: NextPage = () => {
 						<ProjectsView projects={userInvites} newProject={-1} updateProjects={manualUpdateInvites} deleteProject={deletePermByProjectId} />
 					</>
 				)}
-				{user && <NewProjectDialog userId={user.id} open={location === '/projects/new'} handleClose={closeNewProjectDialog} />}
+				{user && <NewProjectDialog userId={user.id} open={location === '/new'} handleClose={closeNewProjectDialog} />}
 			</Container>
 		</>
 	);
