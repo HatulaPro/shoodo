@@ -5,9 +5,10 @@ import Badge from '@mui/material/Badge';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import type { FC } from 'react';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import type { UseMutateFunction } from 'react-query';
 import type { ColumnMutateArgs } from '../../hooks/useQueryProject';
+import useRealtimeProject from '../../hooks/useRealtimeProject';
 import { MessageHandlerContext } from '../../pages/projects/[id]';
 import type { FullProject } from '../../utils/supabase/projects';
 import ChatDialog from '../Dialogs/ChatDialog/ChatDialog';
@@ -23,10 +24,10 @@ type ColumnsToolsProps = {
 const ColumnsTools: FC<ColumnsToolsProps> = ({ mutate, project, manualUpdate, editPerms }) => {
 	const [projectPermsOpen, setProjectPermsOpen] = useState<boolean>(false);
 	const [chatOpen, setChatOpen] = useState<boolean>(false);
-	const messageHandler = useContext(MessageHandlerContext);
+	const messageHandler = useRealtimeProject(project, manualUpdate);
 
 	return (
-		<>
+		<MessageHandlerContext.Provider value={messageHandler}>
 			<Box display="flex" flexDirection="row" mr={2}>
 				{editPerms && (
 					<IconButton onClick={() => mutate({ type: 'CREATE' })} aria-label="Add Column">
@@ -66,7 +67,7 @@ const ColumnsTools: FC<ColumnsToolsProps> = ({ mutate, project, manualUpdate, ed
 					)}
 				</>
 			)}
-		</>
+		</MessageHandlerContext.Provider>
 	);
 };
 

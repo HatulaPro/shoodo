@@ -5,8 +5,8 @@ import DragHandleIcon from '@mui/icons-material/DragHandle';
 import PaletteIcon from '@mui/icons-material/Palette';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
-import { AnimatePresence, motion, PanInfo, Reorder, useDragControls } from 'framer-motion';
-import { FC, useRef, useState } from 'react';
+import { PanInfo, Reorder, useDragControls } from 'framer-motion';
+import { FC, useMemo, useRef, useState } from 'react';
 import type { UseMutateFunction } from 'react-query';
 import type { ColumnMutateArgs } from '../../hooks/useQueryProject';
 import { cn } from '../../utils/general';
@@ -29,7 +29,7 @@ const MovableColumn: FC<MovableColumnProps> = ({ column, mutate, columns, index,
 	const parentRef = useRef(null);
 	const [openTools, setOpenTools] = useState<boolean>(false);
 	const [openColorPicker, setOpenColorPicker] = useState<boolean>(false);
-	const tasks = column.tasks;
+	const tasks = useMemo(() => column.tasks, [column.tasks]);
 	const controls = useDragControls();
 	const columnRef = useRef<HTMLElement | null>(null);
 	if (column.id === -1) editPerms = false;
@@ -58,16 +58,11 @@ const MovableColumn: FC<MovableColumnProps> = ({ column, mutate, columns, index,
 	}
 
 	function onTasksReorder(newTasks: Task[]) {
-		if (new Set(newTasks.map((t) => t.importance)).size < newTasks.length) {
-			mutate({ type: 'UPDATE_TASK_INDEXES', column });
-			return;
-		}
-
-		column.tasks = newTasks;
+		column.tasks = [...newTasks];
 		setColumns(columns);
 	}
 
-	function onDragEnd(task_id: number) {
+	function onDragEnd(task_id: number, task_index: number) {
 		return (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
 			const colWidth = columnRef.current!.clientWidth; // 300
 			const scrollerWidth = columnRef.current!.parentElement!.scrollWidth; // 964
@@ -76,19 +71,19 @@ const MovableColumn: FC<MovableColumnProps> = ({ column, mutate, columns, index,
 			const offsetX = info.offset.x;
 			const nextIndex = index + Math.round(offsetX / (colWidth + colGap));
 			if (nextIndex === index) {
+				const impSet = new Set(tasks.map((t) => t.importance));
+				if (impSet.size < tasks.length) {
+					mutate({ type: 'UPDATE_TASK_INDEXES', column });
+					return;
+				}
+
 				if (tasks.length > 1) {
-					for (let i = 0; i < tasks.length; i++) {
-						if (task_id === tasks[i].id) {
-							// this is where swap
-							if (i === 0) {
-								mutate({ task_id: tasks[i].id, column_id: column.id, update: { importance: tasks[1].importance - Math.pow(2, 32) }, type: 'UPDATE_TASK' });
-							} else if (i === tasks.length - 1) {
-								mutate({ task_id: tasks[i].id, column_id: column.id, update: { importance: tasks[i - 1].importance + Math.pow(2, 32) }, type: 'UPDATE_TASK' });
-							} else {
-								mutate({ task_id: tasks[i].id, column_id: column.id, update: { importance: (tasks[i - 1].importance + tasks[i + 1].importance) / 2 }, type: 'UPDATE_TASK' });
-							}
-							break;
-						}
+					if (task_index === 0) {
+						mutate({ task_id: tasks[task_index].id, column_id: column.id, update: { importance: tasks[1].importance - Math.pow(2, 32) }, type: 'UPDATE_TASK' });
+					} else if (task_index === tasks.length - 1) {
+						mutate({ task_id: tasks[task_index].id, column_id: column.id, update: { importance: tasks[task_index - 1].importance + Math.pow(2, 32) }, type: 'UPDATE_TASK' });
+					} else {
+						mutate({ task_id: tasks[task_index].id, column_id: column.id, update: { importance: (tasks[task_index - 1].importance + tasks[task_index + 1].importance) / 2 }, type: 'UPDATE_TASK' });
 					}
 				}
 			} else {
@@ -155,15 +150,11 @@ const MovableColumn: FC<MovableColumnProps> = ({ column, mutate, columns, index,
 				<div>
 					<div ref={parentRef}>
 						<Reorder.Group axis="y" as="div" values={tasks} onReorder={onTasksReorder}>
-							<AnimatePresence>
-								{tasks.map((task) => (
-									<motion.div initial={{ opacity: 0, scale: 0 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0 }} key={task.id}>
-										<Reorder.Item drag={editPerms} onDragEnd={onDragEnd(task.id)} value={task} as="div" dragTransition={{ bounceDamping: 20, bounceStiffness: 200 }}>
-											<MovableTask task={task} column_id={column.id} mutate={mutate} editPerms={editPerms} />
-										</Reorder.Item>
-									</motion.div>
-								))}
-							</AnimatePresence>
+							{tasks.map((task, index) => (
+								<Reorder.Item drag={editPerms} onDragEnd={onDragEnd(task.id, index)} value={task} as="div" initial={{ opacity: 0, scale: 0 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0 }} key={task.id}>
+									<MovableTask task={task} column_id={column.id} mutate={mutate} editPerms={editPerms} />
+								</Reorder.Item>
+							))}
 						</Reorder.Group>
 					</div>
 

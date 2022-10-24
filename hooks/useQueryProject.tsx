@@ -132,7 +132,6 @@ export function useQueryProject(user: User | null) {
 			const taskColumn = data.columns.find((col) => col.id === args.column_id)!;
 			taskColumn.tasks = taskColumn.tasks.filter((t) => t.id !== args.task_id);
 		} else if (args.type === 'MOVE_TASK') {
-			console.log(args);
 			const nextIndex = Math.min(Math.max(args.nextIndex, 0), data.columns.length - 1);
 			const currentColumn = data.columns[args.currentIndex];
 			const nextColumn = data.columns[nextIndex];
@@ -140,8 +139,8 @@ export function useQueryProject(user: User | null) {
 			const task = currentColumn.tasks.splice(taskIndex, 1)[0];
 
 			const bestImportance = nextColumn.tasks.length ? Math.min(...nextColumn.tasks.map((t) => t.importance)) : Math.pow(2, 33);
-			// nextColumn.tasks = [task, ...nextColumn.tasks];
-			// manualUpdate(data);
+			nextColumn.tasks = [task, ...nextColumn.tasks];
+			manualUpdate(data);
 			updateTaskById(task.id, { importance: bestImportance, column_id: nextColumn.id });
 		} else if (args.type === 'UPDATE_TASK_INDEXES') {
 			updateTaskImportances(args.column).then((tasks) => {
