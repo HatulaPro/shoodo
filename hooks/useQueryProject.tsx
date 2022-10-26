@@ -140,7 +140,7 @@ export function useQueryProject(user: User | null) {
 
 			const bestImportance = nextColumn.tasks.length ? Math.min(...nextColumn.tasks.map((t) => t.importance)) : Math.pow(2, 33);
 			nextColumn.tasks = [task, ...nextColumn.tasks];
-			manualUpdate(data);
+			// manualUpdate(data);
 			updateTaskById(task.id, { importance: bestImportance, column_id: nextColumn.id });
 		} else if (args.type === 'UPDATE_TASK_INDEXES') {
 			updateTaskImportances(args.column).then((tasks) => {

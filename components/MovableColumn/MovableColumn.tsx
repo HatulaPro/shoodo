@@ -150,7 +150,7 @@ const MovableColumn: FC<MovableColumnProps> = ({ column, mutate, columns, index,
 					<div>
 						<Reorder.Group axis="y" as="div" values={tasks} onReorder={onTasksReorder}>
 							{tasks.map((task, index) => (
-								<Reorder.Item drag={editPerms} onDragEnd={onDragEnd(task.id, index)} value={task} as="div" initial={{ opacity: 0, scale: 0 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0 }} key={task.id}>
+								<Reorder.Item drag={editPerms} onDragEnd={onDragEnd(task.id, index)} value={task} as="div" initial={{ opacity: 0, scaleX: 0 }} animate={{ opacity: 1, scaleX: 1 }} exit={{ opacity: 0, scaleX: 0 }} key={task.id}>
 									<MovableTask task={task} column_id={column.id} mutate={mutate} editPerms={editPerms} />
 								</Reorder.Item>
 							))}
