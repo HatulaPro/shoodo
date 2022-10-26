@@ -95,7 +95,14 @@ export default function useRealtimeProject(project: FullProject | undefined, onU
 				if (payload.eventType === 'UPDATE') {
 					console.log('update payload', payload);
 					const newColId = payload.new.column_id;
-					const newCol = project.columns.find((c) => c.id === newColId);
+					let newColIndex = 0;
+					const newCol = project.columns.find((c, i) => {
+						if (c.id === newColId) {
+							newColIndex = i;
+							return true;
+						}
+						return false;
+					});
 
 					if (newCol === undefined) return;
 
@@ -126,8 +133,8 @@ export default function useRealtimeProject(project: FullProject | undefined, onU
 							}
 						}
 					}
-
-					onUpdate({ ...project, columns: [...project.columns] });
+					project.columns[newColIndex] = { ...newCol };
+					onUpdate(project);
 				} else if (payload.eventType === 'DELETE') {
 					for (const col of project.columns!) {
 						const newTasks = col.tasks.filter((oldTask) => {
